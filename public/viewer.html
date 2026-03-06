@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>360 Viewer</title>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.css" />
+
+    <link rel="stylesheet" href="css/style.css?v=1.1" type="text/css">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+</head>
+
+<body>
+
+    <div class="viewer-container">
+
+        <div id="loading-overlay">
+            <div class="loader"></div>
+            <p>Loading Panorama...</p>
+        </div>
+
+        <div id="panorama"></div>
+
+        <div class="viewer-ui">
+
+            <div class="viewer-header">
+
+                <a href="index.html" class="back-btn">
+                    <i class="fas fa-arrow-left"></i> Back
+                </a>
+
+                <div class="scene-title" id="current-scene-title">
+                    Loading...
+                </div>
+
+                <div style="width:140px;"></div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.js"></script>
+
+    <script type="module" src="js/viewer.js"></script>
+
+</body>
+
+</html>

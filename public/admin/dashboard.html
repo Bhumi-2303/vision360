@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Vision 360</title>
+
+    <link rel="stylesheet" href="../css/style.css?v=1.1" type="text/css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+    <style>
+        body {
+            background: #111;
+            color: #fff;
+            font-family: Arial, sans-serif;
+            padding-top: 100px;
+            /* space for fixed header */
+        }
+
+        .dashboard-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            display: flex;
+            gap: 30px;
+            align-items: flex-start;
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-container {
+                flex-direction: column;
+            }
+        }
+
+        .sidebar {
+            width: 250px;
+            background: #1f1f1f;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            flex-shrink: 0;
+        }
+
+        .sidebar h3 {
+            margin-bottom: 20px;
+            color: #00d2d3;
+            border-bottom: 1px solid #333;
+            padding-bottom: 15px;
+        }
+
+        .nav-menu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .nav-menu li {
+            margin-bottom: 10px;
+        }
+
+        .nav-menu a {
+            display: block;
+            padding: 12px 15px;
+            color: #ccc;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background 0.3s, color 0.3s;
+        }
+
+        .nav-menu a:hover,
+        .nav-menu a.active {
+            background: #00d2d3;
+            color: #111;
+            font-weight: bold;
+        }
+
+        .main-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .tab-section {
+            display: none;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        .tab-section.active {
+            display: flex;
+        }
+
+        .header-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            border-bottom: 1px solid #333;
+            padding-bottom: 15px;
+        }
+
+        .header-actions h2 {
+            color: #00d2d3;
+        }
+
+        .card {
+            background: #1f1f1f;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .card h3 {
+            margin-bottom: 15px;
+            border-bottom: 1px solid #333;
+            padding-bottom: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #ccc;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #444;
+            border-radius: 5px;
+            background: #2a2a2a;
+            color: #fff;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 15px;
+        }
+
+        .form-row .form-group {
+            flex: 1;
+        }
+
+        /* Manage Scenes List Styles */
+        .scene-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .scene-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: #2a2a2a;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            border-left: 4px solid #00d2d3;
+        }
+
+        .scene-info strong {
+            display: block;
+            color: #fff;
+            margin-bottom: 3px;
+        }
+
+        .scene-info span {
+            font-size: 0.8em;
+            color: #aaa;
+        }
+
+        .scene-actions button {
+            background: transparent;
+            border: none;
+            color: #ccc;
+            cursor: pointer;
+            margin-left: 10px;
+            transition: color 0.3s;
+        }
+
+        .scene-actions button:hover {
+            color: #fff;
+        }
+
+        .scene-actions .delete-btn:hover {
+            color: #ff4757;
+        }
+
+        .scene-actions .edit-btn:hover {
+            color: #00d2d3;
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: #1f1f1f;
+            padding: 30px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .hotspot-item {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            background: #2a2a2a;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+        }
+
+        .hotspot-item input {
+            margin: 0;
+        }
+
+        .hotspot-item button {
+            background: #ff4757;
+            padding: 10px;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .auth-check {
+            text-align: center;
+            margin-top: 100px;
+        }
+
+        #dashboard-content {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header class="header">
+        <div class="container nav-container">
+            <h1 class="logo">Vision <span>360</span></h1>
+            <nav class="navbar">
+                <ul class="nav-links">
+                    <li><a href="../index.html">Back to Home</a></li>
+                    <li><a href="#" id="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <div id="auth-loading" class="auth-check">
+        <h2><i class="fas fa-spinner fa-spin"></i> Checking Authorization...</h2>
+    </div>
+
+    <div id="dashboard-content" class="dashboard-container">
+
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <h3>Admin Panel</h3>
+            <ul class="nav-menu">
+                <li><a href="#" class="nav-btn active" data-target="section-create"><i class="fas fa-plus-circle"></i>
+                        Create Scene</a></li>
+                <li><a href="#" class="nav-btn" data-target="section-edit"><i class="fas fa-edit"></i> Edit Scene</a>
+                </li>
+                <li><a href="#" class="nav-btn" data-target="section-delete"><i class="fas fa-trash"></i> Delete
+                        Scene</a></li>
+            </ul>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <div class="header-actions">
+                <h2 id="section-title">Create New Scene</h2>
+            </div>
+
+            <!-- CREATE SECTION -->
+            <div id="section-create" class="tab-section active">
+                <div class="card">
+                    <h3><i class="fas fa-building"></i> Add Building (Main Campus)</h3>
+                    <form id="add-building-form">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="b-id">Building ID (e.g., 'main')</label>
+                                <input type="text" id="b-id" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="b-title">Title</label>
+                                <input type="text" id="b-title" required placeholder="Main Campus">
+                            </div>
+                            <div class="form-group">
+                                <label for="b-panorama">Panorama Image</label>
+                                <input type="file" id="b-panorama" accept="image/jpeg, image/png" required>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Add Building</button>
+                    </form>
+                </div>
+
+                <!-- Add Department Form -->
+                <div class="card">
+                    <h3><i class="fas fa-door-open"></i> Add Department</h3>
+                    <form id="add-dept-form">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="d-parent">Parent Building</label>
+                                <select id="d-parent" required>
+                                    <option value="">Loading...</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="d-id">Department ID (e.g., 'department')</label>
+                                <input type="text" id="d-id" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="d-title">Title</label>
+                                <input type="text" id="d-title" required placeholder="Engineering Block">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="d-panorama">Panorama Image</label>
+                                <input type="file" id="d-panorama" accept="image/jpeg, image/png" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="d-yaw">Hotspot Yaw (left/right angle)</label>
+                                <input type="number" id="d-yaw" value="90" required>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Add Department</button>
+                    </form>
+                </div>
+
+                <!-- Add Classroom Form -->
+                <div class="card">
+                    <h3><i class="fas fa-chalkboard"></i> Add Classroom</h3>
+                    <form id="add-class-form">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="c-parent">Parent Department</label>
+                                <select id="c-parent" required>
+                                    <option value="">Loading...</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="c-id">Classroom ID (e.g., 'classroom')</label>
+                                <input type="text" id="c-id" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="c-title">Title</label>
+                                <input type="text" id="c-title" required placeholder="Lab 1">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="c-panorama">Panorama Image</label>
+                                <input type="file" id="c-panorama" accept="image/jpeg, image/png" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="c-yaw">Hotspot Yaw (left/right angle)</label>
+                                <input type="number" id="c-yaw" value="-90" required>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Add Classroom</button>
+                    </form>
+                </div>
+
+            </div> <!-- End Create Section -->
+
+            <!-- EDIT SECTION -->
+            <div id="section-edit" class="tab-section">
+                <div class="card">
+                    <h3><i class="fas fa-edit"></i> Select a Scene to Edit</h3>
+                    <ul class="scene-list" id="edit-scene-list">
+                        <li>Loading scenes...</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- DELETE SECTION -->
+            <div id="section-delete" class="tab-section">
+                <div class="card">
+                    <h3><i class="fas fa-trash"></i> Select a Scene to Delete</h3>
+                    <ul class="scene-list" id="delete-scene-list">
+                        <li>Loading scenes...</li>
+                    </ul>
+                </div>
+            </div>
+
+        </main>
+
+    </div>
+
+    <!-- Edit Scene Modal -->
+    <div id="edit-modal" class="modal-overlay">
+        <div class="modal-content">
+            <button class="close-modal" id="close-modal-btn">&times;</button>
+            <h3 id="edit-modal-title">Edit Scene</h3>
+
+            <form id="edit-scene-form">
+                <input type="hidden" id="edit-scene-id">
+
+                <div class="form-group">
+                    <label>Scene Title</label>
+                    <input type="text" id="edit-title" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Update Panorama Image (Leave blank to keep existing)</label>
+                    <input type="file" id="edit-panorama" accept="image/jpeg, image/png">
+                </div>
+
+                <h4>Configure Hotspots</h4>
+                <div id="edit-hotspots-container">
+                    <!-- Hotspots injected here via JS -->
+                </div>
+
+                <button type="button" id="add-hotspot-btn" class="btn btn-secondary"
+                    style="margin-bottom: 20px; background: #333; color: white;">+ Add New Hotspot</button>
+
+                <button type="submit" class="btn btn-primary" style="width: 100%">Save Changes</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Use modular import for Firebase JS integration -->
+    <script type="module" src="../js/admin-dashboard.js"></script>
+
+</body>
+
+</html>

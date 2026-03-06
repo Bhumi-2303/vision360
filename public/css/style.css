@@ -1,0 +1,331 @@
+/* ===============================
+   GLOBAL RESET
+================================ */
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial, Helvetica, sans-serif;
+}
+
+body{
+background:#111;
+color:#fff;
+line-height:1.6;
+overflow-x:hidden;
+}
+
+/* ===============================
+   HEADER
+================================ */
+.header{
+position:fixed;
+top:0;
+width:100%;
+background:#000;
+padding:18px 20px;
+z-index:1000;
+border-bottom:1px solid #222;
+}
+
+.nav-container{
+display:flex;
+justify-content:space-between;
+align-items:center;
+max-width:1200px;
+margin:auto;
+}
+
+.logo{
+font-size:1.6rem;
+font-weight:bold;
+}
+
+.logo span{
+color:#00d2d3;
+}
+
+.nav-links{
+display:flex;
+gap:25px;
+list-style:none;
+}
+
+.nav-links a{
+text-decoration:none;
+color:#fff;
+font-weight:500;
+transition:0.3s;
+}
+
+.nav-links a:hover{
+color:#00d2d3;
+}
+
+/* ===============================
+   HERO SECTION
+================================ */
+.hero{
+height:100vh;
+display:flex;
+align-items:center;
+justify-content:center;
+text-align:center;
+padding-top:120px;
+background:
+linear-gradient(rgba(0,0,0,0.7),rgba(0,0,0,0.8)),
+url("../images/campus.jpg")
+center/cover no-repeat;
+}
+
+.hero-content{
+background:rgba(0,0,0,0.6);
+padding:40px;
+border-radius:10px;
+max-width:700px;
+}
+
+.hero h2{
+font-size:3rem;
+margin-bottom:20px;
+}
+
+.hero p{
+font-size:1.1rem;
+margin-bottom:30px;
+color:#ccc;
+}
+
+/* ===============================
+   BUTTONS
+================================ */
+.btn{
+padding:12px 28px;
+border:none;
+border-radius:30px;
+cursor:pointer;
+font-size:1rem;
+font-weight:600;
+transition:0.3s;
+}
+
+.btn-primary{
+background:#00d2d3;
+color:#000;
+}
+
+.btn-primary:hover{
+background:#01e4e5;
+transform:translateY(-2px);
+}
+
+.btn-outline{
+border:2px solid #00d2d3;
+color:#00d2d3;
+background:none;
+}
+
+.btn-outline:hover{
+background:#00d2d3;
+color:#000;
+}
+
+/* ===============================
+   CAMPUS SECTION
+================================ */
+.selection-section{
+padding:100px 20px;
+max-width:1200px;
+margin:auto;
+}
+
+.section-header{
+text-align:center;
+margin-bottom:50px;
+}
+
+.section-header h2{
+font-size:2.2rem;
+margin-bottom:10px;
+}
+
+.section-header p{
+color:#aaa;
+}
+
+/* ===============================
+   CARDS
+================================ */
+.card-grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+gap:30px;
+}
+
+.card{
+background:#1f1f1f;
+border-radius:12px;
+overflow:hidden;
+box-shadow:0 5px 15px rgba(0,0,0,0.4);
+transition:0.3s;
+}
+
+.card:hover{
+transform:translateY(-6px);
+}
+
+.card-image{
+height:200px;
+background-size:cover;
+background-position:center;
+}
+
+.bg-1{
+background-image:url("../images/building.jpg");
+}
+
+.bg-2{
+background-image:url("../images/department.jpg");
+}
+
+.card-content{
+padding:22px;
+}
+
+.card-content h3{
+margin-bottom:10px;
+}
+
+.card-content p{
+color:#aaa;
+margin-bottom:20px;
+}
+
+/* ===============================
+   FOOTER
+================================ */
+.footer{
+text-align:center;
+padding:25px;
+background:#000;
+border-top:1px solid #222;
+color:#aaa;
+}
+
+/* ===============================
+   360 VIEWER PAGE
+================================ */
+.viewer-container{
+width:100%;
+height:100vh;
+position:relative;
+background:#000;
+}
+
+#panorama{
+width:100%;
+height:100%;
+}
+
+/* Viewer header overlay */
+.viewer-ui{
+position:absolute;
+top:0;
+left:0;
+width:100%;
+height:100%;
+pointer-events:none;
+}
+
+.viewer-header{
+position:absolute;
+top:20px;
+left:20px;
+right:20px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+pointer-events:auto;
+}
+
+.back-btn{
+background:rgba(0,0,0,0.6);
+padding:10px 18px;
+border-radius:20px;
+text-decoration:none;
+color:#fff;
+display:flex;
+align-items:center;
+gap:8px;
+border:1px solid #333;
+}
+
+.back-btn:hover{
+background:#00d2d3;
+color:#000;
+}
+
+.scene-title{
+background:rgba(0,0,0,0.6);
+padding:10px 18px;
+border-radius:20px;
+font-weight:600;
+border:1px solid #333;
+}
+
+/* ===============================
+   LOADING SCREEN
+================================ */
+#loading-overlay{
+position:absolute;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:#111;
+display:flex;
+flex-direction:column;
+align-items:center;
+justify-content:center;
+z-index:999;
+transition:opacity 0.5s;
+}
+
+.loader{
+width:50px;
+height:50px;
+border:4px solid #333;
+border-top:4px solid #00d2d3;
+border-radius:50%;
+animation:spin 1s linear infinite;
+margin-bottom:15px;
+}
+
+@keyframes spin{
+to{
+transform:rotate(360deg);
+}
+}
+
+/* ===============================
+   RESPONSIVE
+================================ */
+@media(max-width:768px){
+
+.hero h2{
+font-size:2rem;
+}
+
+.nav-links{
+display:none;
+}
+
+.viewer-header{
+justify-content:center;
+}
+
+.scene-title{
+display:none;
+}
+
+}

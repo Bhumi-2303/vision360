@@ -1,28 +1,78 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vision 360 – Virtual Campus Explorer</title>
 
-<link rel="stylesheet"
-href="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.css"/>
-
-<script
-src="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.js">
-</script>
-
-<style>
-#viewer{
-width:100%;
-height:100vh;
-}
-</style>
+    <link rel="stylesheet" href="css/style.css?v=1.1" type="text/css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 
 </head>
 
 <body>
 
-<div id="viewer"></div>
+    <header class="header">
+        <div class="container nav-container">
 
-<script src="viewer.js"></script>
+            <h1 class="logo">Vision <span>360</span></h1>
+
+            <nav class="navbar">
+                <ul class="nav-links">
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#campuses">Campuses</a></li>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="admin/login.html" class="btn btn-primary" style="padding: 8px 15px;">Admin
+                            Dashboard</a></li>
+                </ul>
+            </nav>
+
+        </div>
+    </header>
+
+    <section id="home" class="hero">
+
+        <div class="hero-content">
+
+            <h2>Explore Our Campus Like Never Before</h2>
+
+            <p>
+                Immerse yourself in a 360° virtual tour of our facilities and departments.
+            </p>
+
+            <a href="viewer.html?scene=main" class="btn btn-primary">
+                Start Virtual Tour
+            </a>
+
+        </div>
+
+    </section>
+
+
+    <section id="campuses" class="selection-section container">
+
+        <div class="section-header">
+
+            <h2>Select a Campus Area</h2>
+            <p>Choose an area to start exploring</p>
+
+        </div>
+
+
+        <div class="card-grid" id="building-cards-grid">
+            <!-- dynamically populated by main.js from Firebase -->
+        </div>
+
+    </section>
+
+
+    <footer class="footer">
+        <p>© 2026 Vision 360 – Virtual Campus Explorer</p>
+    </footer>
+
+    <script type="module" src="js/main.js"></script>
 
 </body>
+
 </html>
