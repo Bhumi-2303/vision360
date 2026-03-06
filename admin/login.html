@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login - Vision 360</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/admin.css">
+</head>
+
+<body class="admin-bg">
+    <div class="login-wrapper">
+        <div class="login-panel glass-panel">
+            <div class="brand text-center">
+                <h1>Vision 360 Admin</h1>
+                <p>Virtual Campus Explorer CMS</p>
+            </div>
+
+            <form id="login-form">
+                <div class="control-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" required placeholder="admin@example.com">
+                </div>
+
+                <div class="control-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" required placeholder="••••••••">
+                </div>
+
+                <div id="error-message" class="error-msg" style="display:none;"></div>
+
+                <button type="submit" id="btn-login" class="btn-primary w-100">Sign In</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+
+    <!-- Config -->
+    <script src="../js/firebase-config.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const loginForm = document.getElementById('login-form');
+            const btnLogin = document.getElementById('btn-login');
+            const errorMsg = document.getElementById('error-message');
+
+            // Redirect if already logged in
+            auth.onAuthStateChanged(user => {
+                if (user) {
+                    window.location.href = 'dashboard.html';
+                }
+            });
+
+            loginForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                btnLogin.disabled = true;
+                btnLogin.textContent = 'Signing in...';
+                errorMsg.style.display = 'none';
+
+                const email = document.getElementById('email').value;
+                const password = document.getElementById('password').value;
+
+                try {
+                    await auth.signInWithEmailAndPassword(email, password);
+                    // On success, state listener will redirect
+                } catch (error) {
+                    console.error("Login failed", error);
+                    errorMsg.textContent = error.message;
+                    errorMsg.style.display = 'block';
+                    btnLogin.disabled = false;
+                    btnLogin.textContent = 'Sign In';
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>
