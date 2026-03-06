@@ -599,6 +599,12 @@
                                 <input type="text" id="create-title" required placeholder="Main Entrance">
                             </div>
                         </div>
+                        <div class="form-row">
+                            <div class="form-group" style="grid-column:1/-1;">
+                                <label for="create-description">Description <span style="color:var(--text-muted); font-weight:400;">(shown in the viewer info panel — describe the location, facilities, or subjects)</span></label>
+                                <textarea id="create-description" rows="3" placeholder="e.g. The Computer Science laboratory is equipped with 40 high-performance workstations…" style="width:100%;resize:vertical;"></textarea>
+                            </div>
+                        </div>
                         <div class="form-group">
                             <label for="create-panorama">Panorama Image</label>
                             <input type="file" id="create-panorama" accept="image/jpeg,image/png" required>
@@ -701,6 +707,11 @@
                 <div class="form-group">
                     <label>Scene Title</label>
                     <input type="text" id="edit-title" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Description <span style="color:var(--text-muted); font-weight:400;">(shown in viewer info panel)</span></label>
+                    <textarea id="edit-description" rows="3" placeholder="Describe this location…" style="width:100%;resize:vertical;"></textarea>
                 </div>
 
                 <div class="form-group">

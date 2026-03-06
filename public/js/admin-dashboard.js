@@ -174,11 +174,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function buildHotspotEditorRow(hotspot = {}, container, viewerInstance) {
         hotspot = {
-            type: hotspot.type || 'scene', // 'scene' or 'info'
+            type: hotspot.type || 'scene',
             pitch: hotspot.pitch !== undefined ? hotspot.pitch : 0,
             yaw: hotspot.yaw !== undefined ? hotspot.yaw : 0,
             text: hotspot.text || 'New Hotspot',
             sceneId: hotspot.sceneId || '',
+            description: hotspot.description || '',
+            imageUrl: hotspot.imageUrl || '',
             ...hotspot
         };
 
@@ -186,6 +188,7 @@ document.addEventListener("DOMContentLoaded", () => {
         div.className = 'hotspot-item';
         div.style.flexWrap = 'wrap';
         const hsId = 'hs_' + Date.now() + Math.random().toString(36).substring(7);
+        const isInfo = hotspot.type === 'info';
 
         let targetOptions = '<option value="">Select Target Scene...</option>';
         window.allScenes.forEach(s => {
@@ -195,29 +198,32 @@ document.addEventListener("DOMContentLoaded", () => {
 
         div.innerHTML = `
             <select class="hs-type" title="Hotspot Type">
-                <option value="scene" ${hotspot.type === 'scene' ? 'selected' : ''}>Link</option>
-                <option value="info" ${hotspot.type === 'info' ? 'selected' : ''}>Info Detail</option>
+                <option value="scene" ${!isInfo ? 'selected' : ''}>🔗 Link to Scene</option>
+                <option value="info"  ${ isInfo ? 'selected' : ''}>ℹ️ Info Popup</option>
             </select>
-            <input type="number" step="any" class="hs-pitch" placeholder="Pitch" value="${hotspot.pitch}" required style="width: 70px" title="Pitch (Up/Down)">
-            <input type="number" step="any" class="hs-yaw" placeholder="Yaw" value="${hotspot.yaw}" required style="width: 70px" title="Yaw (Left/Right)">
-            <input type="text" class="hs-text" placeholder="Hover / Detail Text" value="${hotspot.text}" required style="flex-grow: 1;">
-            <select class="hs-target" ${hotspot.type === 'info' ? 'style="display:none;"' : ''} ${hotspot.type === 'scene' ? 'required' : ''} title="Target Scene">
+            <input type="number" step="any" class="hs-pitch" placeholder="Pitch" value="${hotspot.pitch}" required style="width:70px" title="Pitch">
+            <input type="number" step="any" class="hs-yaw"   placeholder="Yaw"   value="${hotspot.yaw}"   required style="width:70px" title="Yaw">
+            <input type="text" class="hs-text" placeholder="Label / Title" value="${hotspot.text}" required style="flex-grow:1;">
+            <select class="hs-target" ${isInfo ? 'style="display:none;"' : ''} ${!isInfo ? 'required' : ''} title="Target Scene">
                 ${targetOptions}
             </select>
             <button type="button" class="remove-hs-btn" title="Delete Hotspot"><i class="fas fa-trash"></i></button>
+            <div class="hs-info-fields" style="width:100%;display:${isInfo ? 'flex' : 'none'};flex-direction:column;gap:8px;margin-top:8px;padding:10px;background:rgba(0,0,0,0.2);border-radius:8px;">
+                <textarea class="hs-description" placeholder="Description shown in popup (supports multiple lines)" rows="3" style="width:100%;resize:vertical;">${hotspot.description}</textarea>
+                <input type="url" class="hs-image-url" placeholder="Optional image URL for popup (https://…)" value="${hotspot.imageUrl || ''}" style="width:100%;">
+            </div>
         `;
 
-        // Type Change Listener
-        const typeSelect = div.querySelector('.hs-type');
-        const targetSelect = div.querySelector('.hs-target');
+        const typeSelect    = div.querySelector('.hs-type');
+        const targetSelect  = div.querySelector('.hs-target');
+        const infoFields    = div.querySelector('.hs-info-fields');
+
         typeSelect.addEventListener('change', () => {
-            if (typeSelect.value === 'info') {
-                targetSelect.style.display = 'none';
-                targetSelect.removeAttribute('required');
-            } else {
-                targetSelect.style.display = 'inline-block';
-                targetSelect.setAttribute('required', 'true');
-            }
+            const isI = typeSelect.value === 'info';
+            targetSelect.style.display = isI ? 'none' : 'inline-block';
+            infoFields.style.display   = isI ? 'flex' : 'none';
+            if (isI) targetSelect.removeAttribute('required');
+            else     targetSelect.setAttribute('required', 'true');
             updateVisualHotspot();
         });
 
@@ -237,10 +243,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 try {
                     viewerInstance.addHotSpot({
                         pitch: Number(div.querySelector('.hs-pitch').value) || 0,
-                        yaw: Number(div.querySelector('.hs-yaw').value) || 0,
-                        type: div.querySelector('.hs-type').value,
-                        text: div.querySelector('.hs-text').value + " (Click to Details/Delete)",
-                        id: hsId,
+                        yaw:   Number(div.querySelector('.hs-yaw').value)   || 0,
+                        type:  div.querySelector('.hs-type').value,
+                        text:  div.querySelector('.hs-text').value + ' (Click to Details/Delete)',
+                        id:    hsId,
                         clickHandlerFunc: function () {
                             if (confirm(`Delete hotspot "${div.querySelector('.hs-text').value}"?`)) {
                                 div.remove();
@@ -250,18 +256,13 @@ document.addEventListener("DOMContentLoaded", () => {
                     });
                 } catch (err) { }
             };
-
-            if (viewerInstance.isLoaded()) {
-                doAdd();
-            } else {
-                viewerInstance.on('load', doAdd);
-            }
+            if (viewerInstance.isLoaded()) doAdd();
+            else viewerInstance.on('load', doAdd);
         };
 
         updateVisualHotspot();
-
-        div.querySelectorAll('input, select').forEach(input => {
-            input.addEventListener('change', updateVisualHotspot);
+        div.querySelectorAll('input, select, textarea').forEach(el => {
+            el.addEventListener('change', updateVisualHotspot);
         });
     }
 
@@ -276,9 +277,13 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!currentEditingScene) return;
 
         document.getElementById('edit-modal-title').textContent = `Editing: ${currentEditingScene.title}`;
-        document.getElementById('edit-scene-id').value = sceneId;
-        document.getElementById('edit-title').value = currentEditingScene.title;
-        document.getElementById('edit-panorama').value = '';
+        document.getElementById('edit-scene-id').value   = sceneId;
+        document.getElementById('edit-title').value      = currentEditingScene.title;
+        document.getElementById('edit-panorama').value   = '';
+
+        // Scene description (for info panel in viewer)
+        const editDesc = document.getElementById('edit-description');
+        if (editDesc) editDesc.value = currentEditingScene.description || '';
 
         const hotspotsContainer = document.getElementById('edit-hotspots-container');
         hotspotsContainer.innerHTML = '';
@@ -319,7 +324,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
         try {
             const sceneId = document.getElementById('edit-scene-id').value;
-            const updates = { title: document.getElementById('edit-title').value };
+            const updates = {
+                title:       document.getElementById('edit-title').value,
+                description: document.getElementById('edit-description')?.value || ''
+            };
 
             const fileInput = document.getElementById('edit-panorama');
             if (fileInput.files.length > 0) {
@@ -328,13 +336,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
             const newHotspots = [];
             document.querySelectorAll('#edit-hotspots-container .hotspot-item').forEach(item => {
-                newHotspots.push({
-                    type: item.querySelector('.hs-type').value,
-                    pitch: Number(item.querySelector('.hs-pitch').value),
-                    yaw: Number(item.querySelector('.hs-yaw').value),
-                    text: item.querySelector('.hs-text').value,
+                const hs = {
+                    type:    item.querySelector('.hs-type').value,
+                    pitch:   Number(item.querySelector('.hs-pitch').value),
+                    yaw:     Number(item.querySelector('.hs-yaw').value),
+                    text:    item.querySelector('.hs-text').value,
                     sceneId: item.querySelector('.hs-target').value || ''
-                });
+                };
+                if (hs.type === 'info') {
+                    hs.description = item.querySelector('.hs-description')?.value || '';
+                    hs.imageUrl    = item.querySelector('.hs-image-url')?.value   || '';
+                }
+                newHotspots.push(hs);
             });
             updates.hotSpots = newHotspots;
 
@@ -421,17 +434,23 @@ document.addEventListener("DOMContentLoaded", () => {
 
             const newHotspots = [];
             document.querySelectorAll('#create-hotspots-container .hotspot-item').forEach(item => {
-                newHotspots.push({
-                    type: item.querySelector('.hs-type').value,
-                    pitch: Number(item.querySelector('.hs-pitch').value),
-                    yaw: Number(item.querySelector('.hs-yaw').value),
-                    text: item.querySelector('.hs-text').value,
+                const hs = {
+                    type:    item.querySelector('.hs-type').value,
+                    pitch:   Number(item.querySelector('.hs-pitch').value),
+                    yaw:     Number(item.querySelector('.hs-yaw').value),
+                    text:    item.querySelector('.hs-text').value,
                     sceneId: item.querySelector('.hs-target').value || ''
-                });
+                };
+                if (hs.type === 'info') {
+                    hs.description = item.querySelector('.hs-description')?.value || '';
+                    hs.imageUrl    = item.querySelector('.hs-image-url')?.value   || '';
+                }
+                newHotspots.push(hs);
             });
 
             const data = {
-                title: document.getElementById('create-title').value,
+                title:       document.getElementById('create-title').value,
+                description: document.getElementById('create-description')?.value || '',
                 type: 'equirectangular',
                 panorama: url,
                 sceneType: createLevel.value,
