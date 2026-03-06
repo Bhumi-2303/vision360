@@ -1,0 +1,45 @@
+{
+  "gate": {
+    "panorama": "https://res.cloudinary.com/dr8uswpkk/image/upload/v1772780698/IMG_4991_jy2ij6.jpg",
+    "hotSpots": [
+      {
+        "pitch": 5,
+        "yaw": 120,
+        "type": "scene",
+        "text": "Go to Block",
+        "sceneId": "block"
+      }
+    ]
+  },
+
+  "block": {
+    "panorama": "https://res.cloudinary.com/dr8uswpkk/image/upload/v1772780734/IMG_4988_o3z5rv.jpg",
+    "hotSpots": [
+      {
+        "pitch": 5,
+        "yaw": -110,
+        "type": "scene",
+        "text": "Go to Lab",
+        "sceneId": "lab"
+      }
+    ]
+  },
+
+  "lab": {
+    "panorama": "https://res.cloudinary.com/dr8uswpkk/image/upload/v1772780770/IMG_9144_acr9dq.jpg",
+    "hotSpots": [
+      {
+        "pitch": 5,
+        "yaw": 90,
+        "type": "scene",
+        "text": "Go to Corridor",
+        "sceneId": "corridor"
+      }
+    ]
+  },
+
+  "corridor": {
+    "panorama": "https://res.cloudinary.com/dr8uswpkk/image/upload/v1772780793/IMG_9143_kewbux.jpg",
+    "hotSpots": []
+  }
+}
