@@ -21,7 +21,10 @@
   "dependencies": {
     "@fortawesome/fontawesome-free": "^7.2.0",
     "bootstrap": "^5.3.8",
+    "cors": "^2.8.6",
+    "express": "^5.2.1",
     "firebase": "^12.10.0",
+    "multer": "^2.1.1",
     "pannellum": "^2.5.7"
   },
   "devDependencies": {

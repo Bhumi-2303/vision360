@@ -272,24 +272,33 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    // Helper to upload image to Firebase Storage
+    // Helper to upload image to local Express backend
     async function uploadImage(fileInput) {
         if (!fileInput.files || fileInput.files.length === 0) {
             throw new Error("No image selected");
         }
 
         const file = fileInput.files[0];
+        const formData = new FormData();
+        formData.append("panorama", file);
 
-        // Create a unique filename in the "panoramas" folder
-        const uniqueName = Date.now() + '-' + file.name.replace(/\s+/g, '-');
-        const storageRef = ref(storage, 'panoramas/' + uniqueName);
+        try {
+            const response = await fetch("http://localhost:3000/upload", {
+                method: "POST",
+                body: formData
+            });
 
-        // Upload the file to Firebase Storage
-        await uploadBytes(storageRef, file);
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error || "Upload failed");
+            }
 
-        // Get the publicly accessible URL
-        const downloadUrl = await getDownloadURL(storageRef);
-        return downloadUrl;
+            const data = await response.json();
+            return data.url; // Relative path, e.g. "images/filename.jpg"
+        } catch (error) {
+            console.error("EXPRESS UPLOAD ERROR:", error);
+            throw new Error("Local Upload Failed: " + error.message);
+        }
     }
 
     // Add Scene Helper

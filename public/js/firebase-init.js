@@ -3,7 +3,6 @@ import { getAuth } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth
 import { getFirestore } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 import { getStorage } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-storage.js";
 
-// TODO: Replace with your Firebase project configuration
 const firebaseConfig = {
     apiKey: "AIzaSyClr1OrQOHUx6GznJEHoCBIh2bXbF7CNtU",
     authDomain: "virtualcampusexplorer.firebaseapp.com",
@@ -14,8 +13,8 @@ const firebaseConfig = {
     measurementId: "G-W56Q6CDXV4"
 };
 
-// Initialize Firebase
 const app = initializeApp(firebaseConfig);
+
 const auth = getAuth(app);
 const db = getFirestore(app);
 const storage = getStorage(app);

@@ -1,17 +1,16 @@
 # Frontend Libraries
-pannellum==2.5.6
 
-# Firebase SDK (Web)
-firebase-auth
-firebase-firestore
-firebase-storage
-firebase-app
+pannellum (CDN used)
 
-# UI / Utility Libraries (optional but recommended)
-bootstrap==5.3.0
-fontawesome==6.5.0
+# Backend / Hosting
+
+firebase-tools
+
+# Image Hosting
+
+cloudinary
 
 # Development Tools
-vite
-eslint
-prettier
+
+node
+npm
