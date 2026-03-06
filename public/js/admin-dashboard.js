@@ -1,28 +1,65 @@
-import { auth, db, storage } from "./firebase-init.js";
-import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-import { collection, doc, setDoc, getDocs, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+import { auth, db } from "./firebase-init.js";
+import { onAuthStateChanged, signOut, createUserWithEmailAndPassword, updateProfile, getAuth } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+import { initializeApp, deleteApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+import { collection, doc, setDoc, getDocs, updateDoc, deleteDoc, getDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+
+// Firebase config (duplicated here for secondary app instance)
+const FIREBASE_CONFIG = {
+    apiKey: "AIzaSyClr1OrQOHUx6GznJEHoCBIh2bXbF7CNtU",
+    authDomain: "virtualcampusexplorer.firebaseapp.com",
+    projectId: "virtualcampusexplorer",
+    storageBucket: "virtualcampusexplorer.firebasestorage.app",
+    messagingSenderId: "972342141922",
+    appId: "1:972342141922:web:e618d4fd02d54231ae0fbb"
+};
 
 const ADMIN_EMAIL = "admin@vision360.com";
 
 document.addEventListener("DOMContentLoaded", () => {
 
     // Auth Check
-    onAuthStateChanged(auth, (user) => {
-        if (user && user.email === ADMIN_EMAIL) {
-            document.getElementById("auth-loading").style.display = "none";
-            document.getElementById("dashboard-content").style.display = "flex";
-            loadScenesList();
+    onAuthStateChanged(auth, async (user) => {
+        if (user) {
+            const isMasterAdmin = (user.email === ADMIN_EMAIL);
+            let isAdmin = isMasterAdmin;
+
+            if (!isAdmin) {
+                try {
+                    const snap = await getDoc(doc(db, "admins", user.email));
+                    if (snap.exists()) isAdmin = true;
+                } catch (e) { console.error("Admin check error:", e); }
+            }
+
+            if (isAdmin) {
+                document.getElementById("auth-loading").style.display = "none";
+                document.getElementById("dashboard-content").style.display = "flex";
+                loadScenesList();
+
+                // Only master admin can see & use the Manage Admins tab
+                if (!isMasterAdmin) {
+                    // Hide the sidebar link
+                    const adminsNavBtn = document.querySelector('[data-target="section-admins"]');
+                    if (adminsNavBtn) adminsNavBtn.closest('li').style.display = 'none';
+                    // Hide the section itself
+                    const adminsSection = document.getElementById('section-admins');
+                    if (adminsSection) adminsSection.style.display = 'none';
+                } else {
+                    loadAdminsList(); // only load for master admin
+                }
+            } else {
+                window.location.href = "login.html";
+            }
         } else {
             window.location.href = "login.html";
         }
     });
+
 
     document.getElementById("logout-btn").addEventListener("click", async (e) => {
         e.preventDefault();
         await signOut(auth);
     });
 
-    // Tab Switching Logic
     const navBtns = document.querySelectorAll('.nav-btn');
     const tabSections = document.querySelectorAll('.tab-section');
     const sectionTitle = document.getElementById('section-title');
@@ -38,6 +75,9 @@ document.addEventListener("DOMContentLoaded", () => {
             sectionTitle.textContent = btn.textContent.trim();
             if (targetId === 'section-edit' || targetId === 'section-delete') {
                 loadScenesList();
+            }
+            if (targetId === 'section-admins') {
+                loadAdminsList();
             }
         });
     });
@@ -58,7 +98,7 @@ document.addEventListener("DOMContentLoaded", () => {
         try {
             const querySnapshot = await getDocs(collection(db, "scenes"));
             window.allScenes = [];
-            
+
             if (querySnapshot.empty) {
                 if (editListContainer) editListContainer.innerHTML = '<li>No scenes found.</li>';
                 if (deleteListContainer) deleteListContainer.innerHTML = '<li>No scenes found.</li>';
@@ -131,7 +171,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // --- REUSABLE HOTSPOT UI ARCHITECTURE ---
-    
+
     function buildHotspotEditorRow(hotspot = {}, container, viewerInstance) {
         hotspot = {
             type: hotspot.type || 'scene', // 'scene' or 'info'
@@ -184,7 +224,7 @@ document.addEventListener("DOMContentLoaded", () => {
         div.querySelector('.remove-hs-btn').addEventListener('click', () => {
             div.remove();
             if (viewerInstance) {
-                try { viewerInstance.removeHotSpot(hsId); } catch(e){}
+                try { viewerInstance.removeHotSpot(hsId); } catch (e) { }
             }
         });
 
@@ -193,7 +233,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const updateVisualHotspot = () => {
             if (!viewerInstance) return;
             const doAdd = () => {
-                try { viewerInstance.removeHotSpot(hsId); } catch(e) {}
+                try { viewerInstance.removeHotSpot(hsId); } catch (e) { }
                 try {
                     viewerInstance.addHotSpot({
                         pitch: Number(div.querySelector('.hs-pitch').value) || 0,
@@ -201,14 +241,14 @@ document.addEventListener("DOMContentLoaded", () => {
                         type: div.querySelector('.hs-type').value,
                         text: div.querySelector('.hs-text').value + " (Click to Details/Delete)",
                         id: hsId,
-                        clickHandlerFunc: function() {
+                        clickHandlerFunc: function () {
                             if (confirm(`Delete hotspot "${div.querySelector('.hs-text').value}"?`)) {
                                 div.remove();
-                                try { viewerInstance.removeHotSpot(hsId); } catch(e) {}
+                                try { viewerInstance.removeHotSpot(hsId); } catch (e) { }
                             }
                         }
                     });
-                } catch(err) { }
+                } catch (err) { }
             };
 
             if (viewerInstance.isLoaded()) {
@@ -238,11 +278,11 @@ document.addEventListener("DOMContentLoaded", () => {
         document.getElementById('edit-modal-title').textContent = `Editing: ${currentEditingScene.title}`;
         document.getElementById('edit-scene-id').value = sceneId;
         document.getElementById('edit-title').value = currentEditingScene.title;
-        document.getElementById('edit-panorama').value = ''; 
+        document.getElementById('edit-panorama').value = '';
 
         const hotspotsContainer = document.getElementById('edit-hotspots-container');
         hotspotsContainer.innerHTML = '';
-        
+
         let panoramaUrl = currentEditingScene.panorama;
         if (panoramaUrl && panoramaUrl.startsWith('images/')) panoramaUrl = '/' + panoramaUrl;
 
@@ -301,7 +341,7 @@ document.addEventListener("DOMContentLoaded", () => {
             await updateDoc(doc(db, "scenes", sceneId), updates);
             alert("Scene updated successfully!");
             modal.style.display = 'none';
-            loadScenesList(); 
+            loadScenesList();
         } catch (error) {
             alert("Failed to update: " + error.message);
         } finally {
@@ -333,9 +373,9 @@ document.addEventListener("DOMContentLoaded", () => {
             if (level === 'classroom') createParentLabel.textContent = "Select Parent Department";
 
             createParent.innerHTML = '<option value="">-- Select Parent --</option>';
-            
+
             const expectedParentType = level === 'department' ? 'building' : 'department';
-            
+
             window.allScenes.forEach(s => {
                 const sType = s.sceneType || 'building'; // default old scenes without a type to building
                 if (sType === expectedParentType) {
@@ -378,7 +418,7 @@ document.addEventListener("DOMContentLoaded", () => {
         try {
             const url = await uploadImage(createPanoramaInput);
             const sceneId = document.getElementById('create-id').value;
-            
+
             const newHotspots = [];
             document.querySelectorAll('#create-hotspots-container .hotspot-item').forEach(item => {
                 newHotspots.push({
@@ -401,7 +441,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             await setDoc(doc(db, "scenes", sceneId), data);
             alert(`Created Scene ${sceneId}! Note: If you want the parent scene to link here, please go Edit the parent scene.`);
-            
+
             e.target.reset();
             createHotspotsContainer.innerHTML = '';
             createPreviewWrapper.style.display = 'none';
@@ -413,6 +453,144 @@ document.addEventListener("DOMContentLoaded", () => {
             submitBtn.textContent = 'Create Scene'; submitBtn.disabled = false;
         }
     });
+
+    // --- MANAGE ADMINS LOGIC ---
+    async function loadAdminsList() {
+        const adminListContainer = document.getElementById("admins-list");
+        if (!adminListContainer) return;
+
+        adminListContainer.innerHTML = '';
+
+        // Add master admin visually manually
+        const masterLi = document.createElement('li');
+        masterLi.className = 'scene-item';
+        masterLi.innerHTML = `
+            <div class="scene-info">
+                <strong>${ADMIN_EMAIL}</strong>
+                <span>Master Admin (Cannot be deleted)</span>
+            </div>
+        `;
+        adminListContainer.appendChild(masterLi);
+
+        try {
+            const querySnapshot = await getDocs(collection(db, "admins"));
+            querySnapshot.forEach(docSnap => {
+                const email = docSnap.id;
+                const li = document.createElement('li');
+                li.className = 'scene-item';
+                li.innerHTML = `
+                    <div class="scene-info">
+                        <strong>${email}</strong>
+                        <span>Authorized Co-Admin</span>
+                    </div>
+                    <div class="scene-actions">
+                        <button class="delete-admin-btn" data-email="${email}" title="Revoke Access"><i class="fas fa-trash"></i></button>
+                    </div>
+                `;
+                adminListContainer.appendChild(li);
+            });
+
+            document.querySelectorAll('.delete-admin-btn').forEach(btn => {
+                btn.addEventListener('click', async (e) => {
+                    const email = e.currentTarget.dataset.email;
+                    if (confirm(`Revoke admin access for ${email}? They will no longer be able to access the dashboard.`)) {
+                        try {
+                            await deleteDoc(doc(db, 'admins', email));
+                            alert(`Access revoked for ${email}.`);
+                            loadAdminsList();
+                        } catch (err) { alert('Error: ' + err.message); }
+                    }
+                });
+            });
+        } catch (error) {
+            console.error('Error loading admins', error);
+        }
+    }
+
+    const addAdminForm = document.getElementById('add-admin-form');
+    if (addAdminForm) {
+        addAdminForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const nameInput = document.getElementById('new-admin-name');
+            const emailInput = document.getElementById('new-admin-email');
+            const passInput = document.getElementById('new-admin-password');
+            const confirmInput = document.getElementById('new-admin-confirm');
+            const errorDiv = document.getElementById('admin-form-error');
+
+            const newEmail = emailInput.value.toLowerCase().trim();
+            const password = passInput.value;
+            const confirmPwd = confirmInput.value;
+            const displayName = nameInput ? nameInput.value.trim() : '';
+
+            // Client-side validation
+            errorDiv.style.display = 'none';
+            if (!newEmail || !password) return;
+            if (password !== confirmPwd) {
+                errorDiv.textContent = 'Passwords do not match.';
+                errorDiv.style.display = 'block';
+                return;
+            }
+            if (password.length < 6) {
+                errorDiv.textContent = 'Password must be at least 6 characters.';
+                errorDiv.style.display = 'block';
+                return;
+            }
+
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating...';
+            submitBtn.disabled = true;
+
+            let secondaryApp = null;
+            try {
+                // Use a secondary Firebase app so the CURRENT admin session is never touched
+                secondaryApp = initializeApp(FIREBASE_CONFIG, `admin-create-${Date.now()}`);
+                const secondaryAuth = getAuth(secondaryApp);
+
+                // Create the new Firebase Auth account
+                const userCred = await createUserWithEmailAndPassword(secondaryAuth, newEmail, password);
+
+                // Set display name if provided
+                if (displayName) {
+                    await updateProfile(userCred.user, { displayName });
+                }
+
+                // Immediately sign out the secondary auth (we don't need it logged in)
+                await secondaryAuth.signOut();
+
+                // Store in Firestore /admins/<email>
+                await setDoc(doc(db, 'admins', newEmail), {
+                    uid: userCred.user.uid,
+                    role: 'admin',
+                    addedAt: new Date().toISOString(),
+                    displayName: displayName || newEmail.split('@')[0]
+                });
+
+                // Clean up secondary app
+                await deleteApp(secondaryApp);
+                secondaryApp = null;
+
+                e.target.reset();
+                errorDiv.style.display = 'none';
+                alert(`✅ Admin account created for ${newEmail}\nThey can now log in with the password you set.`);
+                loadAdminsList();
+
+            } catch (error) {
+                if (secondaryApp) {
+                    try { await deleteApp(secondaryApp); } catch (_) { }
+                }
+                let msg = error.message;
+                if (error.code === 'auth/email-already-in-use') {
+                    msg = `An account for ${newEmail} already exists. Try a different email, or go to Firebase Console to reset their password.`;
+                }
+                errorDiv.textContent = msg;
+                errorDiv.style.display = 'block';
+            } finally {
+                submitBtn.innerHTML = '<i class="fas fa-user-check"></i> Create Admin Account';
+                submitBtn.disabled = false;
+            }
+        });
+    }
 
     // Helper
     async function uploadImage(fileInput) {

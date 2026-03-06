@@ -4,405 +4,692 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard - Vision 360</title>
+    <title>Admin Dashboard – Vision 360</title>
 
-    <link rel="stylesheet" href="../css/style.css?v=1.1" type="text/css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="../css/style.css" type="text/css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.css"/>
 
     <style>
-        body {
-            background: #111;
-            color: #fff;
-            font-family: Arial, sans-serif;
-            padding-top: 100px;
-            /* space for fixed header */
-        }
+        /* ── Shared overrides that are dashboard-only ── */
+        body { padding-top: 88px; }
 
+        /* ── LAYOUT ── */
         .dashboard-container {
-            max-width: 1200px;
+            max-width: 1380px;
             margin: 0 auto;
-            padding: 20px;
+            padding: 32px 24px;
             display: flex;
-            gap: 30px;
+            gap: 32px;
             align-items: flex-start;
+            animation: fadeIn 0.5s ease both;
         }
 
-        @media (max-width: 768px) {
-            .dashboard-container {
-                flex-direction: column;
-            }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(12px); }
+            to   { opacity: 1; transform: translateY(0); }
         }
 
+        @media (max-width: 900px) {
+            .dashboard-container { flex-direction: column; }
+            .sidebar { width: 100% !important; position: static !important; }
+        }
+
+        /* ── SIDEBAR ── */
         .sidebar {
-            width: 250px;
-            background: #1f1f1f;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            width: 270px;
+            flex-shrink: 0;
+            position: sticky;
+            top: 104px;
+            background: rgba(15, 25, 50, 0.55);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-lg);
+            padding: 28px 20px;
+            box-shadow: var(--shadow-card);
+        }
+
+        .sidebar-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding-bottom: 22px;
+            margin-bottom: 22px;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .sidebar-brand .brand-icon {
+            width: 42px; height: 42px;
+            background: linear-gradient(135deg, var(--c-primary), var(--c-secondary));
+            border-radius: 12px;
+            display: grid;
+            place-items: center;
+            font-size: 1.1rem;
+            color: #04111f;
+            font-weight: 900;
+            flex-shrink: 0;
+            box-shadow: 0 8px 20px rgba(0, 242, 254, 0.3);
+        }
+
+        .sidebar-brand .brand-text strong {
+            display: block;
+            font-size: 1rem;
+            font-weight: 800;
+            background: linear-gradient(90deg, var(--c-primary), var(--c-secondary));
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.3px;
+        }
+
+        .sidebar-brand .brand-text span {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            font-weight: 400;
+        }
+
+        .nav-menu { list-style: none; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+
+        .nav-menu a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 13px 16px;
+            border-radius: var(--radius-sm);
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.95rem;
+            border: 1px solid transparent;
+            transition: var(--transition);
+        }
+
+        .nav-menu a i {
+            width: 20px;
+            text-align: center;
+            font-size: 1rem;
             flex-shrink: 0;
         }
 
-        .sidebar h3 {
-            margin-bottom: 20px;
-            color: #00d2d3;
-            border-bottom: 1px solid #333;
-            padding-bottom: 15px;
+        .nav-menu a:hover, .nav-menu a.active {
+            background: rgba(0, 242, 254, 0.08);
+            color: var(--c-primary);
+            border-color: rgba(0, 242, 254, 0.18);
+            transform: translateX(4px);
         }
 
-        .nav-menu {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-
-        .nav-menu li {
-            margin-bottom: 10px;
-        }
-
-        .nav-menu a {
-            display: block;
-            padding: 12px 15px;
-            color: #ccc;
-            text-decoration: none;
-            border-radius: 5px;
-            transition: background 0.3s, color 0.3s;
-        }
-
-        .nav-menu a:hover,
         .nav-menu a.active {
-            background: #00d2d3;
-            color: #111;
-            font-weight: bold;
+            font-weight: 600;
         }
 
-        .main-content {
-            flex: 1;
-            min-width: 0;
+        /* ── MAIN CONTENT ── */
+        .main-content { flex: 1; min-width: 0; }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 32px;
+            padding-bottom: 22px;
+            border-bottom: 1px solid var(--glass-border);
         }
 
+        .header-actions h2 {
+            font-size: 2rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            background: linear-gradient(to right, var(--text-main), var(--text-muted));
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* ── TAB SECTIONS ── */
         .tab-section {
             display: none;
             flex-direction: column;
-            gap: 30px;
+            gap: 28px;
         }
 
         .tab-section.active {
             display: flex;
+            animation: slideIn 0.35s ease both;
         }
 
-        .header-actions {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 30px;
-            border-bottom: 1px solid #333;
-            padding-bottom: 15px;
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(16px); }
+            to   { opacity: 1; transform: translateX(0); }
         }
 
-        .header-actions h2 {
-            color: #00d2d3;
-        }
-
+        /* ── CARDS ── */
         .card {
-            background: #1f1f1f;
-            padding: 25px;
-            border-radius: 10px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            background: rgba(15, 25, 50, 0.5);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-md);
+            padding: 30px;
+            box-shadow: var(--shadow-card);
+            transition: var(--transition);
+        }
+
+        .card:hover {
+            border-color: rgba(255,255,255,0.12);
+            box-shadow: 0 25px 55px rgba(0,0,0,0.4);
+            transform: translateY(-2px);
         }
 
         .card h3 {
-            margin-bottom: 15px;
-            border-bottom: 1px solid #333;
-            padding-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 22px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--glass-border);
         }
 
-        .form-group {
-            margin-bottom: 15px;
+        .card h3 i { color: var(--c-secondary); font-size: 1.1rem; }
+
+        .card h4 {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin: 22px 0 14px;
         }
+
+        /* ── FORMS ── */
+        .form-group { margin-bottom: 18px; }
 
         .form-group label {
             display: block;
-            margin-bottom: 5px;
-            color: #ccc;
+            margin-bottom: 8px;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            font-weight: 500;
+            letter-spacing: 0.2px;
         }
 
         .form-group input,
         .form-group select {
             width: 100%;
-            padding: 10px;
-            border: 1px solid #444;
-            border-radius: 5px;
-            background: #2a2a2a;
-            color: #fff;
+            padding: 13px 16px;
+            background: rgba(7, 13, 26, 0.6);
+            border: 1px solid rgba(255,255,255,0.09);
+            border-radius: var(--radius-sm);
+            color: var(--text-main);
+            font-size: 0.97rem;
+            font-family: 'Outfit', sans-serif;
+            outline: none;
+            transition: var(--transition);
         }
 
-        .form-row {
-            display: flex;
-            gap: 15px;
+        .form-group input::placeholder {
+            color: var(--text-muted);
+            opacity: 0.6;
         }
 
-        .form-row .form-group {
-            flex: 1;
+        .form-group input:focus,
+        .form-group select:focus {
+            border-color: var(--c-secondary);
+            background: rgba(7, 13, 26, 0.85);
+            box-shadow: 0 0 0 3px rgba(79, 172, 254, 0.18);
         }
 
-        /* Manage Scenes List Styles */
-        .scene-list {
-            list-style: none;
-            padding: 0;
-            margin: 0;
+        .form-group select option {
+            background: #0f1930;
+            color: var(--text-main);
         }
+
+        .form-row { display: flex; gap: 18px; }
+        .form-row .form-group { flex: 1; }
+
+        /* ── SCENE LIST ITEMS ── */
+        .scene-list { list-style: none; padding: 0; }
 
         .scene-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 15px;
-            background: #2a2a2a;
-            margin-bottom: 10px;
-            border-radius: 5px;
-            border-left: 4px solid #00d2d3;
+            padding: 18px 20px;
+            background: rgba(7, 13, 26, 0.4);
+            border: 1px solid var(--glass-border);
+            border-left: 3px solid var(--c-primary);
+            border-radius: var(--radius-sm);
+            margin-bottom: 12px;
+            transition: var(--transition);
+        }
+
+        .scene-item:hover {
+            transform: translateX(5px);
+            background: rgba(7, 13, 26, 0.7);
+            border-color: rgba(0, 242, 254, 0.22);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.25);
         }
 
         .scene-info strong {
             display: block;
-            color: #fff;
-            margin-bottom: 3px;
+            color: var(--text-main);
+            font-weight: 600;
+            font-size: 1.05rem;
+            margin-bottom: 6px;
         }
 
         .scene-info span {
-            font-size: 0.8em;
-            color: #aaa;
+            display: inline-block;
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--glass-border);
+            padding: 3px 9px;
+            border-radius: 50px;
+            margin-right: 5px;
         }
+
+        .scene-actions { display: flex; align-items: center; gap: 8px; }
 
         .scene-actions button {
-            background: transparent;
-            border: none;
-            color: #ccc;
+            width: 38px; height: 38px;
+            border-radius: 50%;
+            border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.04);
+            color: var(--text-muted);
             cursor: pointer;
-            margin-left: 10px;
-            transition: color 0.3s;
+            display: grid;
+            place-items: center;
+            font-size: 0.9rem;
+            transition: var(--transition);
         }
 
-        .scene-actions button:hover {
-            color: #fff;
-        }
-
-        .scene-actions .delete-btn:hover {
-            color: #ff4757;
-        }
+        .scene-actions button:hover { color: #fff; transform: scale(1.12); }
 
         .scene-actions .edit-btn:hover {
-            color: #00d2d3;
+            background: rgba(0, 242, 254, 0.1);
+            border-color: rgba(0, 242, 254, 0.3);
+            color: var(--c-primary);
+            box-shadow: 0 0 14px rgba(0, 242, 254, 0.2);
         }
 
-        /* Modal Styles */
+        .scene-actions .delete-btn:hover,
+        .scene-actions .delete-admin-btn:hover {
+            background: rgba(255, 8, 68, 0.1);
+            border-color: rgba(255, 8, 68, 0.3);
+            color: var(--c-danger);
+            box-shadow: 0 0 14px rgba(255, 8, 68, 0.2);
+        }
+
+        /* ── BUTTONS (dashboard specific) ── */
+        #create-add-hotspot-btn,
+        #add-hotspot-btn {
+            background: rgba(255,255,255,0.05);
+            border: 1px dashed rgba(255,255,255,0.2);
+            color: var(--text-muted);
+            padding: 12px 20px;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 500;
+            width: 100%;
+            margin-bottom: 20px;
+            transition: var(--transition);
+        }
+
+        #create-add-hotspot-btn:hover,
+        #add-hotspot-btn:hover {
+            background: rgba(0, 242, 254, 0.07);
+            border-color: rgba(0, 242, 254, 0.35);
+            color: var(--c-primary);
+        }
+
+        /* ── PANORAMA VIEWER INSET ── */
+        #create-panorama-viewer,
+        #admin-panorama-viewer {
+            width: 100%;
+            height: 360px;
+            background: #000;
+            border-radius: var(--radius-sm);
+            overflow: hidden;
+            margin-bottom: 14px;
+            border: 1px solid var(--glass-border);
+        }
+
+        /* ── HOTSPOT ROWS ── */
+        .hotspot-item {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
+            padding: 14px 16px;
+            background: rgba(7, 13, 26, 0.5);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-sm);
+            margin-bottom: 10px;
+            transition: var(--transition);
+        }
+
+        .hotspot-item:hover {
+            border-color: rgba(255,255,255,0.14);
+            background: rgba(7, 13, 26, 0.75);
+        }
+
+        .hotspot-item input,
+        .hotspot-item select {
+            padding: 9px 12px;
+            background: rgba(7, 13, 26, 0.7);
+            border: 1px solid rgba(255,255,255,0.09);
+            border-radius: 8px;
+            color: var(--text-main);
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.9rem;
+            outline: none;
+            transition: var(--transition);
+        }
+
+        .hotspot-item input:focus,
+        .hotspot-item select:focus {
+            border-color: var(--c-secondary);
+            box-shadow: 0 0 0 2px rgba(79, 172, 254, 0.15);
+        }
+
+        .hotspot-item .remove-hs-btn {
+            background: rgba(255, 8, 68, 0.08);
+            border: 1px solid rgba(255, 8, 68, 0.2);
+            color: var(--c-danger);
+            padding: 10px 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 0.9rem;
+        }
+
+        .hotspot-item .remove-hs-btn:hover {
+            background: var(--c-danger);
+            color: #fff;
+            box-shadow: 0 6px 18px rgba(255, 8, 68, 0.35);
+        }
+
+        /* ── MODAL ── */
         .modal-overlay {
             display: none;
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            z-index: 1000;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            z-index: 1100;
             justify-content: center;
             align-items: center;
         }
 
         .modal-content {
-            background: #1f1f1f;
-            padding: 30px;
-            border-radius: 10px;
-            width: 90%;
-            max-width: 900px;
-            max-height: 90vh;
+            background: rgba(10, 18, 38, 0.98);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            padding: 44px;
+            border-radius: var(--radius-lg);
+            width: 92%;
+            max-width: 920px;
+            max-height: 88vh;
             overflow-y: auto;
+            border: 1px solid rgba(255,255,255,0.1);
+            box-shadow: var(--shadow-deep);
             position: relative;
+            animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
         }
 
-        /* Custom modern dark scrollbar */
-        .modal-content::-webkit-scrollbar {
-            width: 8px;
+        @keyframes popIn {
+            from { transform: scale(0.93) translateY(10px); opacity: 0; }
+            to   { transform: scale(1)    translateY(0);    opacity: 1; }
         }
-        .modal-content::-webkit-scrollbar-track {
-            background: #1f1f1f;
-            border-radius: 10px;
-        }
+
+        .modal-content::-webkit-scrollbar { width: 5px; }
+        .modal-content::-webkit-scrollbar-track { background: transparent; }
         .modal-content::-webkit-scrollbar-thumb {
-            background: #555;
-            border-radius: 10px;
+            background: rgba(79, 172, 254, 0.3);
+            border-radius: 6px;
         }
-        .modal-content::-webkit-scrollbar-thumb:hover {
-            background: #00d2d3;
-        }
-        .modal-content {
-            scrollbar-width: thin;
-            scrollbar-color: #555 #1f1f1f;
+        .modal-content::-webkit-scrollbar-thumb:hover { background: var(--c-secondary); }
+        .modal-content { scrollbar-width: thin; scrollbar-color: rgba(79,172,254,0.3) transparent; }
+
+        .modal-content h3 {
+            font-size: 1.5rem;
+            font-weight: 800;
+            letter-spacing: -0.3px;
+            background: linear-gradient(to right, var(--text-main), var(--text-muted));
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 28px;
+            padding-right: 40px;
         }
 
         .close-modal {
             position: absolute;
-            top: 20px;
-            right: 20px;
-            background: none;
-            border: none;
-            color: #fff;
-            font-size: 1.5rem;
+            top: 20px; right: 20px;
+            width: 36px; height: 36px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: var(--text-muted);
+            font-size: 1.1rem;
             cursor: pointer;
+            display: grid;
+            place-items: center;
+            transition: var(--transition);
         }
 
-        .hotspot-item {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-            background: #2a2a2a;
-            padding: 10px;
-            margin-bottom: 10px;
-            border-radius: 5px;
+        .close-modal:hover {
+            background: rgba(255, 8, 68, 0.1);
+            border-color: rgba(255, 8, 68, 0.3);
+            color: var(--c-danger);
+            transform: rotate(90deg);
         }
 
-        .hotspot-item input {
-            margin: 0;
-        }
-
-        .hotspot-item button {
-            background: #ff4757;
-            padding: 10px;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
+        /* ── AUTH CHECK ── */
         .auth-check {
-            text-align: center;
-            margin-top: 100px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: calc(100vh - 88px);
+            gap: 20px;
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            font-weight: 500;
         }
 
-        #dashboard-content {
-            display: none;
+        .auth-check .loader-ring {
+            width: 56px; height: 56px;
+            border: 3px solid rgba(255,255,255,0.05);
+            border-top-color: var(--c-primary);
+            border-right-color: var(--c-secondary);
+            border-radius: 50%;
+            animation: spin 1.2s linear infinite;
         }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        #dashboard-content { display: none; }
     </style>
 </head>
 
 <body>
 
+    <!-- ─── HEADER (matches home) ─────────────────── -->
     <header class="header">
-        <div class="container nav-container">
+        <div class="nav-container">
             <h1 class="logo">Vision <span>360</span></h1>
-            <nav class="navbar">
+            <nav aria-label="Admin navigation">
                 <ul class="nav-links">
-                    <li><a href="../index.html">Back to Home</a></li>
-                    <li><a href="#" id="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                    <li><a href="../index.html"><i class="fas fa-arrow-left" style="font-size:0.8rem; margin-right:4px;"></i> Home</a></li>
+                    <li><a href="#" id="logout-btn"><i class="fas fa-sign-out-alt" style="font-size:0.85rem; margin-right:4px;"></i> Logout</a></li>
                 </ul>
             </nav>
         </div>
     </header>
 
+    <!-- ─── AUTH LOADING ──────────────────────────── -->
     <div id="auth-loading" class="auth-check">
-        <h2><i class="fas fa-spinner fa-spin"></i> Checking Authorization...</h2>
+        <div class="loader-ring"></div>
+        <p>Checking Authorization…</p>
     </div>
 
+    <!-- ─── DASHBOARD ────────────────────────────── -->
     <div id="dashboard-content" class="dashboard-container">
 
-        <!-- Sidebar Navigation -->
+        <!-- Sidebar -->
         <aside class="sidebar">
-            <h3>Admin Panel</h3>
+            <div class="sidebar-brand">
+                <div class="brand-icon"><i class="fas fa-shield-alt"></i></div>
+                <div class="brand-text">
+                    <strong>Admin Panel</strong>
+                    <span>Vision 360</span>
+                </div>
+            </div>
             <ul class="nav-menu">
-                <li><a href="#" class="nav-btn active" data-target="section-create"><i class="fas fa-plus-circle"></i>
-                        Create Scene</a></li>
-                <li><a href="#" class="nav-btn" data-target="section-edit"><i class="fas fa-edit"></i> Edit Scene</a>
-                </li>
-                <li><a href="#" class="nav-btn" data-target="section-delete"><i class="fas fa-trash"></i> Delete
-                        Scene</a></li>
+                <li><a href="#" class="nav-btn active" data-target="section-create"><i class="fas fa-plus-circle"></i> Create Scene</a></li>
+                <li><a href="#" class="nav-btn" data-target="section-edit"><i class="fas fa-pen"></i> Edit Scene</a></li>
+                <li><a href="#" class="nav-btn" data-target="section-delete"><i class="fas fa-trash-alt"></i> Delete Scene</a></li>
+                <li><a href="#" class="nav-btn" data-target="section-admins"><i class="fas fa-users-cog"></i> Manage Admins</a></li>
             </ul>
         </aside>
 
-        <!-- Main Content Area -->
+        <!-- Main Content -->
         <main class="main-content">
             <div class="header-actions">
                 <h2 id="section-title">Create New Scene</h2>
             </div>
 
-            <!-- CREATE SECTION -->
+            <!-- ── CREATE ── -->
             <div id="section-create" class="tab-section active">
                 <div class="card">
                     <h3><i class="fas fa-plus-circle"></i> Add New Scene</h3>
                     <form id="create-scene-form">
                         <div class="form-row">
                             <div class="form-group">
-                                <label for="create-level">Scene Level (Hierarchy)</label>
+                                <label for="create-level">Scene Level</label>
                                 <select id="create-level" required>
                                     <option value="building">Building (Main Campus)</option>
                                     <option value="department">Department</option>
                                     <option value="classroom">Classroom / Lab</option>
                                 </select>
                             </div>
-                            <div class="form-group" id="create-parent-group" style="display: none;">
+                            <div class="form-group" id="create-parent-group" style="display:none;">
                                 <label id="create-parent-label" for="create-parent">Parent Scene</label>
                                 <select id="create-parent">
-                                    <option value="">-- Select Parent --</option>
+                                    <option value="">— Select Parent —</option>
                                 </select>
                             </div>
                         </div>
                         <div class="form-row">
                             <div class="form-group">
-                                <label for="create-id">Scene ID (e.g., 'main_entrance')</label>
-                                <input type="text" id="create-id" required>
+                                <label for="create-id">Scene ID</label>
+                                <input type="text" id="create-id" required placeholder="e.g. main_entrance">
                             </div>
                             <div class="form-group">
                                 <label for="create-title">Display Title</label>
                                 <input type="text" id="create-title" required placeholder="Main Entrance">
                             </div>
                         </div>
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="create-panorama">Panorama Image</label>
-                                <input type="file" id="create-panorama" accept="image/jpeg, image/png" required>
-                            </div>
+                        <div class="form-group">
+                            <label for="create-panorama">Panorama Image</label>
+                            <input type="file" id="create-panorama" accept="image/jpeg,image/png" required>
                         </div>
 
-                        <!-- Manual Hotspots UI for Create Form -->
-                        <div class="form-group" id="create-preview-wrapper" style="display: none;">
-                            <label><strong>Hotspot Preview & Editor:</strong> Shift + Click on the image to add a hotspot exactly where you point.</label>
-                            <div id="create-panorama-viewer" style="width: 100%; height: 350px; background: #000; margin-bottom: 10px; border-radius: 5px;"></div>
+                        <!-- Panorama preview & hotspot editor -->
+                        <div class="form-group" id="create-preview-wrapper" style="display:none;">
+                            <label><strong>Hotspot Preview &amp; Editor:</strong> Shift + Click on the image to add a hotspot exactly where you point.</label>
+                            <div id="create-panorama-viewer"></div>
                         </div>
 
-                        <h4>Configure Hotspots</h4>
+                        <h4><i class="fas fa-map-pin" style="margin-right:6px; color:var(--c-primary);"></i> Configure Hotspots</h4>
                         <div id="create-hotspots-container"></div>
-                        <button type="button" id="create-add-hotspot-btn" class="btn btn-secondary" style="margin-bottom: 20px; background: #333; color: white;">+ Add Manual Hotspot</button>
+                        <button type="button" id="create-add-hotspot-btn">
+                            <i class="fas fa-plus"></i> Add Manual Hotspot
+                        </button>
 
-                        <button type="submit" class="btn btn-primary" style="width: 100%">Create Scene</button>
+                        <button type="submit" class="btn btn-primary" style="width:100%; margin-top:8px;">
+                            <i class="fas fa-cloud-upload-alt"></i> Create Scene
+                        </button>
                     </form>
                 </div>
-            </div> <!-- End Create Section -->
+            </div>
 
-            <!-- EDIT SECTION -->
+            <!-- ── EDIT ── -->
             <div id="section-edit" class="tab-section">
                 <div class="card">
-                    <h3><i class="fas fa-edit"></i> Select a Scene to Edit</h3>
+                    <h3><i class="fas fa-pen"></i> Select a Scene to Edit</h3>
                     <ul class="scene-list" id="edit-scene-list">
-                        <li>Loading scenes...</li>
+                        <li style="color:var(--text-muted); padding:10px 0;">Loading scenes…</li>
                     </ul>
                 </div>
             </div>
 
-            <!-- DELETE SECTION -->
+            <!-- ── DELETE ── -->
             <div id="section-delete" class="tab-section">
                 <div class="card">
-                    <h3><i class="fas fa-trash"></i> Select a Scene to Delete</h3>
+                    <h3><i class="fas fa-trash-alt"></i> Select a Scene to Delete</h3>
                     <ul class="scene-list" id="delete-scene-list">
-                        <li>Loading scenes...</li>
+                        <li style="color:var(--text-muted); padding:10px 0;">Loading scenes…</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- ── MANAGE ADMINS ── -->
+            <div id="section-admins" class="tab-section">
+                <div class="card">
+                    <h3><i class="fas fa-user-plus"></i> Grant Admin Access</h3>
+                    <p style="color:var(--text-muted); font-size:0.9rem; margin-bottom:20px;">
+                        This will create a real Firebase Auth account. The new admin can log in with these credentials.
+                    </p>
+                    <form id="add-admin-form" autocomplete="off">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="new-admin-name">Display Name</label>
+                                <input type="text" id="new-admin-name" placeholder="John Doe">
+                            </div>
+                            <div class="form-group">
+                                <label for="new-admin-email">Email Address</label>
+                                <input type="email" id="new-admin-email" required placeholder="john@vision360.com">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="new-admin-password">Password</label>
+                                <input type="password" id="new-admin-password" required placeholder="Min. 6 characters" minlength="6" autocomplete="new-password">
+                            </div>
+                            <div class="form-group">
+                                <label for="new-admin-confirm">Confirm Password</label>
+                                <input type="password" id="new-admin-confirm" required placeholder="Repeat password" minlength="6" autocomplete="new-password">
+                            </div>
+                        </div>
+                        <div id="admin-form-error" style="display:none; color:var(--c-danger); background:rgba(255,8,68,0.08); border:1px solid rgba(255,8,68,0.2); padding:12px 16px; border-radius:10px; font-size:0.9rem; margin-bottom:16px;"></div>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-user-check"></i> Create Admin Account
+                        </button>
+                    </form>
+                </div>
+
+                <div class="card">
+                    <h3><i class="fas fa-users"></i> Authorized Admins</h3>
+                    <ul class="scene-list" id="admins-list">
+                        <li style="color:var(--text-muted); padding:10px 0;">Loading admins…</li>
                     </ul>
                 </div>
             </div>
 
         </main>
-
     </div>
 
-    <!-- Edit Scene Modal -->
+    <!-- ─── EDIT MODAL ────────────────────────────── -->
     <div id="edit-modal" class="modal-overlay">
         <div class="modal-content">
             <button class="close-modal" id="close-modal-btn">&times;</button>
@@ -417,34 +704,31 @@
                 </div>
 
                 <div class="form-group">
-                    <label>Update Panorama Image (Leave blank to keep existing)</label>
-                    <input type="file" id="edit-panorama" accept="image/jpeg, image/png">
+                    <label>Update Panorama Image <span style="color:var(--text-muted); font-weight:400;">(leave blank to keep existing)</span></label>
+                    <input type="file" id="edit-panorama" accept="image/jpeg,image/png">
                 </div>
 
                 <div class="form-group">
-                    <label><strong>Hotspot Helper:</strong> Shift + Click on the image to capture Pitch and Yaw automatically.</label>
-                    <div id="admin-panorama-viewer" style="width: 100%; height: 350px; background: #000; margin-bottom: 10px; border-radius: 5px;"></div>
+                    <label><strong>Hotspot Helper:</strong> Shift + Click on the image to capture Pitch &amp; Yaw automatically.</label>
+                    <div id="admin-panorama-viewer"></div>
                 </div>
 
-                <h4>Configure Hotspots</h4>
-                <div id="edit-hotspots-container">
-                    <!-- Hotspots injected here via JS -->
-                </div>
+                <h4><i class="fas fa-map-pin" style="margin-right:6px; color:var(--c-primary);"></i> Configure Hotspots</h4>
+                <div id="edit-hotspots-container"></div>
 
-                <button type="button" id="add-hotspot-btn" class="btn btn-secondary"
-                    style="margin-bottom: 20px; background: #333; color: white;">+ Add New Hotspot</button>
+                <button type="button" id="add-hotspot-btn">
+                    <i class="fas fa-plus"></i> Add New Hotspot
+                </button>
 
-                <button type="submit" class="btn btn-primary" style="width: 100%">Save Changes</button>
+                <button type="submit" class="btn btn-primary" style="width:100%; margin-top:8px;">
+                    <i class="fas fa-save"></i> Save Changes
+                </button>
             </form>
         </div>
     </div>
 
-    <!-- Pannellum JS -->
     <script src="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.js"></script>
-
-    <!-- Use modular import for Firebase JS integration -->
     <script type="module" src="../js/admin-dashboard.js"></script>
 
 </body>
-
 </html>

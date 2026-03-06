@@ -5,7 +5,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     try {
         const urlParams = new URLSearchParams(window.location.search);
-        // Default to a fallback if not provided, though the DB will dictate actual root scenes
         const initialScene = urlParams.get("scene") || "main";
 
         // Fetch all scenes from Firestore
@@ -17,12 +16,13 @@ document.addEventListener("DOMContentLoaded", async () => {
         });
 
         if (Object.keys(scenesData).length === 0) {
-            console.warn("No scenes found in the database. Has the admin added any yet?");
-            document.getElementById("loading-overlay").innerHTML = "<p>No scenes available. Please wait for an admin to add them.</p>";
+            document.getElementById("loading-overlay").innerHTML = `
+                <i class="fas fa-cube" style="font-size:2.5rem; color: var(--text-faint); margin-bottom:20px;"></i>
+                <p>No scenes available yet.</p>`;
             return;
         }
 
-        // If 'main' doesn't exist anymore but they didn't pass a param, grab the first available key
+        // Fallback to first available scene if requested one doesn't exist
         const startSceneId = scenesData[initialScene] ? initialScene : Object.keys(scenesData)[0];
 
         const scenesConfig = {
@@ -42,26 +42,40 @@ document.addEventListener("DOMContentLoaded", async () => {
             const overlay = document.getElementById("loading-overlay");
             if (overlay) {
                 overlay.style.opacity = "0";
-                setTimeout(() => {
-                    overlay.style.display = "none";
-                }, 500);
+                setTimeout(() => { overlay.style.display = "none"; }, 700);
             }
-            updateTitle();
+            updateSceneUI();
         });
 
-        viewer.on("scenechange", updateTitle);
+        viewer.on("scenechange", updateSceneUI);
 
-        function updateTitle() {
+        function updateSceneUI() {
             const id = viewer.getScene();
-            const title = document.getElementById("current-scene-title");
-            if (scenesData[id]) {
-                title.textContent = scenesData[id].title;
+            const titleEl = document.getElementById("current-scene-title");
+            const typeEl  = document.getElementById("current-scene-type");
+            const scene   = scenesData[id];
+
+            if (scene) {
+                // Set title
+                if (titleEl) titleEl.textContent = scene.title;
+
+                // Set type badge
+                if (typeEl) {
+                    const typeMap = { building:'Building', department:'Department', classroom:'Classroom', lab:'Lab' };
+                    typeEl.textContent = typeMap[scene.sceneType] || '360° View';
+                }
+
+                // Update browser tab title
+                document.title = `${scene.title} – Vision 360`;
             }
         }
 
     } catch (error) {
         console.error("Viewer initialization failed:", error);
-        document.getElementById("loading-overlay").innerHTML = `<p>Error loading viewer: ${error.message}</p>`;
+        document.getElementById("loading-overlay").innerHTML = `
+            <i class="fas fa-exclamation-triangle" style="font-size:2.5rem; color:#ff0844; margin-bottom:20px;"></i>
+            <p style="color:#ff0844;">Error loading viewer</p>
+            <small style="color: var(--text-faint);">${error.message}</small>`;
     }
 
 });
