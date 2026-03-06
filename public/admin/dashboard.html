@@ -218,7 +218,8 @@
         }
 
         .form-group input,
-        .form-group select {
+        .form-group select,
+        .form-group textarea {
             width: 100%;
             padding: 13px 16px;
             background: rgba(7, 13, 26, 0.6);
@@ -229,15 +230,18 @@
             font-family: 'Outfit', sans-serif;
             outline: none;
             transition: var(--transition);
+            box-sizing: border-box;
         }
 
-        .form-group input::placeholder {
+        .form-group input::placeholder,
+        .form-group textarea::placeholder {
             color: var(--text-muted);
             opacity: 0.6;
         }
 
         .form-group input:focus,
-        .form-group select:focus {
+        .form-group select:focus,
+        .form-group textarea:focus {
             border-color: var(--c-secondary);
             background: rgba(7, 13, 26, 0.85);
             box-shadow: 0 0 0 3px rgba(79, 172, 254, 0.18);
@@ -246,6 +250,11 @@
         .form-group select option {
             background: #0f1930;
             color: var(--text-main);
+        }
+
+        .admin-textarea {
+            resize: vertical;
+            min-height: 80px;
         }
 
         .form-row { display: flex; gap: 18px; }
@@ -381,7 +390,8 @@
         }
 
         .hotspot-item input,
-        .hotspot-item select {
+        .hotspot-item select,
+        .hotspot-item textarea {
             padding: 9px 12px;
             background: rgba(7, 13, 26, 0.7);
             border: 1px solid rgba(255,255,255,0.09);
@@ -391,12 +401,33 @@
             font-size: 0.9rem;
             outline: none;
             transition: var(--transition);
+            box-sizing: border-box;
+        }
+
+        .hotspot-item input::placeholder,
+        .hotspot-item textarea::placeholder {
+            color: var(--text-muted);
+            opacity: 0.6;
         }
 
         .hotspot-item input:focus,
-        .hotspot-item select:focus {
+        .hotspot-item select:focus,
+        .hotspot-item textarea:focus {
             border-color: var(--c-secondary);
             box-shadow: 0 0 0 2px rgba(79, 172, 254, 0.15);
+        }
+
+        .hotspot-item .hs-info-fields {
+            background: rgba(7, 13, 26, 0.4) !important;
+            border: 1px solid rgba(255,255,255,0.06) !important;
+            border-radius: 8px;
+            padding: 10px !important;
+        }
+
+        .hotspot-item .hs-info-fields textarea,
+        .hotspot-item .hs-info-fields input[type="url"] {
+            resize: vertical;
+            width: 100%;
         }
 
         .hotspot-item .remove-hs-btn {
@@ -602,7 +633,7 @@
                         <div class="form-row">
                             <div class="form-group" style="grid-column:1/-1;">
                                 <label for="create-description">Description <span style="color:var(--text-muted); font-weight:400;">(shown in the viewer info panel — describe the location, facilities, or subjects)</span></label>
-                                <textarea id="create-description" rows="3" placeholder="e.g. The Computer Science laboratory is equipped with 40 high-performance workstations…" style="width:100%;resize:vertical;"></textarea>
+                                <textarea id="create-description" rows="3" placeholder="e.g. The Computer Science laboratory is equipped with 40 high-performance workstations…" class="admin-textarea"></textarea>
                             </div>
                         </div>
                         <div class="form-group">
@@ -711,7 +742,7 @@
 
                 <div class="form-group">
                     <label>Description <span style="color:var(--text-muted); font-weight:400;">(shown in viewer info panel)</span></label>
-                    <textarea id="edit-description" rows="3" placeholder="Describe this location…" style="width:100%;resize:vertical;"></textarea>
+                    <textarea id="edit-description" rows="3" placeholder="Describe this location…" class="admin-textarea"></textarea>
                 </div>
 
                 <div class="form-group">
