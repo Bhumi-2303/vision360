@@ -8,6 +8,7 @@
 
     <link rel="stylesheet" href="../css/style.css?v=1.1" type="text/css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.css" />
 
     <style>
         body {
@@ -214,10 +215,30 @@
             padding: 30px;
             border-radius: 10px;
             width: 90%;
-            max-width: 600px;
+            max-width: 900px;
             max-height: 90vh;
             overflow-y: auto;
             position: relative;
+        }
+
+        /* Custom modern dark scrollbar */
+        .modal-content::-webkit-scrollbar {
+            width: 8px;
+        }
+        .modal-content::-webkit-scrollbar-track {
+            background: #1f1f1f;
+            border-radius: 10px;
+        }
+        .modal-content::-webkit-scrollbar-thumb {
+            background: #555;
+            border-radius: 10px;
+        }
+        .modal-content::-webkit-scrollbar-thumb:hover {
+            background: #00d2d3;
+        }
+        .modal-content {
+            scrollbar-width: thin;
+            scrollbar-color: #555 #1f1f1f;
         }
 
         .close-modal {
@@ -307,94 +328,54 @@
             <!-- CREATE SECTION -->
             <div id="section-create" class="tab-section active">
                 <div class="card">
-                    <h3><i class="fas fa-building"></i> Add Building (Main Campus)</h3>
-                    <form id="add-building-form">
+                    <h3><i class="fas fa-plus-circle"></i> Add New Scene</h3>
+                    <form id="create-scene-form">
                         <div class="form-row">
                             <div class="form-group">
-                                <label for="b-id">Building ID (e.g., 'main')</label>
-                                <input type="text" id="b-id" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="b-title">Title</label>
-                                <input type="text" id="b-title" required placeholder="Main Campus">
-                            </div>
-                            <div class="form-group">
-                                <label for="b-panorama">Panorama Image</label>
-                                <input type="file" id="b-panorama" accept="image/jpeg, image/png" required>
-                            </div>
-                        </div>
-                        <button type="submit" class="btn btn-primary">Add Building</button>
-                    </form>
-                </div>
-
-                <!-- Add Department Form -->
-                <div class="card">
-                    <h3><i class="fas fa-door-open"></i> Add Department</h3>
-                    <form id="add-dept-form">
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="d-parent">Parent Building</label>
-                                <select id="d-parent" required>
-                                    <option value="">Loading...</option>
+                                <label for="create-level">Scene Level (Hierarchy)</label>
+                                <select id="create-level" required>
+                                    <option value="building">Building (Main Campus)</option>
+                                    <option value="department">Department</option>
+                                    <option value="classroom">Classroom / Lab</option>
                                 </select>
                             </div>
-                            <div class="form-group">
-                                <label for="d-id">Department ID (e.g., 'department')</label>
-                                <input type="text" id="d-id" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="d-title">Title</label>
-                                <input type="text" id="d-title" required placeholder="Engineering Block">
-                            </div>
-                        </div>
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="d-panorama">Panorama Image</label>
-                                <input type="file" id="d-panorama" accept="image/jpeg, image/png" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="d-yaw">Hotspot Yaw (left/right angle)</label>
-                                <input type="number" id="d-yaw" value="90" required>
-                            </div>
-                        </div>
-                        <button type="submit" class="btn btn-primary">Add Department</button>
-                    </form>
-                </div>
-
-                <!-- Add Classroom Form -->
-                <div class="card">
-                    <h3><i class="fas fa-chalkboard"></i> Add Classroom</h3>
-                    <form id="add-class-form">
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="c-parent">Parent Department</label>
-                                <select id="c-parent" required>
-                                    <option value="">Loading...</option>
+                            <div class="form-group" id="create-parent-group" style="display: none;">
+                                <label id="create-parent-label" for="create-parent">Parent Scene</label>
+                                <select id="create-parent">
+                                    <option value="">-- Select Parent --</option>
                                 </select>
                             </div>
+                        </div>
+                        <div class="form-row">
                             <div class="form-group">
-                                <label for="c-id">Classroom ID (e.g., 'classroom')</label>
-                                <input type="text" id="c-id" required>
+                                <label for="create-id">Scene ID (e.g., 'main_entrance')</label>
+                                <input type="text" id="create-id" required>
                             </div>
                             <div class="form-group">
-                                <label for="c-title">Title</label>
-                                <input type="text" id="c-title" required placeholder="Lab 1">
+                                <label for="create-title">Display Title</label>
+                                <input type="text" id="create-title" required placeholder="Main Entrance">
                             </div>
                         </div>
                         <div class="form-row">
                             <div class="form-group">
-                                <label for="c-panorama">Panorama Image</label>
-                                <input type="file" id="c-panorama" accept="image/jpeg, image/png" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="c-yaw">Hotspot Yaw (left/right angle)</label>
-                                <input type="number" id="c-yaw" value="-90" required>
+                                <label for="create-panorama">Panorama Image</label>
+                                <input type="file" id="create-panorama" accept="image/jpeg, image/png" required>
                             </div>
                         </div>
-                        <button type="submit" class="btn btn-primary">Add Classroom</button>
+
+                        <!-- Manual Hotspots UI for Create Form -->
+                        <div class="form-group" id="create-preview-wrapper" style="display: none;">
+                            <label><strong>Hotspot Preview & Editor:</strong> Shift + Click on the image to add a hotspot exactly where you point.</label>
+                            <div id="create-panorama-viewer" style="width: 100%; height: 350px; background: #000; margin-bottom: 10px; border-radius: 5px;"></div>
+                        </div>
+
+                        <h4>Configure Hotspots</h4>
+                        <div id="create-hotspots-container"></div>
+                        <button type="button" id="create-add-hotspot-btn" class="btn btn-secondary" style="margin-bottom: 20px; background: #333; color: white;">+ Add Manual Hotspot</button>
+
+                        <button type="submit" class="btn btn-primary" style="width: 100%">Create Scene</button>
                     </form>
                 </div>
-
             </div> <!-- End Create Section -->
 
             <!-- EDIT SECTION -->
@@ -440,6 +421,11 @@
                     <input type="file" id="edit-panorama" accept="image/jpeg, image/png">
                 </div>
 
+                <div class="form-group">
+                    <label><strong>Hotspot Helper:</strong> Shift + Click on the image to capture Pitch and Yaw automatically.</label>
+                    <div id="admin-panorama-viewer" style="width: 100%; height: 350px; background: #000; margin-bottom: 10px; border-radius: 5px;"></div>
+                </div>
+
                 <h4>Configure Hotspots</h4>
                 <div id="edit-hotspots-container">
                     <!-- Hotspots injected here via JS -->
@@ -452,6 +438,9 @@
             </form>
         </div>
     </div>
+
+    <!-- Pannellum JS -->
+    <script src="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.js"></script>
 
     <!-- Use modular import for Firebase JS integration -->
     <script type="module" src="../js/admin-dashboard.js"></script>

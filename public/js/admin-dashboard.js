@@ -1,7 +1,6 @@
 import { auth, db, storage } from "./firebase-init.js";
 import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-import { collection, doc, setDoc, getDocs, updateDoc, arrayUnion } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
-import { ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-storage.js";
+import { collection, doc, setDoc, getDocs, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
 const ADMIN_EMAIL = "admin@vision360.com";
 
@@ -12,7 +11,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (user && user.email === ADMIN_EMAIL) {
             document.getElementById("auth-loading").style.display = "none";
             document.getElementById("dashboard-content").style.display = "flex";
-            loadDropdowns();
+            loadScenesList();
         } else {
             window.location.href = "login.html";
         }
@@ -31,161 +30,122 @@ document.addEventListener("DOMContentLoaded", () => {
     navBtns.forEach(btn => {
         btn.addEventListener('click', (e) => {
             e.preventDefault();
-
             navBtns.forEach(b => b.classList.remove('active'));
             tabSections.forEach(s => s.classList.remove('active'));
-
             btn.classList.add('active');
-
             const targetId = btn.dataset.target;
             document.getElementById(targetId).classList.add('active');
-
             sectionTitle.textContent = btn.textContent.trim();
+            if (targetId === 'section-edit' || targetId === 'section-delete') {
+                loadScenesList();
+            }
         });
     });
 
-    // Populate Dropdowns and admin list
-    async function loadDropdowns() {
-        const dParent = document.getElementById("d-parent");
-        const cParent = document.getElementById("c-parent");
+    // Globals
+    window.allScenes = [];
+    let editViewer = null;
+    let createViewer = null;
+    let currentEditingScene = null;
+
+    async function loadScenesList() {
         const editListContainer = document.getElementById("edit-scene-list");
         const deleteListContainer = document.getElementById("delete-scene-list");
-
-        dParent.innerHTML = '<option value="">Select Building...</option>';
-        cParent.innerHTML = '<option value="">Select Department...</option>';
 
         if (editListContainer) editListContainer.innerHTML = '';
         if (deleteListContainer) deleteListContainer.innerHTML = '';
 
         try {
             const querySnapshot = await getDocs(collection(db, "scenes"));
-
+            window.allScenes = [];
+            
             if (querySnapshot.empty) {
                 if (editListContainer) editListContainer.innerHTML = '<li>No scenes found.</li>';
                 if (deleteListContainer) deleteListContainer.innerHTML = '<li>No scenes found.</li>';
+                updateCreateParentDropdown();
                 return;
             }
 
-            // Save global reference for editing
-            window.allScenes = [];
             querySnapshot.forEach(docSnap => {
                 window.allScenes.push({ id: docSnap.id, ...docSnap.data() });
             });
 
-            querySnapshot.forEach((docSnap) => {
-                const data = docSnap.data();
-                const option = `<option value="${docSnap.id}">${data.title} (${docSnap.id})</option>`;
+            window.allScenes.forEach((data) => {
+                const sceneTypeStr = data.sceneType ? `[${data.sceneType}]` : `[building]`;
+                const contentHTML = `
+                    <div class="scene-info">
+                        <strong>${data.title} ${sceneTypeStr}</strong>
+                        <span>ID: ${data.id}</span>
+                        <span>Hotspots: ${data.hotSpots ? data.hotSpots.length : 0}</span>
+                    </div>
+                `;
 
-                // Add to dropdowns
-                dParent.innerHTML += option;
-                cParent.innerHTML += option;
-
-                // Add to Edit List
                 if (editListContainer) {
                     const editLi = document.createElement('li');
                     editLi.className = 'scene-item';
-                    editLi.innerHTML = `
-                        <div class="scene-info">
-                            <strong>${data.title}</strong>
-                            <span>ID: ${docSnap.id}</span>
-                            <span>Hotspots: ${data.hotSpots ? data.hotSpots.length : 0}</span>
-                        </div>
+                    editLi.innerHTML = contentHTML + `
                         <div class="scene-actions">
-                            <button class="edit-btn" data-id="${docSnap.id}" title="Edit Scene">
-                                <i class="fas fa-edit"></i>
-                            </button>
+                            <button class="edit-btn" data-id="${data.id}" title="Edit Scene"><i class="fas fa-edit"></i></button>
                         </div>
                     `;
                     editListContainer.appendChild(editLi);
                 }
 
-                // Add to Delete List
                 if (deleteListContainer) {
                     const deleteLi = document.createElement('li');
                     deleteLi.className = 'scene-item';
-                    deleteLi.innerHTML = `
-                        <div class="scene-info">
-                            <strong>${data.title}</strong>
-                            <span>ID: ${docSnap.id}</span>
-                            <span>Hotspots: ${data.hotSpots ? data.hotSpots.length : 0}</span>
-                        </div>
+                    deleteLi.innerHTML = contentHTML + `
                         <div class="scene-actions">
-                            <button class="delete-btn" data-id="${docSnap.id}" title="Delete Scene">
-                                <i class="fas fa-trash"></i>
-                            </button>
+                            <button class="delete-btn" data-id="${data.id}" title="Delete Scene"><i class="fas fa-trash"></i></button>
                         </div>
                     `;
                     deleteListContainer.appendChild(deleteLi);
                 }
             });
 
-            // Attach Action Listeners
             document.querySelectorAll('.delete-btn').forEach(btn => {
                 btn.addEventListener('click', async (e) => {
                     const sceneId = e.currentTarget.dataset.id;
-                    if (confirm(`Are you sure you want to completely delete the scene: ${sceneId}?`)) {
-                        await deleteScene(sceneId);
+                    if (confirm(`Are you sure you want to completely delete the scene: "${sceneId}"? Note that the image is still stored on local disk.`)) {
+                        try {
+                            await deleteDoc(doc(db, "scenes", sceneId));
+                            alert(`Scene deleted.`);
+                            loadScenesList();
+                        } catch (err) { alert(err.message); }
                     }
                 });
             });
 
             document.querySelectorAll('.edit-btn').forEach(btn => {
                 btn.addEventListener('click', (e) => {
-                    const sceneId = e.currentTarget.dataset.id;
-                    openEditModal(sceneId);
+                    openEditModal(e.currentTarget.dataset.id);
                 });
             });
 
+            // Update hierarchy dropdown for CREATE mode based on new loaded scenes
+            updateCreateParentDropdown();
+
         } catch (error) {
-            console.error("Error loading scenes from Firestore:", error);
-            if (editListContainer) editListContainer.innerHTML = '<li>Error loading scenes.</li>';
-            if (deleteListContainer) deleteListContainer.innerHTML = '<li>Error loading scenes.</li>';
+            console.error(error);
         }
     }
 
-    // --- Modal & Hotspot Logic ---
-    const modal = document.getElementById('edit-modal');
-    const closeBtn = document.getElementById('close-modal-btn');
-    const editForm = document.getElementById('edit-scene-form');
-    const hotspotsContainer = document.getElementById('edit-hotspots-container');
-    const addHotspotBtn = document.getElementById('add-hotspot-btn');
+    // --- REUSABLE HOTSPOT UI ARCHITECTURE ---
+    
+    function buildHotspotEditorRow(hotspot = {}, container, viewerInstance) {
+        hotspot = {
+            type: hotspot.type || 'scene', // 'scene' or 'info'
+            pitch: hotspot.pitch !== undefined ? hotspot.pitch : 0,
+            yaw: hotspot.yaw !== undefined ? hotspot.yaw : 0,
+            text: hotspot.text || 'New Hotspot',
+            sceneId: hotspot.sceneId || '',
+            ...hotspot
+        };
 
-    closeBtn.addEventListener('click', () => {
-        modal.style.display = 'none';
-    });
-
-    // Close modal if clicked outside
-    window.addEventListener('click', (e) => {
-        if (e.target === modal) {
-            modal.style.display = 'none';
-        }
-    });
-
-    let currentEditingScene = null;
-
-    function openEditModal(sceneId) {
-        currentEditingScene = window.allScenes.find(s => s.id === sceneId);
-        if (!currentEditingScene) return;
-
-        document.getElementById('edit-modal-title').textContent = `Editing: ${currentEditingScene.title} (${sceneId})`;
-        document.getElementById('edit-scene-id').value = sceneId;
-        document.getElementById('edit-title').value = currentEditingScene.title;
-        document.getElementById('edit-panorama').value = ''; // Reset file input
-
-        // Render existing hotspots
-        hotspotsContainer.innerHTML = '';
-        if (currentEditingScene.hotSpots) {
-            currentEditingScene.hotSpots.forEach((hs) => {
-                addHotspotUI(hs);
-            });
-        }
-
-        modal.style.display = 'flex';
-    }
-
-    function addHotspotUI(hotspot = { pitch: 0, yaw: 0, text: 'New Target', sceneId: '' }) {
         const div = document.createElement('div');
         div.className = 'hotspot-item';
+        div.style.flexWrap = 'wrap';
+        const hsId = 'hs_' + Date.now() + Math.random().toString(36).substring(7);
 
         let targetOptions = '<option value="">Select Target Scene...</option>';
         window.allScenes.forEach(s => {
@@ -194,54 +154,146 @@ document.addEventListener("DOMContentLoaded", () => {
         });
 
         div.innerHTML = `
-            <input type="number" class="hs-yaw" placeholder="Yaw" value="${hotspot.yaw}" required style="width: 80px">
-            <input type="text" class="hs-text" placeholder="Label Text" value="${hotspot.text}" required>
-            <select class="hs-target" required>
+            <select class="hs-type" title="Hotspot Type">
+                <option value="scene" ${hotspot.type === 'scene' ? 'selected' : ''}>Link</option>
+                <option value="info" ${hotspot.type === 'info' ? 'selected' : ''}>Info Detail</option>
+            </select>
+            <input type="number" step="any" class="hs-pitch" placeholder="Pitch" value="${hotspot.pitch}" required style="width: 70px" title="Pitch (Up/Down)">
+            <input type="number" step="any" class="hs-yaw" placeholder="Yaw" value="${hotspot.yaw}" required style="width: 70px" title="Yaw (Left/Right)">
+            <input type="text" class="hs-text" placeholder="Hover / Detail Text" value="${hotspot.text}" required style="flex-grow: 1;">
+            <select class="hs-target" ${hotspot.type === 'info' ? 'style="display:none;"' : ''} ${hotspot.type === 'scene' ? 'required' : ''} title="Target Scene">
                 ${targetOptions}
             </select>
-            <button type="button" class="remove-hs-btn"><i class="fas fa-times"></i></button>
+            <button type="button" class="remove-hs-btn" title="Delete Hotspot"><i class="fas fa-trash"></i></button>
         `;
+
+        // Type Change Listener
+        const typeSelect = div.querySelector('.hs-type');
+        const targetSelect = div.querySelector('.hs-target');
+        typeSelect.addEventListener('change', () => {
+            if (typeSelect.value === 'info') {
+                targetSelect.style.display = 'none';
+                targetSelect.removeAttribute('required');
+            } else {
+                targetSelect.style.display = 'inline-block';
+                targetSelect.setAttribute('required', 'true');
+            }
+            updateVisualHotspot();
+        });
 
         div.querySelector('.remove-hs-btn').addEventListener('click', () => {
             div.remove();
+            if (viewerInstance) {
+                try { viewerInstance.removeHotSpot(hsId); } catch(e){}
+            }
         });
 
-        hotspotsContainer.appendChild(div);
+        container.appendChild(div);
+
+        const updateVisualHotspot = () => {
+            if (!viewerInstance) return;
+            const doAdd = () => {
+                try { viewerInstance.removeHotSpot(hsId); } catch(e) {}
+                try {
+                    viewerInstance.addHotSpot({
+                        pitch: Number(div.querySelector('.hs-pitch').value) || 0,
+                        yaw: Number(div.querySelector('.hs-yaw').value) || 0,
+                        type: div.querySelector('.hs-type').value,
+                        text: div.querySelector('.hs-text').value + " (Click to Details/Delete)",
+                        id: hsId,
+                        clickHandlerFunc: function() {
+                            if (confirm(`Delete hotspot "${div.querySelector('.hs-text').value}"?`)) {
+                                div.remove();
+                                try { viewerInstance.removeHotSpot(hsId); } catch(e) {}
+                            }
+                        }
+                    });
+                } catch(err) { }
+            };
+
+            if (viewerInstance.isLoaded()) {
+                doAdd();
+            } else {
+                viewerInstance.on('load', doAdd);
+            }
+        };
+
+        updateVisualHotspot();
+
+        div.querySelectorAll('input, select').forEach(input => {
+            input.addEventListener('change', updateVisualHotspot);
+        });
     }
 
-    addHotspotBtn.addEventListener('click', () => {
-        addHotspotUI();
+    // --- EDIT SCENE LOGIC ---
+
+    const modal = document.getElementById('edit-modal');
+    document.getElementById('close-modal-btn').addEventListener('click', () => modal.style.display = 'none');
+    window.addEventListener('click', (e) => { if (e.target === modal) modal.style.display = 'none'; });
+
+    function openEditModal(sceneId) {
+        currentEditingScene = window.allScenes.find(s => s.id === sceneId);
+        if (!currentEditingScene) return;
+
+        document.getElementById('edit-modal-title').textContent = `Editing: ${currentEditingScene.title}`;
+        document.getElementById('edit-scene-id').value = sceneId;
+        document.getElementById('edit-title').value = currentEditingScene.title;
+        document.getElementById('edit-panorama').value = ''; 
+
+        const hotspotsContainer = document.getElementById('edit-hotspots-container');
+        hotspotsContainer.innerHTML = '';
+        
+        let panoramaUrl = currentEditingScene.panorama;
+        if (panoramaUrl && panoramaUrl.startsWith('images/')) panoramaUrl = '/' + panoramaUrl;
+
+        if (editViewer) { editViewer.destroy(); editViewer = null; }
+
+        if (panoramaUrl) {
+            editViewer = pannellum.viewer('admin-panorama-viewer', {
+                type: 'equirectangular', panorama: panoramaUrl, autoLoad: true, showControls: true
+            });
+
+            document.getElementById('admin-panorama-viewer').onmousedown = function (e) {
+                if (e.shiftKey && editViewer) {
+                    const coords = editViewer.mouseEventToCoords(e);
+                    buildHotspotEditorRow({ pitch: coords[0].toFixed(2), yaw: coords[1].toFixed(2), text: 'New Target' }, hotspotsContainer, editViewer);
+                }
+            };
+        }
+
+        if (currentEditingScene.hotSpots) {
+            currentEditingScene.hotSpots.forEach(hs => buildHotspotEditorRow(hs, hotspotsContainer, editViewer));
+        }
+
+        modal.style.display = 'flex';
+    }
+
+    document.getElementById('add-hotspot-btn').addEventListener('click', () => {
+        buildHotspotEditorRow({}, document.getElementById('edit-hotspots-container'), editViewer);
     });
 
-    // Handle Edit Save
-    editForm.addEventListener('submit', async (e) => {
+    document.getElementById('edit-scene-form').addEventListener('submit', async (e) => {
         e.preventDefault();
         const submitBtn = e.target.querySelector('button[type="submit"]');
-        submitBtn.textContent = 'Saving...';
-        submitBtn.disabled = true;
+        submitBtn.textContent = 'Saving...'; submitBtn.disabled = true;
 
         try {
             const sceneId = document.getElementById('edit-scene-id').value;
-            const updates = {
-                title: document.getElementById('edit-title').value,
-            };
+            const updates = { title: document.getElementById('edit-title').value };
 
-            // Check if new image was uploaded
             const fileInput = document.getElementById('edit-panorama');
             if (fileInput.files.length > 0) {
-                const newUrl = await uploadImage(fileInput);
-                updates.panorama = newUrl;
+                updates.panorama = await uploadImage(fileInput);
             }
 
-            // Gather hotspots
             const newHotspots = [];
-            document.querySelectorAll('.hotspot-item').forEach(item => {
+            document.querySelectorAll('#edit-hotspots-container .hotspot-item').forEach(item => {
                 newHotspots.push({
-                    type: "scene",
-                    pitch: 0,
+                    type: item.querySelector('.hs-type').value,
+                    pitch: Number(item.querySelector('.hs-pitch').value),
                     yaw: Number(item.querySelector('.hs-yaw').value),
                     text: item.querySelector('.hs-text').value,
-                    sceneId: item.querySelector('.hs-target').value
+                    sceneId: item.querySelector('.hs-target').value || ''
                 });
             });
             updates.hotSpots = newHotspots;
@@ -249,183 +301,135 @@ document.addEventListener("DOMContentLoaded", () => {
             await updateDoc(doc(db, "scenes", sceneId), updates);
             alert("Scene updated successfully!");
             modal.style.display = 'none';
-            loadDropdowns(); // Refresh list
+            loadScenesList(); 
         } catch (error) {
-            console.error("Error updating scene:", error);
             alert("Failed to update: " + error.message);
         } finally {
-            submitBtn.textContent = 'Save Changes';
-            submitBtn.disabled = false;
+            submitBtn.textContent = 'Save Changes'; submitBtn.disabled = false;
         }
     });
 
-    // Delete Scene logic
-    async function deleteScene(id) {
-        try {
-            const { deleteDoc, doc } = await import("https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js");
-            await deleteDoc(doc(db, "scenes", id));
-            alert(`Scene '${id}' successfully deleted! Note: Its image in Firebase Storage remains.`);
-            loadDropdowns();
-        } catch (error) {
-            console.error("Error deleting scene:", error);
-            alert("Error: " + error.message);
+    // --- UNIFIED CREATE SCENE LOGIC ---
+
+    const createLevel = document.getElementById('create-level');
+    const createParentGroup = document.getElementById('create-parent-group');
+    const createParent = document.getElementById('create-parent');
+    const createParentLabel = document.getElementById('create-parent-label');
+    const createPanoramaInput = document.getElementById('create-panorama');
+    const createPreviewWrapper = document.getElementById('create-preview-wrapper');
+    const createHotspotsContainer = document.getElementById('create-hotspots-container');
+
+    createLevel.addEventListener('change', updateCreateParentDropdown);
+
+    function updateCreateParentDropdown() {
+        const level = createLevel.value;
+        if (level === 'building') {
+            createParentGroup.style.display = 'none';
+            createParent.removeAttribute('required');
+        } else {
+            createParentGroup.style.display = 'block';
+            createParent.setAttribute('required', 'true');
+            if (level === 'department') createParentLabel.textContent = "Select Parent Building";
+            if (level === 'classroom') createParentLabel.textContent = "Select Parent Department";
+
+            createParent.innerHTML = '<option value="">-- Select Parent --</option>';
+            
+            const expectedParentType = level === 'department' ? 'building' : 'department';
+            
+            window.allScenes.forEach(s => {
+                const sType = s.sceneType || 'building'; // default old scenes without a type to building
+                if (sType === expectedParentType) {
+                    createParent.innerHTML += `<option value="${s.id}">${s.title} (${s.id})</option>`;
+                }
+            });
         }
     }
 
-    // Helper to upload image to local Express backend
-    async function uploadImage(fileInput) {
-        if (!fileInput.files || fileInput.files.length === 0) {
-            throw new Error("No image selected");
-        }
+    createPanoramaInput.addEventListener('change', (e) => {
+        if (!e.target.files || e.target.files.length === 0) return;
+        const file = e.target.files[0];
+        const objectUrl = URL.createObjectURL(file);
 
-        const file = fileInput.files[0];
-        const formData = new FormData();
-        formData.append("panorama", file);
+        createPreviewWrapper.style.display = 'block';
+        if (createViewer) { createViewer.destroy(); createViewer = null; }
+        createHotspotsContainer.innerHTML = ''; // reset hotspots for new image
+
+        createViewer = pannellum.viewer('create-panorama-viewer', {
+            type: 'equirectangular', panorama: objectUrl, autoLoad: true, showControls: true
+        });
+
+        document.getElementById('create-panorama-viewer').onmousedown = function (ev) {
+            if (ev.shiftKey && createViewer) {
+                const coords = createViewer.mouseEventToCoords(ev);
+                buildHotspotEditorRow({ pitch: coords[0].toFixed(2), yaw: coords[1].toFixed(2), text: 'New Target' }, createHotspotsContainer, createViewer);
+            }
+        };
+    });
+
+    document.getElementById('create-add-hotspot-btn').addEventListener('click', () => {
+        buildHotspotEditorRow({}, createHotspotsContainer, createViewer);
+    });
+
+    document.getElementById('create-scene-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const submitBtn = e.target.querySelector('button[type="submit"]');
+        submitBtn.textContent = 'Uploading...'; submitBtn.disabled = true;
 
         try {
-            const response = await fetch("http://localhost:3000/upload", {
-                method: "POST",
-                body: formData
+            const url = await uploadImage(createPanoramaInput);
+            const sceneId = document.getElementById('create-id').value;
+            
+            const newHotspots = [];
+            document.querySelectorAll('#create-hotspots-container .hotspot-item').forEach(item => {
+                newHotspots.push({
+                    type: item.querySelector('.hs-type').value,
+                    pitch: Number(item.querySelector('.hs-pitch').value),
+                    yaw: Number(item.querySelector('.hs-yaw').value),
+                    text: item.querySelector('.hs-text').value,
+                    sceneId: item.querySelector('.hs-target').value || ''
+                });
             });
 
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.error || "Upload failed");
-            }
+            const data = {
+                title: document.getElementById('create-title').value,
+                type: 'equirectangular',
+                panorama: url,
+                sceneType: createLevel.value,
+                parentId: createParentGroup.style.display !== 'none' ? createParent.value : null,
+                hotSpots: newHotspots
+            };
 
+            await setDoc(doc(db, "scenes", sceneId), data);
+            alert(`Created Scene ${sceneId}! Note: If you want the parent scene to link here, please go Edit the parent scene.`);
+            
+            e.target.reset();
+            createHotspotsContainer.innerHTML = '';
+            createPreviewWrapper.style.display = 'none';
+            if (createViewer) { createViewer.destroy(); createViewer = null; }
+            loadScenesList();
+        } catch (err) {
+            alert("Error: " + err.message);
+        } finally {
+            submitBtn.textContent = 'Create Scene'; submitBtn.disabled = false;
+        }
+    });
+
+    // Helper
+    async function uploadImage(fileInput) {
+        if (!fileInput.files || fileInput.files.length === 0) throw new Error("No image selected");
+        const formData = new FormData();
+        formData.append("panorama", fileInput.files[0]);
+
+        try {
+            // Ensure we strictly hit the local node server running on port 3000
+            const response = await fetch("http://localhost:3000/upload", { method: "POST", body: formData });
+            if (!response.ok) throw new Error("Upload failed (Check if Node.js server is running)");
             const data = await response.json();
-            return data.url; // Relative path, e.g. "images/filename.jpg"
+            return data.url;
         } catch (error) {
-            console.error("EXPRESS UPLOAD ERROR:", error);
-            throw new Error("Local Upload Failed: " + error.message);
+            console.error("Upload API Error:", error);
+            throw new Error(`Failed to upload image. Please verify that your Node.js upload backend is running on port 3000. Setup error Details: ${error.message}`);
         }
     }
-
-    // Add Scene Helper
-    async function addScene(id, data, parentId, hotspotYaw, backText) {
-        try {
-            // Save Scene Document
-            await setDoc(doc(db, "scenes", id), data);
-
-            // Connect Parent Scene if specified
-            if (parentId) {
-                const parentRef = doc(db, "scenes", parentId);
-                await updateDoc(parentRef, {
-                    hotSpots: arrayUnion({
-                        pitch: 0,
-                        yaw: Number(hotspotYaw),
-                        type: "scene",
-                        text: `Go to ${data.title}`,
-                        sceneId: id
-                    })
-                });
-
-                // Also connect a back button automatically from child to parent
-                const childRef = doc(db, "scenes", id);
-                await updateDoc(childRef, {
-                    hotSpots: arrayUnion({
-                        pitch: 0,
-                        yaw: 180, // usually looked opposite direction behind you
-                        type: "scene",
-                        text: backText || `Back`,
-                        sceneId: parentId
-                    })
-                });
-            }
-
-            alert(`Successfully added ${data.title} and processed image!`);
-            loadDropdowns(); // Refresh dropdowns
-        } catch (error) {
-            console.error("Error saving scene:", error);
-            alert("Error: " + error.message);
-        }
-    }
-
-    // Handle Forms
-    document.getElementById("add-building-form").addEventListener("submit", async (e) => {
-        e.preventDefault();
-        try {
-            const submitBtn = e.target.querySelector('button');
-            submitBtn.textContent = "Uploading...";
-            submitBtn.disabled = true;
-
-            const panoramaUrl = await uploadImage(document.getElementById("b-panorama"));
-            const id = document.getElementById("b-id").value;
-            const data = {
-                title: document.getElementById("b-title").value,
-                type: "equirectangular",
-                panorama: panoramaUrl,
-                hotSpots: []
-            };
-            await addScene(id, data, null, null, null);
-            e.target.reset();
-        } catch (err) {
-            alert(err.message);
-        } finally {
-            const submitBtn = e.target.querySelector('button');
-            submitBtn.textContent = "Add Building";
-            submitBtn.disabled = false;
-        }
-    });
-
-    document.getElementById("add-dept-form").addEventListener("submit", async (e) => {
-        e.preventDefault();
-        const parentId = document.getElementById("d-parent").value;
-        if (!parentId) return alert("Select a parent building first!");
-
-        try {
-            const submitBtn = e.target.querySelector('button');
-            submitBtn.textContent = "Uploading...";
-            submitBtn.disabled = true;
-
-            const panoramaUrl = await uploadImage(document.getElementById("d-panorama"));
-            const id = document.getElementById("d-id").value;
-            const yaw = document.getElementById("d-yaw").value;
-            const data = {
-                title: document.getElementById("d-title").value,
-                type: "equirectangular",
-                panorama: panoramaUrl,
-                hotSpots: []
-            };
-            await addScene(id, data, parentId, yaw, "Back to Building");
-            e.target.reset();
-        } catch (err) {
-            alert(err.message);
-        } finally {
-            const submitBtn = e.target.querySelector('button');
-            submitBtn.textContent = "Add Department";
-            submitBtn.disabled = false;
-        }
-    });
-
-    document.getElementById("add-class-form").addEventListener("submit", async (e) => {
-        e.preventDefault();
-        const parentId = document.getElementById("c-parent").value;
-        if (!parentId) return alert("Select a parent department first!");
-
-        try {
-            const submitBtn = e.target.querySelector('button');
-            submitBtn.textContent = "Uploading...";
-            submitBtn.disabled = true;
-
-            const panoramaUrl = await uploadImage(document.getElementById("c-panorama"));
-            const id = document.getElementById("c-id").value;
-            const yaw = document.getElementById("c-yaw").value;
-            const data = {
-                title: document.getElementById("c-title").value,
-                type: "equirectangular",
-                panorama: panoramaUrl,
-                hotSpots: []
-            };
-            await addScene(id, data, parentId, yaw, "Back to Department");
-            e.target.reset();
-        } catch (err) {
-            alert(err.message);
-        } finally {
-            const submitBtn = e.target.querySelector('button');
-            submitBtn.textContent = "Add Classroom";
-            submitBtn.disabled = false;
-        }
-    });
 
 });
