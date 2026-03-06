@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>360 Viewer - Vision 360</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.css"/>
+    <link rel="stylesheet" href="css/style.css">
+    <!-- FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+</head>
+<body>
+    <div class="viewer-container">
+        <!-- Loading Overlay -->
+        <div id="loading-overlay">
+            <div class="loader"></div>
+            <p>Loading Panorama...</p>
+        </div>
+
+        <!-- The Pannellum Viewer -->
+        <div id="panorama"></div>
+
+        <!-- Custom UI Overlay -->
+        <div class="viewer-ui">
+            <div class="viewer-header">
+                <a href="index.html" class="back-btn">
+                    <i class="fas fa-arrow-left"></i> Back to Campus
+                </a>
+                <div class="scene-title" id="current-scene-title">Main Campus Entrance</div>
+                <div style="width: 140px;"></div> <!-- Spacer -->
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.js"></script>
+    <script src="js/viewer.js"></script>
+</body>
+</html>

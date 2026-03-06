@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vision 360 – Virtual Campus Explorer</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+</head>
+<body>
+    <header class="header">
+        <div class="container nav-container">
+            <h1 class="logo">Vision <span>360</span></h1>
+            <nav class="navbar">
+                <ul class="nav-links">
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#campuses">Campuses</a></li>
+                    <li><a href="#about">About</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <section id="home" class="hero">
+        <div class="hero-content">
+            <h2>Explore Our Campus Like Never Before</h2>
+            <p>Immerse yourself in a 360° virtual tour of our state-of-the-art facilities, departments, and labs.</p>
+            <a href="viewer.html" class="btn btn-primary">Start Virtual Tour</a>
+        </div>
+    </section>
+
+    <section id="campuses" class="selection-section container">
+        <div class="section-header">
+            <h2>Select a Campus</h2>
+            <p>Choose a campus to begin your specific journey</p>
+        </div>
+        
+        <div class="card-grid">
+            <!-- Campus Card 1 -->
+            <div class="card">
+                <div class="card-image bg-1"></div>
+                <div class="card-content">
+                    <h3>Main Campus</h3>
+                    <p>The heart of our university, housing the administrative buildings and central library.</p>
+                    <button class="btn btn-outline" onclick="window.location.href='viewer.html?scene=main'">Explore</button>
+                </div>
+            </div>
+
+            <!-- Campus Card 2 -->
+            <div class="card">
+                <div class="card-image bg-2"></div>
+                <div class="card-content">
+                    <h3>Engineering Block</h3>
+                    <p>Home to cutting-edge laboratories, workshops, and technology departments.</p>
+                    <button class="btn btn-outline" onclick="window.location.href='viewer.html?scene=engineering'">Explore</button>
+                </div>
+            </div>
+
+            <!-- Campus Card 3 -->
+            <div class="card">
+                <div class="card-image bg-3"></div>
+                <div class="card-content">
+                    <h3>Medical Sciences</h3>
+                    <p>Advanced research labs, clinical practice areas, and biological sciences.</p>
+                    <button class="btn btn-outline" onclick="window.location.href='viewer.html?scene=medical'">Explore</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <p>&copy; 2026 Vision 360 – Virtual Campus Explorer. All rights reserved.</p>
+    </footer>
+</body>
+</html>
