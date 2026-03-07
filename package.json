@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "vite build",
     "server": "node server.js",
     "firebase:host": "npx --yes firebase-tools serve",
     "dev": "start npm run server && npm run firebase:host"

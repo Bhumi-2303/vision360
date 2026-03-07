@@ -298,12 +298,35 @@ document.addEventListener("DOMContentLoaded", () => {
                 type: 'equirectangular', panorama: panoramaUrl, autoLoad: true, showControls: true
             });
 
-            document.getElementById('admin-panorama-viewer').onmousedown = function (e) {
+            const viewerContainer = document.getElementById('admin-panorama-viewer');
+            
+            // Desktop shift-click
+            viewerContainer.onmousedown = function (e) {
                 if (e.shiftKey && editViewer) {
                     const coords = editViewer.mouseEventToCoords(e);
                     buildHotspotEditorRow({ pitch: coords[0].toFixed(2), yaw: coords[1].toFixed(2), text: 'New Target' }, hotspotsContainer, editViewer);
                 }
             };
+
+            // Mobile long-press
+            let pressTimer;
+            viewerContainer.addEventListener('touchstart', (e) => {
+                if(e.touches.length === 1 && editViewer) {
+                    const touch = e.touches[0];
+                    pressTimer = setTimeout(() => {
+                        // Mock mouse event since Pannellum needs it
+                        const mockEvent = { clientX: touch.clientX, clientY: touch.clientY };
+                        try {
+                            const coords = editViewer.mouseEventToCoords(mockEvent);
+                            buildHotspotEditorRow({ pitch: coords[0].toFixed(2), yaw: coords[1].toFixed(2), text: 'New Target' }, hotspotsContainer, editViewer);
+                            if (navigator.vibrate) navigator.vibrate(50); // Haptic feedback indicating success
+                        } catch (err) {}
+                    }, 800); // 800ms long press
+                }
+            }, {passive: true});
+
+            viewerContainer.addEventListener('touchend', () => clearTimeout(pressTimer));
+            viewerContainer.addEventListener('touchmove', () => clearTimeout(pressTimer));
         }
 
         if (currentEditingScene.hotSpots) {
@@ -411,12 +434,34 @@ document.addEventListener("DOMContentLoaded", () => {
             type: 'equirectangular', panorama: objectUrl, autoLoad: true, showControls: true
         });
 
-        document.getElementById('create-panorama-viewer').onmousedown = function (ev) {
+        const createViewerContainer = document.getElementById('create-panorama-viewer');
+
+        // Desktop shift-click
+        createViewerContainer.onmousedown = function (ev) {
             if (ev.shiftKey && createViewer) {
                 const coords = createViewer.mouseEventToCoords(ev);
                 buildHotspotEditorRow({ pitch: coords[0].toFixed(2), yaw: coords[1].toFixed(2), text: 'New Target' }, createHotspotsContainer, createViewer);
             }
         };
+
+        // Mobile long-press
+        let createPressTimer;
+        createViewerContainer.addEventListener('touchstart', (e) => {
+            if(e.touches.length === 1 && createViewer) {
+                const touch = e.touches[0];
+                createPressTimer = setTimeout(() => {
+                    const mockEvent = { clientX: touch.clientX, clientY: touch.clientY };
+                    try {
+                        const coords = createViewer.mouseEventToCoords(mockEvent);
+                        buildHotspotEditorRow({ pitch: coords[0].toFixed(2), yaw: coords[1].toFixed(2), text: 'New Target' }, createHotspotsContainer, createViewer);
+                        if (navigator.vibrate) navigator.vibrate(50); // Haptic feedback
+                    } catch (err) {}
+                }, 800); // 800ms long press
+            }
+        }, {passive: true});
+
+        createViewerContainer.addEventListener('touchend', () => clearTimeout(createPressTimer));
+        createViewerContainer.addEventListener('touchmove', () => clearTimeout(createPressTimer));
     });
 
     document.getElementById('create-add-hotspot-btn').addEventListener('click', () => {
@@ -614,18 +659,28 @@ document.addEventListener("DOMContentLoaded", () => {
     // Helper
     async function uploadImage(fileInput) {
         if (!fileInput.files || fileInput.files.length === 0) throw new Error("No image selected");
+        
+        const cloudName = "dr8uswpkk"; // Updated from your screenshot!
+        const uploadPreset = "Vision360"; // Updated from your screenshot!
+
         const formData = new FormData();
-        formData.append("panorama", fileInput.files[0]);
+        formData.append("file", fileInput.files[0]);
+        formData.append("upload_preset", uploadPreset);
 
         try {
-            // Ensure we strictly hit the local node server running on port 3000
-            const response = await fetch("http://localhost:3000/upload", { method: "POST", body: formData });
-            if (!response.ok) throw new Error("Upload failed (Check if Node.js server is running)");
+            const response = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, { 
+                method: "POST", 
+                body: formData 
+            });
+            if (!response.ok) {
+                const errData = await response.json();
+                throw new Error(errData.error?.message || "Upload failed. Verify Cloudinary configuration.");
+            }
             const data = await response.json();
-            return data.url;
+            return data.secure_url;
         } catch (error) {
             console.error("Upload API Error:", error);
-            throw new Error(`Failed to upload image. Please verify that your Node.js upload backend is running on port 3000. Setup error Details: ${error.message}`);
+            throw new Error(`Failed to upload image to Cloudinary. Setup error Details: ${error.message}`);
         }
     }
 
