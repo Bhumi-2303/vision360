@@ -50,6 +50,9 @@
         </ul>
     </nav>
 
+    <!-- ─── MAIN CONTENT ─────────────────────────────── -->
+    <main>
+
     <!-- ─── HERO ─────────────────────────────────────── -->
     <section id="home" class="hero">
         <div class="hero-bg"></div>
@@ -72,9 +75,9 @@
                     <i class="fas fa-street-view"></i>
                     Start Exploring
                 </a>
-                <a href="viewer.html?tour=1" class="btn btn-outline" id="hero-tour-btn" style="border-color:rgba(0,242,254,0.4);color:var(--c-primary);">
-                    <i class="fas fa-route"></i>
-                    Virtual Tour
+                <a href="viewer.html?auto=true" class="btn btn-outline" style="background: rgba(0, 242, 254, 0.08); border: 1px solid rgba(0, 242, 254, 0.3); color: var(--text-main);">
+                    <i class="fas fa-sync-alt"></i>
+                    Auto Virtual Tour
                 </a>
                 <a href="#about" class="btn btn-outline">
                     <i class="fas fa-info-circle"></i>
@@ -111,7 +114,7 @@
         <div class="search-wrap">
             <div class="search-input-row">
                 <i class="fas fa-search"></i>
-                <input type="text" id="scene-search" placeholder="Search departments, labs, classrooms…" autocomplete="off">
+                <input type="text" id="scene-search" aria-label="Search across all scenes" placeholder="Search departments, labs, classrooms…" autocomplete="off">
                 <button class="search-clear" id="search-clear-btn" title="Clear"><i class="fas fa-times"></i></button>
             </div>
             <div class="search-suggestions" id="search-suggestions"></div>
@@ -320,6 +323,7 @@
 
         </div>
     </section>
+    </main>
 
 
 <!-- ─── FOOTER ───────────────────────────────────── -->

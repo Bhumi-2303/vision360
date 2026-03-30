@@ -23,12 +23,17 @@ Thumbs.db
 # Environment Variables
 # =========================
 .env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
 
 # =========================
-# Build folders
+# Build and Test folders
 # =========================
 dist/
 build/
+coverage/
 
 # =========================
 # Firebase cache

@@ -1,0 +1,82 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap');
+
+/* ================================================
+   DESIGN SYSTEM VARIABLES
+================================================ */
+:root {
+  --c-primary:   #00f2fe;
+  --c-secondary: #4facfe;
+  --c-accent:    #f093fb;
+  --c-danger:    #ff0844;
+  --c-success:   #00b09b;
+
+  --bg-base:     #070d1a;
+  --bg-card:     rgba(15, 25, 50, 0.65);
+  --glass-fill:  rgba(255, 255, 255, 0.04);
+  --glass-border:rgba(255, 255, 255, 0.09);
+
+  --text-main:   #f0f4ff;
+  --text-muted:  #7d8fb3;
+  --text-faint:  #3d4f6e;
+
+  --radius-sm: 10px;
+  --radius-md: 18px;
+  --radius-lg: 28px;
+
+  --shadow-glow: 0 0 40px rgba(0, 242, 254, 0.12);
+  --shadow-card: 0 20px 60px rgba(0, 0, 0, 0.5);
+  --shadow-deep: 0 35px 80px rgba(0, 0, 0, 0.7);
+
+  --transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ================================================
+   RESET
+================================================ */
+*, *::before, *::after {
+  margin: 0; padding: 0; box-sizing: border-box;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Outfit', system-ui, sans-serif;
+  background-color: var(--bg-base);
+  color: var(--text-main);
+  line-height: 1.65;
+  overflow-x: hidden;
+  min-height: 100vh;
+}
+
+/* Animated ambient background */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(ellipse 80% 60% at 10% -10%, rgba(79, 172, 254, 0.18) 0%, transparent 60%),
+    radial-gradient(ellipse 70% 50% at 90% 110%, rgba(240, 147, 251, 0.14) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 60% at 50% 50%, rgba(0, 176, 155, 0.06) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: rgba(79, 172, 254, 0.3);
+  border-radius: 6px;
+}
+::-webkit-scrollbar-thumb:hover { background: var(--c-primary); }
+
+/* ================================================
+   TYPOGRAPHY UTILITIES
+================================================ */
+.gradient-text {
+  background: linear-gradient(135deg, var(--c-primary) 0%, var(--c-secondary) 50%, var(--c-accent) 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+

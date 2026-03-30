@@ -1,5 +1,8 @@
 {
   "projects": {
-    "default": "virtualcampusexplorer"
-  }
+    "default": "vision360-d37f8",
+    "Vision360": "vision360-d37f8"
+  },
+  "targets": {},
+  "etags": {}
 }

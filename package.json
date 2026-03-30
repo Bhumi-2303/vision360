@@ -4,11 +4,14 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "vitest run --root .",
+    "test:watch": "vitest --root .",
+    "lint": "eslint .",
+    "format": "prettier --write .",
     "build": "vite build && cp -r public/images dist/images",
-    "server": "node server.js",
     "firebase:host": "npx --yes firebase-tools serve",
-    "dev": "start npm run server && npm run firebase:host"
+    "dev": "vite",
+    "start": "npx --yes concurrently \"node server.js\" \"npm run firebase:host\""
   },
   "repository": {
     "type": "git",
@@ -28,13 +31,15 @@
     "cors": "^2.8.6",
     "express": "^5.2.1",
     "firebase": "^12.10.0",
-    "firebase-admin": "^13.7.0",
     "multer": "^2.1.1",
     "pannellum": "^2.5.7"
   },
   "devDependencies": {
+    "@eslint/js": "^10.0.1",
     "eslint": "^10.0.2",
+    "globals": "^17.4.0",
     "prettier": "^3.8.1",
-    "vite": "^7.3.1"
+    "vite": "^7.3.1",
+    "vitest": "^4.1.1"
   }
 }

@@ -25,10 +25,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     let scenesData       = {};
     let autoRotateActive = false;
     let autoRotateTimer  = null;
-    let tourActive       = false;
-    let tourTimer        = null;
-    let tourIndex        = 0;
-    let tourSequence     = [];
+    let autoTourTimer    = null;
+    let isAutoNavigating = false;
+    let autoTourHistory  = [];
 
     // ── Element refs ───────────────────────────────────────────────
     const overlay    = document.getElementById("loading-overlay");
@@ -47,11 +46,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     const infoModal  = document.getElementById("hotspot-info-modal");
     const modalClose = document.getElementById("modal-close-btn");
     const infoPanel  = document.getElementById("scene-info-panel");
-    const tourOverlay= document.getElementById("tour-overlay");
-    const tourBtn    = document.getElementById("btn-start-tour");
-    const tourStop   = document.getElementById("tour-stop-btn");
-    const tourNext   = document.getElementById("tour-next-btn");
-    const tourPrev   = document.getElementById("tour-prev-btn");
 
     // ── Progress bar ───────────────────────────────────────────────
     function startProgress() {
@@ -71,7 +65,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     try {
         const urlParams    = new URLSearchParams(window.location.search);
         const initialScene = urlParams.get("scene");
-        const startTour    = urlParams.get("tour") === "1";
 
         const loadIv = startProgress();
 
@@ -89,16 +82,28 @@ document.addEventListener("DOMContentLoaded", async () => {
             return;
         }
 
-        const startId = (initialScene && scenesData[initialScene]) ? initialScene : Object.keys(scenesData)[0];
+        // Build hierarchy immediately to ensure we have a valid sequence to fall back to
+        buildOrderedHierarchy();
+
+        // Safe fallback: try URL param first, then the top of our safe hierarchy, then random key
+        let startId = (initialScene && scenesData[initialScene]) ? initialScene : null;
+        if (!startId && orderedAutoTour.length > 0) {
+            startId = orderedAutoTour[0];
+        } else if (!startId) {
+            startId = Object.keys(scenesData)[0];
+        }
 
         // ── Process scenes — attach info hotspot handlers ──────────
         const processed = {};
         Object.entries(scenesData).forEach(([id, scene]) => {
+            // Drop thoroughly invalid scenes to prevent crashes if navigated to via UI either
+            if (!scene.panorama || scene.panorama.trim() === '') return;
+
             const s = { ...scene };
             if (s.hotSpots) {
                 s.hotSpots = s.hotSpots.map(hs => {
                     if (hs.type === 'info') {
-                        return { ...hs, cssClass: 'hs-custom-info', clickHandlerFunc: (e, args) => showInfoModal(args), clickHandlerArgs: { ...hs } };
+                        return { ...hs, cssClass: 'hs-custom-info', clickHandlerFunc: '__showInfoModal', clickHandlerArgs: { ...hs } };
                     }
                     return hs;
                 });
@@ -108,7 +113,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         // ── Init Pannellum ──────────────────────────────────────────
         VIEWER = pannellum.viewer("panorama", {
-            default: { firstScene: startId, sceneFadeDuration: 1000, autoLoad: true, compass: false, showFullscreenCtrl: false, mouseZoom: true, touchZoom: true, hfov: 100 },
+            default: { firstScene: startId, sceneFadeDuration: 1000, autoLoad: true, compass: false, showFullscreenCtrl: false, showZoomCtrl: false, mouseZoom: true, touchZoom: true, hfov: 100 },
             scenes: processed
         });
 
@@ -118,7 +123,24 @@ document.addEventListener("DOMContentLoaded", async () => {
             updateSceneUI();
             updateInfoPanel();
             preloadAdjacent(VIEWER.getScene());
-            if (startTour) setTimeout(() => beginTour(), 800);
+            
+            // Auto start tour if parameter is present
+            if (urlParams.get("auto") === "true") {
+                // Determine the absolute beginning of the hierarchy to start from
+                if (orderedAutoTour.length === 0) buildOrderedHierarchy();
+                const startHierarchalId = orderedAutoTour[0];
+                
+                // If we aren't already on the first scene, switch to it before starting rotation
+                if (VIEWER.getScene() !== startHierarchalId && startHierarchalId) {
+                    autoRotateActive = true; // Set flag so scenechange knows it's an auto tour
+                    isAutoNavigating = true;
+                    if (autoBtn) { autoBtn.classList.add('active'); autoBtn.setAttribute('data-tip','Stop Auto Tour'); }
+                    VIEWER.loadScene(startHierarchalId);
+                    // The 'scenechange' event will re-start the auto rotate sequence
+                } else {
+                    startAutoRotate();
+                }
+            }
         });
 
         VIEWER.on("scenechange", (id) => {
@@ -126,11 +148,27 @@ document.addEventListener("DOMContentLoaded", async () => {
             updateInfoPanel();
             refreshPanelHighlight();
             preloadAdjacent(id);
-            stopAutoRotate();
+            if (!isAutoNavigating) {
+                stopAutoRotate();
+            } else {
+                isAutoNavigating = false;
+                
+                // Only loop if auto rotate is actually active
+                if (autoRotateActive) {
+                    clearTimeout(autoTourTimer);
+                    
+                    // We also need to clear and re-activate the auto rotation interval 
+                    // so it starts rotating the new scene immediately
+                    clearInterval(autoRotateTimer);
+                    autoRotateTimer = setInterval(() => { if (VIEWER) VIEWER.setYaw(VIEWER.getYaw() + 0.25); }, 16);
+                    
+                    autoTourTimer = setTimeout(autoNavigateHierarchy, 10000);
+                }
+            }
         });
 
-        document.getElementById("panorama").addEventListener("mousedown",  () => { if (!tourActive) stopAutoRotate(); });
-        document.getElementById("panorama").addEventListener("touchstart", () => { if (!tourActive) stopAutoRotate(); });
+        document.getElementById("panorama").addEventListener("mousedown",  () => stopAutoRotate());
+        document.getElementById("panorama").addEventListener("touchstart", () => stopAutoRotate());
 
         window.__v360viewer = VIEWER;
 
@@ -208,6 +246,9 @@ document.addEventListener("DOMContentLoaded", async () => {
             infoModal.classList.add('open');
             stopAutoRotate();
         }
+        
+        // Export to window so Pannellum's string-based clickHandlerFunc can find it
+        window.__showInfoModal = function(e, args) { showInfoModal(args); };
 
         modalClose && modalClose.addEventListener('click', () => infoModal && infoModal.classList.remove('open'));
         infoModal  && infoModal.addEventListener('click', (e) => { if (e.target === infoModal) infoModal.classList.remove('open'); });
@@ -266,97 +307,104 @@ document.addEventListener("DOMContentLoaded", async () => {
         zoBtn    && zoBtn.addEventListener('click',    () => VIEWER.setHfov(Math.min(VIEWER.getHfov() + 15, 120)));
         resetBtn && resetBtn.addEventListener('click', () => { VIEWER.setHfov(100); VIEWER.setPitch(0); VIEWER.setYaw(0); });
 
-        // ── Auto-rotate ─────────────────────────────────────────────
+        let orderedAutoTour = [];
+
+        function buildOrderedHierarchy() {
+            orderedAutoTour = [];
+            const typeWeight = { building: 1, department: 2, classroom: 3, lab: 4 };
+
+            // Only consider scenes that actually have an image uploaded
+            const validScenes = Object.values(scenesData).filter(s => s.panorama && s.panorama.trim() !== '');
+
+            // Find root scenes (buildings or those without parents)
+            let roots = validScenes.filter(s => s.sceneType === 'building' || !s.parentId);
+            
+            // Sort roots by strict semantic weight
+            roots.sort((a, b) => {
+                const aTitle = (a.title || '').toLowerCase();
+                const bTitle = (b.title || '').toLowerCase();
+                const aIsMain = aTitle.includes('campus') || aTitle.includes('main');
+                const bIsMain = bTitle.includes('campus') || bTitle.includes('main');
+                if (aIsMain && !bIsMain) return -1;
+                if (!aIsMain && bIsMain) return 1;
+
+                const weightA = typeWeight[a.sceneType] || 5;
+                const weightB = typeWeight[b.sceneType] || 5;
+                if (weightA !== weightB) return weightA - weightB;
+
+                return (a.title || '').localeCompare(b.title || '');
+            });
+            
+            // DFS to add children
+            function addDependencies(parentId) {
+                let children = validScenes.filter(s => s.parentId === parentId);
+                
+                // Sort children by hierarchy weight
+                children.sort((a, b) => {
+                    const weightA = typeWeight[a.sceneType] || 5;
+                    const weightB = typeWeight[b.sceneType] || 5;
+                    if (weightA !== weightB) return weightA - weightB;
+                    return (a.title || '').localeCompare(b.title || '');
+                });
+
+                children.forEach(c => {
+                    if (!orderedAutoTour.includes(c.id)) {
+                        orderedAutoTour.push(c.id);
+                        addDependencies(c.id); // Add grandchildren
+                    }
+                });
+            }
+
+            roots.forEach(root => {
+                if (!orderedAutoTour.includes(root.id)) {
+                    orderedAutoTour.push(root.id);
+                    addDependencies(root.id);
+                }
+            });
+
+            // Append any disconnected scenes just in case, sorted by hierarchy too
+            let leftovers = validScenes.filter(s => !orderedAutoTour.includes(s.id));
+            leftovers.sort((a, b) => {
+                const weightA = typeWeight[a.sceneType] || 5;
+                const weightB = typeWeight[b.sceneType] || 5;
+                if (weightA !== weightB) return weightA - weightB;
+                return (a.title || '').localeCompare(b.title || '');
+            });
+            leftovers.forEach(s => orderedAutoTour.push(s.id));
+        }
+
+        // ── Auto-rotate & Auto-Tour ─────────────────────────────────
+        function autoNavigateHierarchy() {
+            if (!autoRotateActive || !VIEWER) return;
+            const curId = VIEWER.getScene();
+            
+            if (orderedAutoTour.length === 0) buildOrderedHierarchy();
+
+            let nextIdx = orderedAutoTour.indexOf(curId) + 1;
+            if (nextIdx >= orderedAutoTour.length || nextIdx < 0) {
+                nextIdx = 0; // Loop back to the beginning
+            }
+
+            isAutoNavigating = true;
+            VIEWER.loadScene(orderedAutoTour[nextIdx]);
+        }
+
         function startAutoRotate() {
             if (autoRotateActive) return;
             autoRotateActive = true;
-            if (autoBtn) { autoBtn.classList.add('active'); autoBtn.setAttribute('data-tip','Stop Rotation'); }
+            autoTourHistory = [];
+            if (autoBtn) { autoBtn.classList.add('active'); autoBtn.setAttribute('data-tip','Stop Auto Tour'); }
             autoRotateTimer = setInterval(() => { if (VIEWER) VIEWER.setYaw(VIEWER.getYaw() + 0.25); }, 16);
+            autoTourTimer = setTimeout(autoNavigateHierarchy, 10000);
         }
         function stopAutoRotate() {
             if (!autoRotateActive) return;
             autoRotateActive = false;
             clearInterval(autoRotateTimer);
-            if (autoBtn) { autoBtn.classList.remove('active'); autoBtn.setAttribute('data-tip','Auto-Rotate (A)'); }
+            clearTimeout(autoTourTimer);
+            if (autoBtn) { autoBtn.classList.remove('active'); autoBtn.setAttribute('data-tip','Auto-Tour (A)'); }
         }
         autoBtn && autoBtn.addEventListener('click', () => autoRotateActive ? stopAutoRotate() : startAutoRotate());
-
-        // ── GUIDED TOUR ─────────────────────────────────────────────
-        function buildTourSequence() {
-            const typeOrder = { building: 1, department: 2, classroom: 3, lab: 4 };
-            return Object.entries(scenesData)
-                .sort(([,a],[,b]) => (typeOrder[a.sceneType]||5) - (typeOrder[b.sceneType]||5) || (a.title||'').localeCompare(b.title||''))
-                .map(([id]) => id);
-        }
-
-        const TOUR_DURATION = 12; // seconds per stop
-
-        function beginTour() {
-            tourSequence = buildTourSequence();
-            if (tourSequence.length === 0) return;
-            tourActive = true;
-            tourIndex  = 0;
-            if (tourOverlay) tourOverlay.classList.add('open');
-            if (tourBtn) tourBtn.style.display = 'none';
-            startAutoRotate();
-            loadTourStop(tourIndex);
-        }
-
-        function loadTourStop(idx) {
-            clearInterval(tourTimer);
-            const id = tourSequence[idx];
-            if (!id) { endTour(); return; }
-
-            VIEWER.loadScene(id);
-
-            // Update tour overlay content
-            const scene = scenesData[id];
-            if (tourOverlay) {
-                tourOverlay.querySelector('#tour-scene-name').textContent  = scene?.title || 'Scene';
-                tourOverlay.querySelector('#tour-scene-type').textContent  = `${typeIcons[scene?.sceneType]||'🌐'} ${typeLabels[scene?.sceneType]||'Scene'}`;
-                tourOverlay.querySelector('#tour-scene-desc').textContent  = scene?.description || 'Explore this location in 360°.';
-                tourOverlay.querySelector('#tour-stop-num').textContent    = `Stop ${idx + 1} of ${tourSequence.length}`;
-                // Progress dots
-                const dots = tourOverlay.querySelector('#tour-dots');
-                if (dots) {
-                    dots.innerHTML = tourSequence.map((_, i) =>
-                        `<div class="tour-dot ${i === idx ? 'active' : i < idx ? 'done' : ''}"></div>`
-                    ).join('');
-                }
-            }
-
-            // Countdown
-            let remaining = TOUR_DURATION;
-            const countEl = tourOverlay?.querySelector('#tour-countdown');
-            if (countEl) countEl.textContent = remaining;
-
-            tourTimer = setInterval(() => {
-                remaining--;
-                if (countEl) countEl.textContent = remaining;
-                if (remaining <= 0) {
-                    clearInterval(tourTimer);
-                    if (tourIndex < tourSequence.length - 1) {
-                        tourIndex++;
-                        loadTourStop(tourIndex);
-                    } else {
-                        endTour();
-                    }
-                }
-            }, 1000);
-        }
-
-        function endTour() {
-            tourActive = false;
-            clearInterval(tourTimer);
-            if (tourOverlay) tourOverlay.classList.remove('open');
-            if (tourBtn) tourBtn.style.display = '';
-            stopAutoRotate();
-        }
-
-        tourBtn  && tourBtn.addEventListener('click',  () => beginTour());
-        tourStop && tourStop.addEventListener('click',  () => endTour());
-        tourNext && tourNext.addEventListener('click',  () => { if (tourIndex < tourSequence.length - 1) { tourIndex++; loadTourStop(tourIndex); } else endTour(); });
-        tourPrev && tourPrev.addEventListener('click',  () => { if (tourIndex > 0) { tourIndex--; loadTourStop(tourIndex); } });
 
         // ── Keyboard ────────────────────────────────────────────────
         document.addEventListener('keydown', (e) => {
@@ -373,9 +421,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 case 'a': case 'A': autoBtn  && autoBtn.click();  break;
                 case 's': case 'S': toggleBtn && toggleBtn.click(); break;
                 case 'i': case 'I': infoPanelBtn && infoPanelBtn.click(); break;
-                case 't': case 'T': if (!tourActive) beginTour(); else endTour(); break;
                 case 'Escape':
-                    endTour();
                     panel   && panel.classList.remove('open');
                     infoPanel && infoPanel.classList.remove('open');
                     infoModal && infoModal.classList.remove('open');
