@@ -213,6 +213,7 @@
             <button class="shortcut-btn" id="btn-zoom-in"     data-tip="Zoom In (+)"><i class="fas fa-search-plus"></i></button>
             <button class="shortcut-btn" id="btn-zoom-out"    data-tip="Zoom Out (-)"><i class="fas fa-search-minus"></i></button>
             <button class="shortcut-btn" id="btn-reset"       data-tip="Reset View (R)"><i class="fas fa-compress-arrows-alt"></i></button>
+            <button class="shortcut-btn" id="btn-ai-voice"    data-tip="Voice Guide (V)"><i class="fas fa-volume-up"></i></button>
         </div>
 
         <!-- ── Floating Scene Info Panel (left side) ── -->
@@ -266,5 +267,11 @@
 
     <script src="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.js"></script>
     <script type="module" src="js/viewer.js"></script>
+    <script type="module">
+        import { AIAssistant } from "./js/ai-assistant.js";
+        document.addEventListener("DOMContentLoaded", () => {
+            new AIAssistant();
+        });
+    </script>
 </body>
 </html>

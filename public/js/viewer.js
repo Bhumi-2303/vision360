@@ -28,6 +28,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     let autoTourTimer    = null;
     let isAutoNavigating = false;
     let autoTourHistory  = [];
+    let orderedAutoTour  = [];
+    let aiVoiceEnabled   = false;
+    let currentSpeech    = null;
 
     // ── Element refs ───────────────────────────────────────────────
     const overlay    = document.getElementById("loading-overlay");
@@ -46,6 +49,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     const infoModal  = document.getElementById("hotspot-info-modal");
     const modalClose = document.getElementById("modal-close-btn");
     const infoPanel  = document.getElementById("scene-info-panel");
+    const aiVoiceBtn = document.getElementById("btn-ai-voice");
 
     // ── Progress bar ───────────────────────────────────────────────
     function startProgress() {
@@ -60,6 +64,49 @@ document.addEventListener("DOMContentLoaded", async () => {
         clearInterval(iv);
         progressBar.style.width = '100%';
         setTimeout(() => { progressBar.style.opacity = '0'; }, 400);
+    }
+
+    // ── AI Voice Guide ─────────────────────────────────────────────
+    function stopAIVoice() {
+        if (window.speechSynthesis) window.speechSynthesis.cancel();
+    }
+    function playAIVoice(text) {
+        stopAIVoice();
+        if (!aiVoiceEnabled || !window.speechSynthesis) return;
+        currentSpeech = new SpeechSynthesisUtterance(text);
+        currentSpeech.rate = 1.0;
+        currentSpeech.pitch = 1.1;
+        const voices = window.speechSynthesis.getVoices();
+        const niceVoice = voices.find(v => v.name.includes("Google") || v.name.includes("Natural"));
+        if (niceVoice) currentSpeech.voice = niceVoice;
+        window.speechSynthesis.speak(currentSpeech);
+    }
+    function speakCurrentScene() {
+        if (!aiVoiceEnabled) return;
+        const id = VIEWER.getScene();
+        const scene = scenesData[id];
+        if (!scene) return;
+        let text = `Welcome to \${scene.title}.`;
+        if (scene.description) text += ` \${scene.description}`;
+        else text += ` This is a \${typeLabels[scene.sceneType]} space.`;
+        playAIVoice(text);
+    }
+
+    if (aiVoiceBtn) {
+        aiVoiceBtn.addEventListener('click', () => {
+            aiVoiceEnabled = !aiVoiceEnabled;
+            if (aiVoiceEnabled) {
+                aiVoiceBtn.classList.add('active');
+                aiVoiceBtn.setAttribute('data-tip', 'Voice Guide: ON (V)');
+                aiVoiceBtn.style.color = '#f093fb';
+                speakCurrentScene();
+            } else {
+                aiVoiceBtn.classList.remove('active');
+                aiVoiceBtn.setAttribute('data-tip', 'Voice Guide: OFF (V)');
+                aiVoiceBtn.style.color = '';
+                stopAIVoice();
+            }
+        });
     }
 
     try {
@@ -100,6 +147,9 @@ document.addEventListener("DOMContentLoaded", async () => {
             if (!scene.panorama || scene.panorama.trim() === '') return;
 
             const s = { ...scene };
+            if (s.initialPitch !== undefined) s.pitch = s.initialPitch;
+            if (s.initialYaw !== undefined) s.yaw = s.initialYaw;
+            
             if (s.hotSpots) {
                 s.hotSpots = s.hotSpots.map(hs => {
                     if (hs.type === 'info') {
@@ -165,6 +215,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                     autoTourTimer = setTimeout(autoNavigateHierarchy, 10000);
                 }
             }
+            speakCurrentScene();
         });
 
         document.getElementById("panorama").addEventListener("mousedown",  () => stopAutoRotate());
@@ -245,6 +296,10 @@ document.addEventListener("DOMContentLoaded", async () => {
             else imgWrap.style.display = 'none';
             infoModal.classList.add('open');
             stopAutoRotate();
+            
+            if (aiVoiceEnabled && hs.description) {
+                playAIVoice(`${hs.text || 'Information'}: ${hs.description}`);
+            }
         }
         
         // Export to window so Pannellum's string-based clickHandlerFunc can find it
@@ -306,8 +361,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         ziBtn    && ziBtn.addEventListener('click',    () => VIEWER.setHfov(Math.max(VIEWER.getHfov() - 15, 30)));
         zoBtn    && zoBtn.addEventListener('click',    () => VIEWER.setHfov(Math.min(VIEWER.getHfov() + 15, 120)));
         resetBtn && resetBtn.addEventListener('click', () => { VIEWER.setHfov(100); VIEWER.setPitch(0); VIEWER.setYaw(0); });
-
-        let orderedAutoTour = [];
 
         function buildOrderedHierarchy() {
             orderedAutoTour = [];
@@ -421,6 +474,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 case 'a': case 'A': autoBtn  && autoBtn.click();  break;
                 case 's': case 'S': toggleBtn && toggleBtn.click(); break;
                 case 'i': case 'I': infoPanelBtn && infoPanelBtn.click(); break;
+                case 'v': case 'V': aiVoiceBtn && aiVoiceBtn.click(); break;
                 case 'Escape':
                     panel   && panel.classList.remove('open');
                     infoPanel && infoPanel.classList.remove('open');

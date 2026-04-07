@@ -2,13 +2,25 @@
 
 A 360° virtual campus tour platform built with Pannellum.js and Firebase.
 
-## Features
-- 360° campus exploration
-- Interactive scene hotspot navigation
-- Dynamic scene management via Admin Dashboard
-- Cloud storage for panoramas
+## 🚀 For Users
 
-## Setup & Installation
+Vision360 allows you to explore the campus virtually using high-quality 360° panoramas.
+
+### Features
+- **360° Campus Exploration:** Look around and experience the campus dynamically.
+- **Interactive Navigation:** Click on hotspots to seamlessly transition between different locations, buildings, and rooms.
+- **Auto Virtual Tour:** Sit back and let the system guide you circularly through the campus automatically.
+
+### How to Use
+Simply navigate to the deployed web application link from the maintainer and start clicking around! You can use your mouse or touchscreen to pan around scenes, and click on floating markers to travel to new spots. No installation is required.
+
+---
+
+## 💻 For Developers
+
+Welcome! If you want to contribute, test, or build upon Vision360, follow the guide below to set up your local development environment.
+
+### Setup & Installation
 
 1. **Clone the repository:**
    ```bash
@@ -17,36 +29,48 @@ A 360° virtual campus tour platform built with Pannellum.js and Firebase.
    ```
 
 2. **Install Dependencies:**
+   Ensure you have Node.js installed, then run:
    ```bash
    npm install
    ```
 
 3. **Configure Environment:**
-   Ensure you have your Firebase configuration. You can run the app locally using `.env` variables if needed, though Firebase is primarily initialized using static config.
+   Ensure you have your Firebase configuration set up if you intend to interact with the database. The project uses Firebase for hosting, Firestore for database management, and Firebase Storage/Cloudinary for 360 images.
 
-4. **Run Development Server:**
-   ```bash
-   npm run dev
-   ```
-   This will start both the local node server and the Firebase hosting emulator.
+### Running the Project for Development
 
-## Scripts
-- `npm run dev` - Starts development servers.
-- `npm run build` - Builds the application using Vite.
-- `npm run test` - Runs the test suite via Vitest.
-- `npm run lint` - Runs ESLint to check for stylistic and programmatic errors.
+**To start the local development server (Recommended for UI & Frontend Work):**
+```bash
+npm run dev
+```
+> **Note:** This command starts the Vite development server with Hot Module Replacement (HMR) for the fastest development experience.
+
+**Alternative - Running the full stack (Node.js Server + Firebase Hosting Emulator):**
+```bash
+npm start
+```
+> **Note:** This will start both the local node server (`server.js`) and the Firebase hosting emulator concurrently.
+
+### Available Scripts
+
+- `npm run dev` - Starts the Vite development server.
+- `npm start` - Runs the backend `server.js` and the Firebase hosting emulator.
+- `npm run build` - Builds the application for production into the `dist/` directory.
+- `npm run firebase:host` - Runs just the Firebase Hosting emulator.
+- `npm run test` - Runs the Vitest test suite.
+- `npm run lint` - Runs ESLint to check for syntax and stylistic errors.
 - `npm run format` - Runs Prettier to auto-format the codebase.
 
-## Project Structure
-- `public/`: Contains all static assets, HTML, JavaScript, and CSS.
+### Project Structure
+- `public/`: Contains all static assets, HTML, entry JavaScript files, and CSS.
   - `admin/`: Admin dashboard files.
-  - `css/`: Modular CSS files.
-  - `js/`: Modular JavaScript files.
-- `dist/`: Generated build output.
+  - `css/`: Modular CSS styling base.
+  - `js/`: Modular JavaScript logic pieces.
+- `dist/`: Generated optimized build output (created after running `npm run build`).
 - `tests/`: Unit and integration test suites.
+- `server.js`: Express server primarily used for backend integrations or legacy APIs.
 
-## Contributing
-See [CONTRIBUTING.md](CONTRIBUTING.md) for contribution guidelines.
+### Additional Documentation
 
-## Code of Conduct
-Please adhere to our [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md).
+- **Contributing:** See [CONTRIBUTING.md](CONTRIBUTING.md) for instructions on how to submit Pull Requests.
+- **Code of Conduct:** Please adhere to our [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) when interacting in this community.

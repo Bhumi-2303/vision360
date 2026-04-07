@@ -286,6 +286,12 @@ document.addEventListener("DOMContentLoaded", () => {
         const editDesc = document.getElementById('edit-description');
         if (editDesc) editDesc.value = currentEditingScene.description || '';
 
+        const editPitch = document.getElementById('edit-initial-pitch');
+        if (editPitch) editPitch.value = currentEditingScene.initialPitch || 0;
+
+        const editYaw = document.getElementById('edit-initial-yaw');
+        if (editYaw) editYaw.value = currentEditingScene.initialYaw || 0;
+
         const hotspotsContainer = document.getElementById('edit-hotspots-container');
         hotspotsContainer.innerHTML = '';
 
@@ -350,7 +356,9 @@ document.addEventListener("DOMContentLoaded", () => {
             const sceneId = document.getElementById('edit-scene-id').value;
             const updates = {
                 title:       document.getElementById('edit-title').value,
-                description: document.getElementById('edit-description')?.value || ''
+                description: document.getElementById('edit-description')?.value || '',
+                initialPitch: Number(document.getElementById('edit-initial-pitch').value) || 0,
+                initialYaw:   Number(document.getElementById('edit-initial-yaw').value) || 0
             };
 
             const fileInput = document.getElementById('edit-panorama');
@@ -497,6 +505,8 @@ document.addEventListener("DOMContentLoaded", () => {
             const data = {
                 title:       document.getElementById('create-title').value,
                 description: document.getElementById('create-description')?.value || '',
+                initialPitch: Number(document.getElementById('create-initial-pitch').value) || 0,
+                initialYaw:   Number(document.getElementById('create-initial-yaw').value) || 0,
                 type: 'equirectangular',
                 panorama: url,
                 sceneType: createLevel.value,

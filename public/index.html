@@ -335,6 +335,12 @@
     </footer>
 
     <script type="module" src="js/main.js"></script>
+    <script type="module">
+        import { AIAssistant } from "./js/ai-assistant.js";
+        document.addEventListener("DOMContentLoaded", () => {
+            new AIAssistant();
+        });
+    </script>
     <script>
         // Hamburger toggle
         const btn    = document.getElementById('hamburger-btn');
