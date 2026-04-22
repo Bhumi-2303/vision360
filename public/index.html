@@ -18,14 +18,16 @@
     <!-- ─── HEADER ──────────────────────────────────── -->
     <header class="header" id="home">
         <div class="nav-container">
-            <h1 class="logo">Vision <span>360</span></h1>
+            <a href="#home" class="logo" aria-label="Vision 360 Home">
+                <img src="assets/logo.png" alt="Vision 360 Logo" />
+            </a>
             <nav class="navbar" aria-label="Primary navigation">
                 <ul class="nav-links">
                     <li><a href="#home">Home</a></li>
                     <li><a href="#campuses">Explore</a></li>
                     <li><a href="#about">Learn More</a></li>
                     <li>
-                        <a href="admin/login.html" class="btn btn-primary" style="padding:9px 22px; font-size:0.9rem; border-radius:50px;">
+                        <a href="admin/login.html" class="btn btn-primary admin-pill-btn">
                             <i class="fas fa-shield-alt"></i> Admin
                         </a>
                     </li>
@@ -54,11 +56,10 @@
     <main>
 
     <!-- ─── HERO ─────────────────────────────────────── -->
-    <section id="home" class="hero">
-        <div class="hero-bg"></div>
+    <section id="home" class="hero motion-fade-up">
         <div class="hero-content">
             <div class="hero-eyebrow">
-                <i class="fas fa-circle" style="font-size:0.5rem; color: var(--c-success);"></i>
+                <i class="fas fa-circle hero-status-dot"></i>
                 Live Virtual Tours Available
             </div>
 
@@ -66,22 +67,22 @@
                 Explore Campus<br><em>Like Never Before</em>
             </h2>
 
-            <p>
+            <p class="hero-tagline">
+                Explore &middot; Experience &middot; Connect
+            </p>
+
+            <p class="hero-desc">
                 Step inside our campus with immersive 360° panoramic tours. Navigate halls, departments and classrooms from anywhere in the world.
             </p>
 
             <div class="hero-ctas">
-                <a href="#campuses" class="btn btn-primary" id="hero-start-btn">
+                <a href="#campuses" class="btn btn-primary btn-hero-pill" id="hero-start-btn">
                     <i class="fas fa-street-view"></i>
-                    Start Exploring
+                    Explore Our Campus
                 </a>
-                <a href="viewer.html?auto=true" class="btn btn-outline" style="background: rgba(0, 242, 254, 0.08); border: 1px solid rgba(0, 242, 254, 0.3); color: var(--text-main);">
+                <a href="viewer.html?auto=true" class="btn btn-outline hero-auto-tour-btn">
                     <i class="fas fa-sync-alt"></i>
                     Auto Virtual Tour
-                </a>
-                <a href="#about" class="btn btn-outline">
-                    <i class="fas fa-info-circle"></i>
-                    Learn More
                 </a>
             </div>
 
@@ -103,8 +104,9 @@
     </section>
 
     <!-- ─── CAMPUS EXPLORE ───────────────────────────── -->
-    <section id="campuses" class="selection-section">
-        <div class="section-header" style="margin-bottom:36px;">
+    <!-- ─── CAMPUS EXPLORE ───────────────────────────── -->
+    <section id="campuses" class="selection-section motion-fade-up">
+        <div class="section-header section-header-compact">
             <span class="section-label"><i class="fas fa-map-marker-alt"></i>&nbsp; Locations</span>
             <h2>Choose a Campus Area</h2>
             <p>Select a building or area to begin your immersive 360° walkthrough.</p>
@@ -147,60 +149,61 @@
 
 
     <!-- ─── ABOUT / LEARN MORE ──────────────────────── -->
-    <section id="about" style="padding: 100px 24px; position: relative; overflow: hidden;">
+    <!-- ─── ABOUT / LEARN MORE ──────────────────────── -->
+    <section id="about" class="about-section motion-fade-up">
 
         <!-- Background glow -->
-        <div style="position:absolute; inset:0; pointer-events:none; background: radial-gradient(ellipse 80% 60% at 50% 100%, rgba(0,242,254,0.06) 0%, transparent 70%);"></div>
+        <div class="about-bg-glow"></div>
 
-        <div style="max-width:1100px; margin:0 auto; position:relative; z-index:1;">
+        <div class="about-shell">
 
             <!-- Section header -->
-            <div class="section-header" style="margin-bottom:64px;">
+            <div class="section-header about-header">
                 <span class="section-label"><i class="fas fa-info-circle"></i>&nbsp; About Vision 360</span>
                 <h2>Everything You Need to Know</h2>
                 <p>Vision 360 is an immersive virtual campus explorer that lets anyone navigate the entire campus — from the main entrance to individual labs — without stepping foot on site.</p>
             </div>
 
             <!-- How It Works -- 3 steps -->
-            <div style="margin-bottom:72px;">
-                <h3 style="text-align:center; font-size:1.05rem; font-weight:600; color:var(--text-muted); text-transform:uppercase; letter-spacing:1.5px; margin-bottom:40px;">How It Works</h3>
-                <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(260px,1fr)); gap:28px;">
+            <div class="about-block">
+                <h3 class="about-subtitle">How It Works</h3>
+                <div class="about-grid-3">
 
                     <!-- Step 1 -->
-                    <div style="background:rgba(15,25,50,0.5); border:1px solid var(--glass-border); border-radius:var(--radius-md); padding:32px 28px; text-align:center; backdrop-filter:blur(14px); transition:var(--transition);" onmouseenter="this.style.borderColor='rgba(0,242,254,0.25)'" onmouseleave="this.style.borderColor='var(--glass-border)'">
-                        <div style="width:56px;height:56px;background:linear-gradient(135deg,var(--c-primary),var(--c-secondary));border-radius:16px;display:grid;place-items:center;font-size:1.4rem;color:#04111f;margin:0 auto 20px;box-shadow:0 10px 24px rgba(0,242,254,0.25);">
+                    <div class="glass-feature-card">
+                        <div class="feature-icon feature-icon-step1">
                             <i class="fas fa-mouse-pointer"></i>
                         </div>
-                        <div style="font-size:0.75rem;color:var(--c-primary);font-weight:700;letter-spacing:1px;margin-bottom:8px;">STEP 01</div>
-                        <h4 style="font-size:1.1rem;font-weight:700;color:var(--text-main);margin-bottom:10px;">Choose a Location</h4>
-                        <p style="color:var(--text-muted);font-size:0.92rem;line-height:1.65;">Pick any scene from the home page — Main Campus, a department, classroom, or lab. Each card shows the scene type and how many hotspots it has.</p>
+                        <div class="step-tag step1">STEP 01</div>
+                        <h4 class="feature-title">Choose a Location</h4>
+                        <p class="feature-copy">Pick any scene from the home page — Main Campus, a department, classroom, or lab. Each card shows the scene type and how many hotspots it has.</p>
                     </div>
 
                     <!-- Step 2 -->
-                    <div style="background:rgba(15,25,50,0.5); border:1px solid var(--glass-border); border-radius:var(--radius-md); padding:32px 28px; text-align:center; backdrop-filter:blur(14px); transition:var(--transition);" onmouseenter="this.style.borderColor='rgba(79,172,254,0.25)'" onmouseleave="this.style.borderColor='var(--glass-border)'">
-                        <div style="width:56px;height:56px;background:linear-gradient(135deg,var(--c-secondary),#a78bfa);border-radius:16px;display:grid;place-items:center;font-size:1.4rem;color:#04111f;margin:0 auto 20px;box-shadow:0 10px 24px rgba(79,172,254,0.25);">
+                    <div class="glass-feature-card">
+                        <div class="feature-icon feature-icon-step2">
                             <i class="fas fa-street-view"></i>
                         </div>
-                        <div style="font-size:0.75rem;color:var(--c-secondary);font-weight:700;letter-spacing:1px;margin-bottom:8px;">STEP 02</div>
-                        <h4 style="font-size:1.1rem;font-weight:700;color:var(--text-main);margin-bottom:10px;">Explore in 360°</h4>
-                        <p style="color:var(--text-muted);font-size:0.92rem;line-height:1.65;">Drag to look around in any direction. Use pinch-to-zoom on mobile or your scroll wheel on desktop for a fully immersive panoramic experience.</p>
+                        <div class="step-tag step2">STEP 02</div>
+                        <h4 class="feature-title">Explore in 360°</h4>
+                        <p class="feature-copy">Drag to look around in any direction. Use pinch-to-zoom on mobile or your scroll wheel on desktop for a fully immersive panoramic experience.</p>
                     </div>
 
                     <!-- Step 3 -->
-                    <div style="background:rgba(15,25,50,0.5); border:1px solid var(--glass-border); border-radius:var(--radius-md); padding:32px 28px; text-align:center; backdrop-filter:blur(14px); transition:var(--transition);" onmouseenter="this.style.borderColor='rgba(240,147,251,0.25)'" onmouseleave="this.style.borderColor='var(--glass-border)'">
-                        <div style="width:56px;height:56px;background:linear-gradient(135deg,#f093fb,#f5576c);border-radius:16px;display:grid;place-items:center;font-size:1.4rem;color:#fff;margin:0 auto 20px;box-shadow:0 10px 24px rgba(240,147,251,0.25);">
+                    <div class="glass-feature-card">
+                        <div class="feature-icon feature-icon-step3">
                             <i class="fas fa-map-signs"></i>
                         </div>
-                        <div style="font-size:0.75rem;color:#f093fb;font-weight:700;letter-spacing:1px;margin-bottom:8px;">STEP 03</div>
-                        <h4 style="font-size:1.1rem;font-weight:700;color:var(--text-main);margin-bottom:10px;">Navigate via Hotspots</h4>
-                        <p style="color:var(--text-muted);font-size:0.92rem;line-height:1.65;">Click glowing hotspot markers inside the viewer to instantly jump to linked scenes — moving from the main campus into departments, then into classrooms and labs.</p>
+                        <div class="step-tag step3">STEP 03</div>
+                        <h4 class="feature-title">Navigate via Hotspots</h4>
+                        <p class="feature-copy">Click glowing hotspot markers inside the viewer to instantly jump to linked scenes — moving from the main campus into departments, then into classrooms and labs.</p>
                     </div>
 
                 </div>
             </div>
 
             <!-- Campus Hierarchy -->
-            <div style="margin-bottom:72px; background:rgba(15,25,50,0.4); border:1px solid var(--glass-border); border-radius:var(--radius-lg); padding:40px 36px; backdrop-filter:blur(16px);">
+            <div style="margin-bottom:72px; background:rgba(255,255,255,0.78); border:1px solid rgba(255,255,255,0.92); border-radius:var(--radius-lg); padding:40px 36px; backdrop-filter:blur(18px); box-shadow: var(--shadow-neu);">
                 <h3 style="font-size:1.2rem;font-weight:700;color:var(--text-main);margin-bottom:6px; display:flex; align-items:center; gap:10px;">
                     <i class="fas fa-sitemap" style="color:var(--c-primary);"></i> Campus Navigation Hierarchy
                 </h3>
@@ -210,29 +213,29 @@
                 <div style="display:flex; flex-wrap:wrap; align-items:center; gap:12px;">
 
                     <!-- Level 1: Main Campus -->
-                    <div style="flex:0 0 auto; min-width:150px; background:linear-gradient(135deg,rgba(0,242,254,0.12),rgba(0,242,254,0.04)); border:1px solid rgba(0,242,254,0.3); border-radius:var(--radius-sm); padding:18px 20px;">
+                    <div style="flex:0 0 auto; min-width:150px; background:linear-gradient(135deg,rgba(79,70,229,0.12),rgba(79,70,229,0.04)); border:1px solid rgba(79,70,229,0.28); border-radius:var(--radius-sm); padding:18px 20px;">
                         <div style="font-size:1.6rem; margin-bottom:6px;">🏫</div>
                         <div style="font-size:0.7rem; color:var(--c-primary); font-weight:700; letter-spacing:1px; margin-bottom:4px;">LEVEL 1</div>
                         <div style="color:var(--text-main); font-weight:700;">Main Campus</div>
                         <div style="color:var(--text-muted); font-size:0.82rem; margin-top:4px;">Overall entry point</div>
                     </div>
 
-                    <i class="fas fa-arrow-right" style="color:var(--c-primary); opacity:0.5; font-size:1.1rem; flex-shrink:0;"></i>
+                    <i class="fas fa-arrow-right" style="color:var(--c-primary); opacity:0.42; font-size:1.1rem; flex-shrink:0;"></i>
 
                     <!-- Level 2: Department -->
-                    <div style="flex:0 0 auto; min-width:150px; background:linear-gradient(135deg,rgba(79,172,254,0.12),rgba(79,172,254,0.04)); border:1px solid rgba(79,172,254,0.3); border-radius:var(--radius-sm); padding:18px 20px;">
+                    <div style="flex:0 0 auto; min-width:150px; background:linear-gradient(135deg,rgba(14,165,233,0.12),rgba(14,165,233,0.04)); border:1px solid rgba(14,165,233,0.28); border-radius:var(--radius-sm); padding:18px 20px;">
                         <div style="font-size:1.6rem; margin-bottom:6px;">🏛️</div>
                         <div style="font-size:0.7rem; color:var(--c-secondary); font-weight:700; letter-spacing:1px; margin-bottom:4px;">LEVEL 2</div>
                         <div style="color:var(--text-main); font-weight:700;">Department</div>
                         <div style="color:var(--text-muted); font-size:0.82rem; margin-top:4px;">CS, IT, Mechanical…</div>
                     </div>
 
-                    <i class="fas fa-arrow-right" style="color:var(--c-secondary); opacity:0.5; font-size:1.1rem; flex-shrink:0;"></i>
+                    <i class="fas fa-arrow-right" style="color:var(--c-secondary); opacity:0.42; font-size:1.1rem; flex-shrink:0;"></i>
 
                     <!-- Level 3: Classrooms + Labs side by side (both branch from Department) -->
                     <div style="display:flex; flex-direction:column; gap:10px; flex:1; min-width:150px;">
 
-                        <div style="background:linear-gradient(135deg,rgba(167,139,250,0.12),rgba(167,139,250,0.04)); border:1px solid rgba(167,139,250,0.3); border-radius:var(--radius-sm); padding:14px 18px; display:flex; align-items:center; gap:12px;">
+                        <div style="background:linear-gradient(135deg,rgba(139,92,246,0.12),rgba(139,92,246,0.04)); border:1px solid rgba(139,92,246,0.28); border-radius:var(--radius-sm); padding:14px 18px; display:flex; align-items:center; gap:12px;">
                             <div style="font-size:1.3rem;">🚪</div>
                             <div>
                                 <div style="font-size:0.68rem; color:#a78bfa; font-weight:700; letter-spacing:1px; margin-bottom:3px;">LEVEL 3</div>
@@ -241,7 +244,7 @@
                             </div>
                         </div>
 
-                        <div style="background:linear-gradient(135deg,rgba(240,147,251,0.12),rgba(240,147,251,0.04)); border:1px solid rgba(240,147,251,0.3); border-radius:var(--radius-sm); padding:14px 18px; display:flex; align-items:center; gap:12px;">
+                        <div style="background:linear-gradient(135deg,rgba(236,72,153,0.12),rgba(236,72,153,0.04)); border:1px solid rgba(236,72,153,0.28); border-radius:var(--radius-sm); padding:14px 18px; display:flex; align-items:center; gap:12px;">
                             <div style="font-size:1.3rem;">🔬</div>
                             <div>
                                 <div style="font-size:0.68rem; color:#f093fb; font-weight:700; letter-spacing:1px; margin-bottom:3px;">LEVEL 3</div>
@@ -260,7 +263,7 @@
                 <h3 style="text-align:center; font-size:1.05rem; font-weight:600; color:var(--text-muted); text-transform:uppercase; letter-spacing:1.5px; margin-bottom:40px;">Key Features</h3>
                 <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:20px;">
 
-                    <div style="background:rgba(15,25,50,0.4);border:1px solid var(--glass-border);border-radius:var(--radius-sm);padding:22px 20px;display:flex;gap:14px;align-items:flex-start;transition:var(--transition);" onmouseenter="this.style.borderColor='rgba(0,242,254,0.2)'" onmouseleave="this.style.borderColor='var(--glass-border)'">
+                    <div style="background:rgba(255,255,255,0.78);border:1px solid rgba(255,255,255,0.92);border-radius:var(--radius-sm);padding:22px 20px;display:flex;gap:14px;align-items:flex-start;transition:var(--transition);box-shadow:var(--shadow-neu);" onmouseenter="this.style.borderColor='rgba(79,70,229,0.2)'" onmouseleave="this.style.borderColor='rgba(255,255,255,0.92)'">
                         <i class="fas fa-vr-cardboard" style="font-size:1.3rem;color:var(--c-primary);flex-shrink:0;margin-top:2px;"></i>
                         <div>
                             <div style="font-weight:700;color:var(--text-main);margin-bottom:5px;">Full 360° Panorama</div>
@@ -268,7 +271,7 @@
                         </div>
                     </div>
 
-                    <div style="background:rgba(15,25,50,0.4);border:1px solid var(--glass-border);border-radius:var(--radius-sm);padding:22px 20px;display:flex;gap:14px;align-items:flex-start;transition:var(--transition);" onmouseenter="this.style.borderColor='rgba(0,242,254,0.2)'" onmouseleave="this.style.borderColor='var(--glass-border)'">
+                    <div style="background:rgba(255,255,255,0.78);border:1px solid rgba(255,255,255,0.92);border-radius:var(--radius-sm);padding:22px 20px;display:flex;gap:14px;align-items:flex-start;transition:var(--transition);box-shadow:var(--shadow-neu);" onmouseenter="this.style.borderColor='rgba(79,70,229,0.2)'" onmouseleave="this.style.borderColor='rgba(255,255,255,0.92)'">
                         <i class="fas fa-map-pin" style="font-size:1.3rem;color:var(--c-secondary);flex-shrink:0;margin-top:2px;"></i>
                         <div>
                             <div style="font-weight:700;color:var(--text-main);margin-bottom:5px;">Interactive Hotspots</div>
@@ -276,7 +279,7 @@
                         </div>
                     </div>
 
-                    <div style="background:rgba(15,25,50,0.4);border:1px solid var(--glass-border);border-radius:var(--radius-sm);padding:22px 20px;display:flex;gap:14px;align-items:flex-start;transition:var(--transition);" onmouseenter="this.style.borderColor='rgba(0,242,254,0.2)'" onmouseleave="this.style.borderColor='var(--glass-border)'">
+                    <div style="background:rgba(255,255,255,0.78);border:1px solid rgba(255,255,255,0.92);border-radius:var(--radius-sm);padding:22px 20px;display:flex;gap:14px;align-items:flex-start;transition:var(--transition);box-shadow:var(--shadow-neu);" onmouseenter="this.style.borderColor='rgba(79,70,229,0.2)'" onmouseleave="this.style.borderColor='rgba(255,255,255,0.92)'">
                         <i class="fas fa-cloud" style="font-size:1.3rem;color:#a78bfa;flex-shrink:0;margin-top:2px;"></i>
                         <div>
                             <div style="font-weight:700;color:var(--text-main);margin-bottom:5px;">Firebase Powered</div>
@@ -284,7 +287,7 @@
                         </div>
                     </div>
 
-                    <div style="background:rgba(15,25,50,0.4);border:1px solid var(--glass-border);border-radius:var(--radius-sm);padding:22px 20px;display:flex;gap:14px;align-items:flex-start;transition:var(--transition);" onmouseenter="this.style.borderColor='rgba(0,242,254,0.2)'" onmouseleave="this.style.borderColor='var(--glass-border)'">
+                    <div style="background:rgba(255,255,255,0.78);border:1px solid rgba(255,255,255,0.92);border-radius:var(--radius-sm);padding:22px 20px;display:flex;gap:14px;align-items:flex-start;transition:var(--transition);box-shadow:var(--shadow-neu);" onmouseenter="this.style.borderColor='rgba(79,70,229,0.2)'" onmouseleave="this.style.borderColor='rgba(255,255,255,0.92)'">
                         <i class="fas fa-shield-alt" style="font-size:1.3rem;color:#f093fb;flex-shrink:0;margin-top:2px;"></i>
                         <div>
                             <div style="font-weight:700;color:var(--text-main);margin-bottom:5px;">Secure Admin Panel</div>
@@ -292,7 +295,7 @@
                         </div>
                     </div>
 
-                    <div style="background:rgba(15,25,50,0.4);border:1px solid var(--glass-border);border-radius:var(--radius-sm);padding:22px 20px;display:flex;gap:14px;align-items:flex-start;transition:var(--transition);" onmouseenter="this.style.borderColor='rgba(0,242,254,0.2)'" onmouseleave="this.style.borderColor='var(--glass-border)'">
+                    <div style="background:rgba(255,255,255,0.78);border:1px solid rgba(255,255,255,0.92);border-radius:var(--radius-sm);padding:22px 20px;display:flex;gap:14px;align-items:flex-start;transition:var(--transition);box-shadow:var(--shadow-neu);" onmouseenter="this.style.borderColor='rgba(79,70,229,0.2)'" onmouseleave="this.style.borderColor='rgba(255,255,255,0.92)'">
                         <i class="fas fa-mobile-alt" style="font-size:1.3rem;color:var(--c-primary);flex-shrink:0;margin-top:2px;"></i>
                         <div>
                             <div style="font-weight:700;color:var(--text-main);margin-bottom:5px;">Mobile Responsive</div>
@@ -300,7 +303,7 @@
                         </div>
                     </div>
 
-                    <div style="background:rgba(15,25,50,0.4);border:1px solid var(--glass-border);border-radius:var(--radius-sm);padding:22px 20px;display:flex;gap:14px;align-items:flex-start;transition:var(--transition);" onmouseenter="this.style.borderColor='rgba(0,242,254,0.2)'" onmouseleave="this.style.borderColor='var(--glass-border)'">
+                    <div style="background:rgba(255,255,255,0.78);border:1px solid rgba(255,255,255,0.92);border-radius:var(--radius-sm);padding:22px 20px;display:flex;gap:14px;align-items:flex-start;transition:var(--transition);box-shadow:var(--shadow-neu);" onmouseenter="this.style.borderColor='rgba(79,70,229,0.2)'" onmouseleave="this.style.borderColor='rgba(255,255,255,0.92)'">
                         <i class="fas fa-bolt" style="font-size:1.3rem;color:var(--c-secondary);flex-shrink:0;margin-top:2px;"></i>
                         <div>
                             <div style="font-weight:700;color:var(--text-main);margin-bottom:5px;">Instant Loading</div>
@@ -324,6 +327,8 @@
         </div>
     </section>
     </main>
+
+    <script src="js/motion.js"></script>
 
 
 <!-- ─── FOOTER ───────────────────────────────────── -->

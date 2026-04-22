@@ -18,111 +18,115 @@
 
         /* ── LAYOUT ── */
         .dashboard-container {
-            max-width: 1380px;
+            max-width: 1400px;
             margin: 0 auto;
-            padding: 32px 24px;
+            padding: 40px 24px;
             display: flex;
-            gap: 32px;
+            gap: 40px;
             align-items: flex-start;
-            animation: fadeIn 0.5s ease both;
+            animation: fadeIn 0.6s cubic-bezier(0.4, 0, 0.2, 1) both;
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(12px); }
+            from { opacity: 0; transform: translateY(20px); }
             to   { opacity: 1; transform: translateY(0); }
         }
 
-        @media (max-width: 900px) {
-            .dashboard-container { flex-direction: column; }
+        @media (max-width: 1024px) {
+            .dashboard-container { flex-direction: column; padding: 24px 20px; }
             .sidebar { width: 100% !important; position: static !important; }
         }
 
         /* ── SIDEBAR ── */
         .sidebar {
-            width: 270px;
+            width: 280px;
             flex-shrink: 0;
             position: sticky;
             top: 104px;
-            background: rgba(15, 25, 50, 0.55);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid var(--glass-border);
-            border-radius: var(--radius-lg);
-            padding: 28px 20px;
-            box-shadow: var(--shadow-card);
+            background: var(--bg-base);
+            border: none;
+            border-radius: var(--radius-neu);
+            padding: 32px 24px;
+            box-shadow: var(--neuro-shadow);
         }
 
         .sidebar-brand {
             display: flex;
             align-items: center;
-            gap: 12px;
-            padding-bottom: 22px;
-            margin-bottom: 22px;
-            border-bottom: 1px solid var(--glass-border);
+            gap: 14px;
+            padding-bottom: 24px;
+            margin-bottom: 28px;
+            border-bottom: 1px solid rgba(0,0,0,0.04);
         }
 
         .sidebar-brand .brand-icon {
-            width: 42px; height: 42px;
-            background: linear-gradient(135deg, var(--c-primary), var(--c-secondary));
-            border-radius: 12px;
+            width: 48px; height: 48px;
+            background: var(--bg-base);
+            border-radius: 14px;
             display: grid;
             place-items: center;
-            font-size: 1.1rem;
-            color: #04111f;
+            font-size: 1.25rem;
+            color: var(--c-primary);
             font-weight: 900;
             flex-shrink: 0;
-            box-shadow: 0 8px 20px rgba(0, 242, 254, 0.3);
+            box-shadow: var(--neuro-shadow);
         }
 
         .sidebar-brand .brand-text strong {
             display: block;
-            font-size: 1rem;
+            font-size: 1.1rem;
             font-weight: 800;
-            background: linear-gradient(90deg, var(--c-primary), var(--c-secondary));
-            background-clip: text;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            letter-spacing: -0.3px;
+            color: var(--text-main);
+            letter-spacing: -0.5px;
+            line-height: 1.1;
+            margin-bottom: 2px;
         }
 
         .sidebar-brand .brand-text span {
-            font-size: 0.75rem;
+            font-size: 0.78rem;
             color: var(--text-muted);
-            font-weight: 400;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
-        .nav-menu { list-style: none; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+        .nav-menu { list-style: none; padding: 0; display: flex; flex-direction: column; gap: 8px; }
 
         .nav-menu a {
             display: flex;
             align-items: center;
-            gap: 12px;
-            padding: 13px 16px;
-            border-radius: var(--radius-sm);
+            gap: 14px;
+            padding: 14px 18px;
+            border-radius: var(--radius-md);
             color: var(--text-muted);
             text-decoration: none;
             font-weight: 500;
-            font-size: 0.95rem;
+            font-size: 0.98rem;
             border: 1px solid transparent;
             transition: var(--transition);
         }
 
         .nav-menu a i {
-            width: 20px;
+            width: 22px;
             text-align: center;
-            font-size: 1rem;
+            font-size: 1.1rem;
             flex-shrink: 0;
+            opacity: 0.75;
         }
 
-        .nav-menu a:hover, .nav-menu a.active {
-            background: rgba(0, 242, 254, 0.08);
+        .nav-menu a:hover {
             color: var(--c-primary);
-            border-color: rgba(0, 242, 254, 0.18);
-            transform: translateX(4px);
+            background: rgba(79, 70, 229, 0.08);
+            border-color: rgba(79, 70, 229, 0.15);
+            transform: translateX(6px);
         }
 
         .nav-menu a.active {
-            font-weight: 600;
+            background: linear-gradient(135deg, rgba(79, 70, 229, 0.08), rgba(14, 165, 233, 0.08));
+            color: var(--c-primary);
+            border-color: rgba(79, 70, 229, 0.22);
+            font-weight: 700;
+            box-shadow: inset 0 0 12px rgba(79, 70, 229, 0.04);
         }
 
         /* ── MAIN CONTENT ── */
@@ -132,88 +136,77 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 32px;
-            padding-bottom: 22px;
-            border-bottom: 1px solid var(--glass-border);
+            margin-bottom: 40px;
+            padding-bottom: 24px;
         }
 
         .header-actions h2 {
-            font-size: 2rem;
-            font-weight: 800;
-            letter-spacing: -0.5px;
-            background: linear-gradient(to right, var(--text-main), var(--text-muted));
-            background-clip: text;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            font-size: 2.2rem;
+            font-weight: 900;
+            letter-spacing: -1px;
+            color: var(--text-main);
         }
 
         /* ── TAB SECTIONS ── */
-        .tab-section {
-            display: none;
-            flex-direction: column;
-            gap: 28px;
-        }
+        .tab-section { display: none; flex-direction: column; gap: 32px; }
 
         .tab-section.active {
             display: flex;
-            animation: slideIn 0.35s ease both;
+            animation: slideUpFade 0.45s cubic-bezier(0.4, 0, 0.2, 1) both;
         }
 
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateX(16px); }
-            to   { opacity: 1; transform: translateX(0); }
+        @keyframes slideUpFade {
+            from { opacity: 0; transform: translateY(20px); }
+            to   { opacity: 1; transform: translateY(0); }
         }
 
         /* ── CARDS ── */
         .card {
-            background: rgba(15, 25, 50, 0.5);
-            backdrop-filter: blur(14px);
-            -webkit-backdrop-filter: blur(14px);
-            border: 1px solid var(--glass-border);
-            border-radius: var(--radius-md);
-            padding: 30px;
-            box-shadow: var(--shadow-card);
+            background: var(--bg-base);
+            border: none;
+            border-radius: var(--radius-neu);
+            padding: 40px;
+            box-shadow: var(--neuro-shadow);
             transition: var(--transition);
         }
 
         .card:hover {
-            border-color: rgba(255,255,255,0.12);
-            box-shadow: 0 25px 55px rgba(0,0,0,0.4);
-            transform: translateY(-2px);
+            transform: translateY(-4px);
+            box-shadow: 10px 10px 20px rgba(0,0,0,0.1), -10px -10px 20px rgba(255,255,255,0.9);
         }
 
         .card h3 {
             display: flex;
             align-items: center;
-            gap: 10px;
-            font-size: 1.2rem;
-            font-weight: 700;
+            gap: 12px;
+            font-size: 1.4rem;
+            font-weight: 800;
             color: var(--text-main);
-            margin-bottom: 22px;
-            padding-bottom: 16px;
-            border-bottom: 1px solid var(--glass-border);
+            margin-bottom: 32px;
+            padding-bottom: 20px;
+            letter-spacing: -0.3px;
         }
 
-        .card h3 i { color: var(--c-secondary); font-size: 1.1rem; }
+        .card h3 i { color: var(--c-primary); font-size: 1.2rem; }
 
         .card h4 {
-            font-size: 0.9rem;
-            font-weight: 600;
-            color: var(--text-muted);
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--text-faint);
             text-transform: uppercase;
-            letter-spacing: 1px;
-            margin: 22px 0 14px;
+            letter-spacing: 2px;
+            margin: 32px 0 16px;
         }
 
         /* ── FORMS ── */
-        .form-group { margin-bottom: 18px; }
+        .form-group { margin-bottom: 24px; }
 
         .form-group label {
             display: block;
-            margin-bottom: 8px;
-            color: var(--text-muted);
-            font-size: 0.9rem;
-            font-weight: 500;
+            margin-bottom: 10px;
+            color: var(--text-main);
+            font-size: 0.92rem;
+            font-weight: 600;
             letter-spacing: 0.2px;
         }
 
@@ -221,43 +214,61 @@
         .form-group select,
         .form-group textarea {
             width: 100%;
-            padding: 13px 16px;
-            background: rgba(7, 13, 26, 0.6);
-            border: 1px solid rgba(255,255,255,0.09);
+            padding: 15px 18px;
+            background: var(--bg-base);
+            border: none;
             border-radius: var(--radius-sm);
             color: var(--text-main);
-            font-size: 0.97rem;
+            font-size: 1rem;
             font-family: 'Outfit', sans-serif;
             outline: none;
             transition: var(--transition);
             box-sizing: border-box;
+            box-shadow: var(--neuro-shadow-inset);
         }
 
         .form-group input::placeholder,
         .form-group textarea::placeholder {
-            color: var(--text-muted);
-            opacity: 0.6;
+            color: var(--text-faint);
+            opacity: 0.7;
         }
 
         .form-group input:focus,
         .form-group select:focus,
         .form-group textarea:focus {
-            border-color: var(--c-secondary);
-            background: rgba(7, 13, 26, 0.85);
-            box-shadow: 0 0 0 3px rgba(79, 172, 254, 0.18);
+            box-shadow: inset 2px 2px 5px rgba(0,0,0,0.05), inset -2px -2px 5px rgba(255,255,255,0.8), 0 0 0 3px rgba(112, 145, 230, 0.15);
         }
 
         .form-group select option {
-            background: #0f1930;
+            background: #ffffff;
             color: var(--text-main);
+        }
+
+        .form-group input::file-selector-button {
+            padding: 8px 16px;
+            background: var(--bg-base);
+            border: none;
+            border-radius: 50px;
+            color: var(--text-main);
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: var(--neuro-shadow);
+            margin-right: 14px;
+            transition: var(--transition);
+        }
+
+        .form-group input::file-selector-button:hover {
+            transform: scale(1.05);
+            box-shadow: 10px 10px 20px rgba(163, 177, 198, 0.6), -10px -10px 20px rgba(255, 255, 255, 0.9);
         }
 
         .admin-textarea {
             resize: vertical;
-            min-height: 80px;
+            min-height: 120px;
+            line-height: 1.6;
         }
 
-        .form-row { display: flex; gap: 18px; }
+        .form-row { display: flex; gap: 24px; }
         .form-row .form-group { flex: 1; }
 
         /* ── SCENE LIST ITEMS ── */
@@ -267,184 +278,166 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 18px 20px;
-            background: rgba(7, 13, 26, 0.4);
+            padding: 22px 28px;
+            background: rgba(255, 255, 255, 0.4);
             border: 1px solid var(--glass-border);
-            border-left: 3px solid var(--c-primary);
-            border-radius: var(--radius-sm);
-            margin-bottom: 12px;
+            border-left: 4px solid var(--c-primary);
+            border-radius: var(--radius-md);
+            margin-bottom: 16px;
             transition: var(--transition);
+            box-shadow: var(--shadow-neu);
         }
 
         .scene-item:hover {
-            transform: translateX(5px);
-            background: rgba(7, 13, 26, 0.7);
-            border-color: rgba(0, 242, 254, 0.22);
-            box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+            transform: translateX(8px);
+            background: #ffffff;
+            border-color: var(--c-primary);
+            box-shadow: var(--shadow-card);
         }
 
         .scene-info strong {
             display: block;
             color: var(--text-main);
-            font-weight: 600;
-            font-size: 1.05rem;
-            margin-bottom: 6px;
+            font-weight: 800;
+            font-size: 1.15rem;
+            margin-bottom: 8px;
         }
 
         .scene-info span {
             display: inline-block;
-            font-size: 0.78rem;
+            font-size: 0.8rem;
             color: var(--text-muted);
-            background: rgba(255,255,255,0.05);
-            border: 1px solid var(--glass-border);
-            padding: 3px 9px;
+            background: rgba(79, 70, 229, 0.06);
+            border: 1px solid rgba(79, 70, 229, 0.12);
+            padding: 4px 12px;
             border-radius: 50px;
-            margin-right: 5px;
+            margin-right: 8px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
-        .scene-actions { display: flex; align-items: center; gap: 8px; }
+        .scene-actions { display: flex; align-items: center; gap: 12px; }
 
         .scene-actions button {
-            width: 38px; height: 38px;
-            border-radius: 50%;
-            border: 1px solid rgba(255,255,255,0.1);
-            background: rgba(255,255,255,0.04);
+            width: 44px; height: 44px;
+            border-radius: 12px;
+            border: 1px solid var(--glass-border);
+            background: #ffffff;
             color: var(--text-muted);
             cursor: pointer;
             display: grid;
             place-items: center;
-            font-size: 0.9rem;
+            font-size: 1rem;
             transition: var(--transition);
+            box-shadow: var(--shadow-neu);
         }
 
-        .scene-actions button:hover { color: #fff; transform: scale(1.12); }
+        .scene-actions button:hover { color: var(--text-main); transform: translateY(-4px) scale(1.1); }
 
         .scene-actions .edit-btn:hover {
-            background: rgba(0, 242, 254, 0.1);
-            border-color: rgba(0, 242, 254, 0.3);
+            background: rgba(79, 70, 229, 0.08);
+            border-color: var(--c-primary);
             color: var(--c-primary);
-            box-shadow: 0 0 14px rgba(0, 242, 254, 0.2);
+            box-shadow: 0 8px 20px rgba(79, 70, 229, 0.22);
         }
 
         .scene-actions .delete-btn:hover,
         .scene-actions .delete-admin-btn:hover {
-            background: rgba(255, 8, 68, 0.1);
-            border-color: rgba(255, 8, 68, 0.3);
+            background: rgba(220, 38, 38, 0.08);
+            border-color: var(--c-danger);
             color: var(--c-danger);
-            box-shadow: 0 0 14px rgba(255, 8, 68, 0.2);
+            box-shadow: 0 8px 20px rgba(220, 38, 38, 0.22);
         }
 
-        /* ── BUTTONS (dashboard specific) ── */
+        /* ── BUTTONS (dashboard specific overrides) ── */
         #create-add-hotspot-btn,
         #add-hotspot-btn {
-            background: rgba(255,255,255,0.05);
-            border: 1px dashed rgba(255,255,255,0.2);
-            color: var(--text-muted);
-            padding: 12px 20px;
-            border-radius: var(--radius-sm);
+            background: rgba(79, 70, 229, 0.04);
+            border: 1px dashed rgba(79, 70, 229, 0.35);
+            color: var(--c-primary);
+            padding: 16px 24px;
+            border-radius: var(--radius-md);
             cursor: pointer;
             font-family: 'Outfit', sans-serif;
-            font-size: 0.95rem;
-            font-weight: 500;
+            font-size: 1rem;
+            font-weight: 700;
             width: 100%;
-            margin-bottom: 20px;
+            margin-bottom: 24px;
             transition: var(--transition);
         }
 
         #create-add-hotspot-btn:hover,
         #add-hotspot-btn:hover {
-            background: rgba(0, 242, 254, 0.07);
-            border-color: rgba(0, 242, 254, 0.35);
-            color: var(--c-primary);
+            background: rgba(79, 70, 229, 0.08);
+            border-color: var(--c-primary);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(79, 70, 229, 0.12);
         }
 
         /* ── PANORAMA VIEWER INSET ── */
         #create-panorama-viewer,
         #admin-panorama-viewer {
             width: 100%;
-            height: 360px;
+            height: 420px;
             background: #000;
-            border-radius: var(--radius-sm);
+            border-radius: var(--radius-md);
             overflow: hidden;
-            margin-bottom: 14px;
-            border: 1px solid var(--glass-border);
+            margin-bottom: 20px;
+            border: 2px solid var(--glass-border);
+            box-shadow: var(--shadow-deep);
         }
 
         /* ── HOTSPOT ROWS ── */
         .hotspot-item {
             display: flex;
             flex-wrap: wrap;
-            gap: 10px;
+            gap: 12px;
             align-items: center;
-            padding: 14px 16px;
-            background: rgba(7, 13, 26, 0.5);
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.5);
             border: 1px solid var(--glass-border);
-            border-radius: var(--radius-sm);
-            margin-bottom: 10px;
+            border-radius: var(--radius-md);
+            margin-bottom: 16px;
             transition: var(--transition);
+            box-shadow: var(--shadow-neu);
         }
 
         .hotspot-item:hover {
-            border-color: rgba(255,255,255,0.14);
-            background: rgba(7, 13, 26, 0.75);
+            border-color: var(--c-primary);
+            background: #ffffff;
+            transform: translateY(-2px);
         }
 
         .hotspot-item input,
         .hotspot-item select,
         .hotspot-item textarea {
-            padding: 9px 12px;
-            background: rgba(7, 13, 26, 0.7);
-            border: 1px solid rgba(255,255,255,0.09);
-            border-radius: 8px;
+            padding: 10px 14px;
+            background: #ffffff;
+            border: 1px solid rgba(148, 163, 184, 0.3);
+            border-radius: 10px;
             color: var(--text-main);
             font-family: 'Outfit', sans-serif;
-            font-size: 0.9rem;
-            outline: none;
-            transition: var(--transition);
-            box-sizing: border-box;
-        }
-
-        .hotspot-item input::placeholder,
-        .hotspot-item textarea::placeholder {
-            color: var(--text-muted);
-            opacity: 0.6;
-        }
-
-        .hotspot-item input:focus,
-        .hotspot-item select:focus,
-        .hotspot-item textarea:focus {
-            border-color: var(--c-secondary);
-            box-shadow: 0 0 0 2px rgba(79, 172, 254, 0.15);
-        }
-
-        .hotspot-item .hs-info-fields {
-            background: rgba(7, 13, 26, 0.4) !important;
-            border: 1px solid rgba(255,255,255,0.06) !important;
-            border-radius: 8px;
-            padding: 10px !important;
-        }
-
-        .hotspot-item .hs-info-fields textarea,
-        .hotspot-item .hs-info-fields input[type="url"] {
-            resize: vertical;
-            width: 100%;
+            font-size: 0.92rem;
+            box-shadow: none;
         }
 
         .hotspot-item .remove-hs-btn {
-            background: rgba(255, 8, 68, 0.08);
-            border: 1px solid rgba(255, 8, 68, 0.2);
+            background: rgba(220, 38, 38, 0.08);
+            border: 1px solid rgba(220, 38, 38, 0.24);
             color: var(--c-danger);
-            padding: 10px 14px;
-            border-radius: 8px;
+            padding: 11px 16px;
+            border-radius: 10px;
             cursor: pointer;
             transition: var(--transition);
-            font-size: 0.9rem;
+            font-size: 0.92rem;
+            font-weight: 700;
         }
 
         .hotspot-item .remove-hs-btn:hover {
             background: var(--c-danger);
-            color: #fff;
-            box-shadow: 0 6px 18px rgba(255, 8, 68, 0.35);
+            color: #ffffff;
+            box-shadow: 0 10px 24px rgba(220, 38, 38, 0.35);
         }
 
         /* ── MODAL ── */
@@ -452,103 +445,105 @@
             display: none;
             position: fixed;
             inset: 0;
-            background: rgba(0, 0, 0, 0.75);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            z-index: 1100;
+            background: rgba(15, 23, 42, 0.65);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            z-index: 2000;
             justify-content: center;
             align-items: center;
+            padding: 24px;
         }
 
         .modal-content {
-            background: rgba(10, 18, 38, 0.98);
-            backdrop-filter: blur(24px);
-            -webkit-backdrop-filter: blur(24px);
-            padding: 44px;
-            border-radius: var(--radius-lg);
-            width: 92%;
-            max-width: 920px;
-            max-height: 88vh;
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            padding: 48px;
+            border-radius: var(--radius-neu);
+            width: 100%;
+            max-width: 1000px;
+            max-height: 90vh;
             overflow-y: auto;
-            border: 1px solid rgba(255,255,255,0.1);
-            box-shadow: var(--shadow-deep);
+            border: var(--glass-border);
+            box-shadow: var(--glass-shadow);
             position: relative;
-            animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
+            animation: modalPop 0.5s cubic-bezier(0.19, 1, 0.22, 1) both;
         }
 
-        @keyframes popIn {
-            from { transform: scale(0.93) translateY(10px); opacity: 0; }
-            to   { transform: scale(1)    translateY(0);    opacity: 1; }
+        @keyframes modalPop {
+            from { opacity: 0; transform: scale(0.95) translateY(30px); }
+            to   { opacity: 1; transform: scale(1)    translateY(0); }
         }
 
-        .modal-content::-webkit-scrollbar { width: 5px; }
-        .modal-content::-webkit-scrollbar-track { background: transparent; }
-        .modal-content::-webkit-scrollbar-thumb {
-            background: rgba(79, 172, 254, 0.3);
-            border-radius: 6px;
-        }
-        .modal-content::-webkit-scrollbar-thumb:hover { background: var(--c-secondary); }
-        .modal-content { scrollbar-width: thin; scrollbar-color: rgba(79,172,254,0.3) transparent; }
+        .modal-content::-webkit-scrollbar { width: 6px; }
+        .modal-content::-webkit-scrollbar-thumb { background: rgba(79, 70, 229, 0.2); border-radius: 10px; }
 
         .modal-content h3 {
-            font-size: 1.5rem;
-            font-weight: 800;
-            letter-spacing: -0.3px;
-            background: linear-gradient(to right, var(--text-main), var(--text-muted));
-            background-clip: text;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 28px;
-            padding-right: 40px;
+            font-size: 2rem;
+            font-weight: 900;
+            letter-spacing: -0.8px;
+            color: var(--text-main);
+            margin-bottom: 32px;
+            padding-right: 50px;
         }
 
         .close-modal {
             position: absolute;
-            top: 20px; right: 20px;
-            width: 36px; height: 36px;
+            top: 24px; right: 24px;
+            width: 44px; height: 44px;
             border-radius: 50%;
-            background: rgba(255,255,255,0.05);
-            border: 1px solid rgba(255,255,255,0.1);
+            background: var(--bg-base);
+            border: 1px solid var(--glass-border);
             color: var(--text-muted);
-            font-size: 1.1rem;
+            font-size: 1.25rem;
             cursor: pointer;
             display: grid;
             place-items: center;
             transition: var(--transition);
+            z-index: 10;
         }
 
         .close-modal:hover {
-            background: rgba(255, 8, 68, 0.1);
-            border-color: rgba(255, 8, 68, 0.3);
+            background: rgba(220, 38, 38, 0.1);
             color: var(--c-danger);
+            border-color: var(--c-danger);
             transform: rotate(90deg);
         }
 
-        /* ── AUTH CHECK ── */
+        /* ── AUTH CHECK & LOADING ── */
         .auth-check {
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             height: calc(100vh - 88px);
-            gap: 20px;
+            gap: 24px;
             color: var(--text-muted);
-            font-size: 1.1rem;
-            font-weight: 500;
         }
 
-        .auth-check .loader-ring {
-            width: 56px; height: 56px;
-            border: 3px solid rgba(255,255,255,0.05);
-            border-top-color: var(--c-primary);
-            border-right-color: var(--c-secondary);
-            border-radius: 50%;
-            animation: spin 1.2s linear infinite;
-        }
-
-        @keyframes spin { to { transform: rotate(360deg); } }
+        .auth-check p { font-size: 1.2rem; font-weight: 600; letter-spacing: 0.5px; }
 
         #dashboard-content { display: none; }
+        .nav-inline-icon-sm { font-size: 0.85rem; margin-right: 6px; opacity: 0.8; }
+        .nav-inline-icon-md { font-size: 0.95rem; margin-right: 6px; opacity: 0.8; }
+        .heading-icon-primary { margin-right: 8px; color: var(--c-primary); }
+        .btn-block-wide { width: 100%; margin-top: 12px; font-weight: 800; font-size: 1.1rem; padding: 18px; }
+        .admin-subtext { color: var(--text-muted); font-size: 1rem; margin-bottom: 32px; line-height: 1.6; }
+        .admin-form-error {
+            color: var(--c-danger);
+            background: rgba(220, 38, 38, 0.08);
+            border: 1px solid rgba(220, 38, 38, 0.2);
+            padding: 16px 20px;
+            border-radius: 14px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .admin-form-error::before { content: '⚠️'; }
+        .is-hidden { display: none; }
     </style>
 </head>
 
@@ -557,11 +552,13 @@
     <!-- ─── HEADER (matches home) ─────────────────── -->
     <header class="header">
         <div class="nav-container">
-            <h1 class="logo">Vision <span>360</span></h1>
+            <a href="../index.html" class="logo" aria-label="Vision 360 Home">
+                <img src="../assets/logo.png" alt="Vision 360 Logo" />
+            </a>
             <nav aria-label="Admin navigation">
                 <ul class="nav-links">
-                    <li><a href="../index.html"><i class="fas fa-arrow-left" style="font-size:0.8rem; margin-right:4px;"></i> Home</a></li>
-                    <li><a href="#" id="logout-btn"><i class="fas fa-sign-out-alt" style="font-size:0.85rem; margin-right:4px;"></i> Logout</a></li>
+                    <li><a href="../index.html"><i class="fas fa-arrow-left nav-inline-icon-sm"></i> Home</a></li>
+                    <li><a href="#" id="logout-btn"><i class="fas fa-sign-out-alt nav-inline-icon-md"></i> Logout</a></li>
                 </ul>
             </nav>
         </div>
@@ -613,7 +610,7 @@
                                     <option value="classroom">Classroom / Lab</option>
                                 </select>
                             </div>
-                            <div class="form-group" id="create-parent-group" style="display:none;">
+                            <div class="form-group is-hidden" id="create-parent-group">
                                 <label id="create-parent-label" for="create-parent">Parent Scene</label>
                                 <select id="create-parent">
                                     <option value="">— Select Parent —</option>
@@ -631,8 +628,8 @@
                             </div>
                         </div>
                         <div class="form-row">
-                            <div class="form-group" style="grid-column:1/-1;">
-                                <label for="create-description">Description <span style="color:var(--text-muted); font-weight:400;">(shown in the viewer info panel — describe the location, facilities, or subjects)</span></label>
+                            <div class="form-group form-span-full">
+                                <label for="create-description">Description <span class="helper-inline-text">(shown in the viewer info panel — describe the location, facilities, or subjects)</span></label>
                                 <textarea id="create-description" rows="3" placeholder="e.g. The Computer Science laboratory is equipped with 40 high-performance workstations…" class="admin-textarea"></textarea>
                             </div>
                         </div>
@@ -652,18 +649,18 @@
                         </div>
 
                         <!-- Panorama preview & hotspot editor -->
-                        <div class="form-group" id="create-preview-wrapper" style="display:none;">
+                        <div class="form-group is-hidden" id="create-preview-wrapper">
                             <label><strong>Hotspot Preview &amp; Editor:</strong> Shift + Click on the image to add a hotspot exactly where you point.</label>
                             <div id="create-panorama-viewer"></div>
                         </div>
 
-                        <h4><i class="fas fa-map-pin" style="margin-right:6px; color:var(--c-primary);"></i> Configure Hotspots</h4>
+                        <h4><i class="fas fa-map-pin heading-icon-primary"></i> Configure Hotspots</h4>
                         <div id="create-hotspots-container"></div>
                         <button type="button" id="create-add-hotspot-btn">
                             <i class="fas fa-plus"></i> Add Manual Hotspot
                         </button>
 
-                        <button type="submit" class="btn btn-primary" style="width:100%; margin-top:8px;">
+                        <button type="submit" class="btn btn-primary btn-block-wide">
                             <i class="fas fa-cloud-upload-alt"></i> Create Scene
                         </button>
                     </form>
@@ -675,7 +672,7 @@
                 <div class="card">
                     <h3><i class="fas fa-pen"></i> Select a Scene to Edit</h3>
                     <ul class="scene-list" id="edit-scene-list">
-                        <li style="color:var(--text-muted); padding:10px 0;">Loading scenes…</li>
+                        <li class="loading-list-item">Loading scenes…</li>
                     </ul>
                 </div>
             </div>
@@ -685,7 +682,7 @@
                 <div class="card">
                     <h3><i class="fas fa-trash-alt"></i> Select a Scene to Delete</h3>
                     <ul class="scene-list" id="delete-scene-list">
-                        <li style="color:var(--text-muted); padding:10px 0;">Loading scenes…</li>
+                        <li class="loading-list-item">Loading scenes…</li>
                     </ul>
                 </div>
             </div>
@@ -694,7 +691,7 @@
             <div id="section-admins" class="tab-section">
                 <div class="card">
                     <h3><i class="fas fa-user-plus"></i> Grant Admin Access</h3>
-                    <p style="color:var(--text-muted); font-size:0.9rem; margin-bottom:20px;">
+                    <p class="admin-subtext">
                         This will create a real Firebase Auth account. The new admin can log in with these credentials.
                     </p>
                     <form id="add-admin-form" autocomplete="off">
@@ -718,7 +715,7 @@
                                 <input type="password" id="new-admin-confirm" required placeholder="Repeat password" minlength="6" autocomplete="new-password">
                             </div>
                         </div>
-                        <div id="admin-form-error" style="display:none; color:var(--c-danger); background:rgba(255,8,68,0.08); border:1px solid rgba(255,8,68,0.2); padding:12px 16px; border-radius:10px; font-size:0.9rem; margin-bottom:16px;"></div>
+                        <div id="admin-form-error" class="admin-form-error is-hidden"></div>
                         <button type="submit" class="btn btn-primary">
                             <i class="fas fa-user-check"></i> Create Admin Account
                         </button>
@@ -728,7 +725,7 @@
                 <div class="card">
                     <h3><i class="fas fa-users"></i> Authorized Admins</h3>
                     <ul class="scene-list" id="admins-list">
-                        <li style="color:var(--text-muted); padding:10px 0;">Loading admins…</li>
+                        <li class="loading-list-item">Loading admins…</li>
                     </ul>
                 </div>
             </div>
@@ -751,7 +748,7 @@
                 </div>
 
                 <div class="form-group">
-                    <label>Description <span style="color:var(--text-muted); font-weight:400;">(shown in viewer info panel)</span></label>
+                    <label>Description <span class="helper-inline-text">(shown in viewer info panel)</span></label>
                     <textarea id="edit-description" rows="3" placeholder="Describe this location…" class="admin-textarea"></textarea>
                 </div>
 
@@ -767,7 +764,7 @@
                 </div>
 
                 <div class="form-group">
-                    <label>Update Panorama Image <span style="color:var(--text-muted); font-weight:400;">(leave blank to keep existing)</span></label>
+                    <label>Update Panorama Image <span class="helper-inline-text">(leave blank to keep existing)</span></label>
                     <input type="file" id="edit-panorama" accept="image/jpeg,image/png">
                 </div>
 
@@ -776,14 +773,14 @@
                     <div id="admin-panorama-viewer"></div>
                 </div>
 
-                <h4><i class="fas fa-map-pin" style="margin-right:6px; color:var(--c-primary);"></i> Configure Hotspots</h4>
+                <h4><i class="fas fa-map-pin heading-icon-primary"></i> Configure Hotspots</h4>
                 <div id="edit-hotspots-container"></div>
 
                 <button type="button" id="add-hotspot-btn">
                     <i class="fas fa-plus"></i> Add New Hotspot
                 </button>
 
-                <button type="submit" class="btn btn-primary" style="width:100%; margin-top:8px;">
+                <button type="submit" class="btn btn-primary btn-block-wide">
                     <i class="fas fa-save"></i> Save Changes
                 </button>
             </form>

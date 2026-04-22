@@ -7,20 +7,31 @@
   width: 100%;
   z-index: 1000;
   padding: 0 24px;
-  height: 72px;
+  height: 80px; /* Slight increase for logo */
   display: flex;
   align-items: center;
+  transition: transform var(--dur-base) var(--ease-standard),
+              background var(--dur-base) var(--ease-standard),
+              box-shadow var(--dur-base) var(--ease-standard);
 }
 
 .header::before {
   content: '';
   position: absolute;
   inset: 0;
-  background: rgba(7, 13, 26, 0.7);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-bottom: 1px solid var(--glass-border);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border-bottom: var(--glass-border);
+  box-shadow: none; /* No shadow when at top */
   z-index: -1;
+  transition: box-shadow var(--dur-base) var(--ease-standard),
+              backdrop-filter var(--dur-base) var(--ease-standard);
+}
+
+.header.scrolled::before {
+  box-shadow: var(--glass-shadow);
+  backdrop-filter: blur(16px);
 }
 
 .nav-container {
@@ -33,12 +44,25 @@
 }
 
 .logo {
-  font-size: 1.6rem;
-  font-weight: 800;
-  letter-spacing: -0.5px;
-  color: var(--text-main);
-  user-select: none;
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+  transition: transform var(--dur-fast) var(--ease-standard);
+  will-change: transform;
 }
+
+.logo img {
+  height: 72px;
+  width: auto;
+  object-fit: contain;
+  display: block;
+}
+
+.logo:hover {
+  transform: scale(1.04);
+}
+
+/* Old logo pseudos removed */
 
 .logo span {
   background: linear-gradient(90deg, var(--c-primary), var(--c-secondary));
@@ -56,18 +80,35 @@
 
 .nav-links a {
   text-decoration: none;
-  color: var(--text-muted);
-  font-weight: 500;
+  color: var(--text-secondary);
+  font-weight: 600;
   font-size: 0.95rem;
   padding: 8px 14px;
   border-radius: var(--radius-sm);
-  transition: var(--transition);
+  transition: color var(--dur-fast) var(--ease-standard);
   letter-spacing: 0.2px;
+  position: relative;
 }
 
 .nav-links a:hover {
-  color: var(--text-main);
-  background: var(--glass-fill);
+  color: var(--c-primary);
+}
+
+.nav-links a::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 14px;
+  right: 14px;
+  height: 2px;
+  background: var(--c-primary);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--dur-fast) var(--ease-standard);
+}
+
+.nav-links a:hover::after {
+  transform: scaleX(1);
 }
 
 /* ================================================
@@ -81,28 +122,32 @@
   position: relative;
   overflow: hidden;
   padding: 120px 24px 80px;
+  background: var(--bg-base); /* Simplified base */
 }
 
 .hero-bg {
   position: absolute;
   inset: 0;
   z-index: 0;
-  background: linear-gradient(135deg, #070d1a, #0f1932) center / cover no-repeat;
-  filter: brightness(0.25) saturate(1.3);
+  background:
+    radial-gradient(circle at 16% 24%, rgba(112, 145, 230, 0.08), transparent 40%),
+    radial-gradient(circle at 86% 20%, rgba(134, 151, 196, 0.08), transparent 40%),
+    linear-gradient(145deg, #f8faff, var(--bg-base));
+  filter: none;
   transform: scale(1.05);
   animation: heroZoom 20s ease-in-out infinite alternate;
 }
 
 @keyframes heroZoom {
   from { transform: scale(1.05); }
-  to   { transform: scale(1.12); }
+  to   { transform: scale(1.1); }
 }
 
 .hero-bg::after {
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(to bottom, transparent 60%, var(--bg-base));
+  background: linear-gradient(to bottom, transparent 40%, var(--bg-base));
 }
 
 .hero-content {
@@ -115,16 +160,19 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 6px 18px;
-  background: rgba(0, 242, 254, 0.07);
-  border: 1px solid rgba(0, 242, 254, 0.2);
+  padding: 8px 20px;
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: var(--glass-border);
   border-radius: 50px;
   color: var(--c-primary);
   font-size: 0.85rem;
-  font-weight: 600;
-  letter-spacing: 1.5px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
   text-transform: uppercase;
   margin-bottom: 28px;
+  box-shadow: var(--glass-shadow);
   animation: fadeSlideDown 0.8s ease forwards;
 }
 
@@ -134,28 +182,22 @@
 }
 
 .hero h2 {
-  font-size: clamp(2.8rem, 7vw, 5rem);
+  font-size: clamp(3.2rem, 8vw, 6rem);
   font-weight: 900;
-  line-height: 1.1;
-  letter-spacing: -1.5px;
-  margin-bottom: 24px;
+  line-height: 1.05;
+  letter-spacing: -2px;
+  margin-bottom: 20px;
+  color: var(--text-main);
   animation: fadeSlideUp 0.8s 0.15s ease both;
 }
 
 .hero h2 em {
   font-style: normal;
-  background: linear-gradient(135deg, var(--c-primary), var(--c-secondary), var(--c-accent));
+  color: var(--c-primary);
+  background: linear-gradient(135deg, var(--c-primary), var(--c-muted-1));
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  background-size: 200% 200%;
-  animation: gradientShift 4s ease infinite;
-}
-
-@keyframes gradientShift {
-  0%   { background-position: 0%   50%; }
-  50%  { background-position: 100% 50%; }
-  100% { background-position: 0%   50%; }
 }
 
 @keyframes fadeSlideUp {
@@ -163,15 +205,29 @@
   to   { opacity: 1; transform: translateY(0); }
 }
 
-.hero p {
-  font-size: 1.2rem;
-  color: var(--text-muted);
+.hero-tagline {
+  font-size: 1.1rem;
+  font-weight: 700;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  background: linear-gradient(90deg, var(--c-primary), var(--c-secondary));
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 16px;
+  animation: fadeSlideUp 0.8s 0.25s ease both;
+}
+
+.hero-desc {
+  font-size: 1.15rem;
+  color: var(--text-secondary);
   margin-bottom: 44px;
   font-weight: 400;
   max-width: 520px;
   margin-left: auto;
   margin-right: auto;
-  animation: fadeSlideUp 0.8s 0.3s ease both;
+  line-height: 1.7;
+  animation: fadeSlideUp 0.8s 0.35s ease both;
 }
 
 .hero-ctas {
@@ -182,37 +238,65 @@
   animation: fadeSlideUp 0.8s 0.45s ease both;
 }
 
+.btn-hero-pill {
+  padding: 18px 42px;
+  font-size: 1.08rem;
+  border-radius: 50px;
+  font-weight: 800;
+  letter-spacing: 0.3px;
+  box-shadow: 0 8px 30px rgba(79, 70, 229, 0.3);
+  transition: all 0.3s ease;
+}
+
+.btn-hero-pill:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 14px 40px rgba(79, 70, 229, 0.45);
+}
+
 .hero-stats {
   display: flex;
-  gap: 48px;
+  gap: 32px;
   justify-content: center;
   margin-top: 72px;
-  padding-top: 40px;
-  border-top: 1px solid var(--glass-border);
+  padding: 32px;
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: var(--glass-border);
+  border-radius: var(--radius-neu);
+  box-shadow: var(--glass-shadow);
   animation: fadeSlideUp 0.8s 0.6s ease both;
 }
 
 .stat-item {
   text-align: center;
+  position: relative;
+}
+
+.stat-item:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  right: -16px;
+  top: 10%;
+  bottom: 10%;
+  width: 1px;
+  background: rgba(0,0,0,0.05);
 }
 
 .stat-value {
   font-size: 2.2rem;
   font-weight: 900;
-  background: linear-gradient(135deg, var(--c-primary), var(--c-secondary));
-  background-clip: text;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  color: var(--c-primary);
   line-height: 1;
   margin-bottom: 6px;
 }
 
 .stat-label {
   font-size: 0.8rem;
-  color: var(--text-muted);
+  color: var(--text-secondary);
   letter-spacing: 1px;
   text-transform: uppercase;
-  font-weight: 500;
+  font-weight: 600;
 }
 
 /* ================================================
@@ -221,7 +305,7 @@
 .footer {
   text-align: center;
   padding: 40px 24px;
-  border-top: 1px solid var(--glass-border);
+  border-top: 1px solid rgba(148, 163, 184, 0.25);
   color: var(--text-faint);
   font-size: 0.9rem;
   position: relative;
@@ -277,7 +361,7 @@
   top: 72px;
   left: 0;
   right: 0;
-  background: rgba(7, 13, 26, 0.97);
+  background: rgba(248, 250, 255, 0.95);
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
   border-bottom: 1px solid var(--glass-border);
@@ -314,8 +398,8 @@
 
 .nav-drawer a:hover {
   color: var(--c-primary);
-  background: rgba(0,242,254,0.07);
-  border-color: rgba(0,242,254,0.15);
+  background: rgba(79, 70, 229, 0.07);
+  border-color: rgba(79, 70, 229, 0.15);
 }
 
 .nav-drawer .btn-primary {

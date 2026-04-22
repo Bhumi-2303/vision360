@@ -47,8 +47,8 @@
             letter-spacing: 1.2px; text-transform: uppercase; color: var(--c-primary);
         }
         .viewer-title-wrap { display: flex; flex-direction: column; align-items: center; gap: 6px; }
-        .loading-logo { font-size: 1.4rem; font-weight: 900; margin-bottom: 10px; }
-        .loading-logo span { background: linear-gradient(90deg,#00f2fe,#4facfe); background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .loading-logo { margin-bottom: 10px; }
+        .loading-logo img { height: 80px; width: auto; object-fit: contain; }
 
         /* ── Info hotspot dot ──────────────────────── */
         .hs-custom-info {
@@ -161,7 +161,7 @@
         <!-- Loading overlay -->
         <div id="loading-overlay">
             <div class="loader-ring"></div>
-            <p class="loading-logo">Vision <span>360</span></p>
+            <p class="loading-logo"><img src="assets/logo.png" alt="Vision 360" /></p>
             <p>Loading panorama...</p>
         </div>
 
@@ -172,7 +172,13 @@
         <div class="viewer-ui">
             <div class="viewer-header">
 
-                <a href="index.html" class="back-btn"><i class="fas fa-arrow-left"></i> Back</a>
+                <div class="viewer-header-left">
+                    <a href="index.html" class="viewer-brand">
+                        <div class="logo viewer-logo-mini"><img src="assets/logo.png" alt="Vision 360" /></div>
+                    </a>
+                    <div class="brand-divider"></div>
+                    <a href="index.html" class="back-btn"><i class="fas fa-arrow-left"></i> Home</a>
+                </div>
 
                 <div class="viewer-title-wrap">
                     <div class="scene-title" id="current-scene-title">Loading...</div>
@@ -181,8 +187,8 @@
                 </div>
 
                 <!-- Right controls -->
-                <div style="display:flex; gap:8px; align-items:center; justify-content:flex-end;">
-                    <button id="toggle-panel-btn" class="back-btn" style="gap:6px;padding:10px 14px;" title="All Scenes (S)">
+                <div class="viewer-header-actions">
+                    <button id="toggle-panel-btn" class="back-btn compact-back-btn" title="All Scenes (S)">
                         <i class="fas fa-list"></i>
                     </button>
                 </div>
@@ -192,7 +198,7 @@
             <!-- Drag hint -->
             <div class="viewer-hint">
                 <i class="fas fa-mouse"></i>
-                Drag to look around &nbsp;·&nbsp; Click <span style="color:#f093fb;">ⓘ</span> hotspots for info
+                Drag to look around &nbsp;·&nbsp; Click <span class="hint-info-icon">ⓘ</span> hotspots for info
             </div>
         </div>
 
@@ -246,7 +252,7 @@
 
         <!-- ── All Scenes slide-in panel (right side) ── -->
         <div class="viewer-scenes-panel" id="scenes-panel">
-            <h4><i class="fas fa-layer-group" style="margin-right:8px;"></i>All Scenes</h4>
+            <h4><i class="fas fa-layer-group panel-title-icon"></i>All Scenes</h4>
             <div id="panel-scene-list"></div>
         </div>
 
@@ -257,7 +263,7 @@
                 <div class="hs-modal-icon">ℹ️</div>
                 <div id="modal-hs-title">Hotspot</div>
                 <div id="modal-hs-desc">Description.</div>
-                <div id="modal-hs-img-wrap" style="display:none;">
+                <div id="modal-hs-img-wrap" class="is-hidden">
                     <img id="modal-hs-img" src="" alt="Hotspot image">
                 </div>
             </div>

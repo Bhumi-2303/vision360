@@ -23,12 +23,47 @@
 .viewer-header {
   position: absolute;
   top: 0; left: 0; right: 0;
-  padding: 24px 30px;
+  padding: 20px 24px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   pointer-events: auto;
-  background: linear-gradient(to bottom, rgba(7,13,26,0.8) 0%, transparent 100%);
+  background: linear-gradient(to bottom, rgba(255,255,255,0.72) 0%, transparent 100%);
+  z-index: 500;
+}
+
+.viewer-header-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.viewer-brand {
+  text-decoration: none;
+  transition: var(--transition);
+}
+
+.viewer-brand:hover {
+  transform: scale(1.02);
+  opacity: 0.9;
+}
+
+.viewer-logo-mini {
+  display: inline-flex;
+  align-items: center;
+}
+
+.viewer-logo-mini img {
+  height: 48px;
+  width: auto;
+  object-fit: contain;
+}
+
+.brand-divider {
+  width: 1px;
+  height: 24px;
+  background: rgba(0, 0, 0, 0.1);
+  opacity: 0.5;
 }
 
 .back-btn {
@@ -36,10 +71,10 @@
   align-items: center;
   gap: 10px;
   padding: 11px 22px;
-  background: rgba(7, 13, 26, 0.7);
+  background: rgba(255, 255, 255, 0.72);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border: 1px solid var(--glass-border);
+  border: 1px solid rgba(255, 255, 255, 0.9);
   border-radius: 50px;
   color: var(--text-main);
   text-decoration: none;
@@ -53,15 +88,15 @@
   border-color: rgba(0, 242, 254, 0.35);
   color: var(--c-primary);
   transform: translateX(-4px);
-  box-shadow: 0 0 20px rgba(0, 242, 254, 0.15);
+  box-shadow: 0 10px 24px rgba(79, 70, 229, 0.18);
 }
 
 .scene-title {
   padding: 11px 28px;
-  background: rgba(7, 13, 26, 0.7);
+  background: rgba(255, 255, 255, 0.72);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border: 1px solid var(--glass-border);
+  border: 1px solid rgba(255, 255, 255, 0.9);
   border-radius: 50px;
   font-weight: 700;
   font-size: 1rem;
@@ -87,30 +122,31 @@
 }
 
 .shortcut-btn {
-  background: rgba(7,13,26,0.75);
+  background: rgba(255, 255, 255, 0.74);
   backdrop-filter: blur(12px);
-  border: 1px solid rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.92);
   color: var(--text-muted);
   width: 40px; height: 40px;
-  border-radius: 10px;
+  border-radius: 12px;
   cursor: pointer;
   display: grid;
   place-items: center;
   font-size: 0.9rem;
   transition: var(--transition);
   font-family: 'Outfit', sans-serif;
+  box-shadow: var(--shadow-neu);
 }
 
 .shortcut-btn:hover {
   color: var(--c-primary);
-  border-color: rgba(0,242,254,0.3);
-  background: rgba(0,242,254,0.08);
+  border-color: rgba(79,70,229,0.3);
+  background: rgba(79,70,229,0.08);
 }
 
 .shortcut-btn.active {
   color: var(--c-primary);
-  border-color: rgba(0,242,254,0.4);
-  background: rgba(0,242,254,0.1);
+  border-color: rgba(79,70,229,0.4);
+  background: rgba(79,70,229,0.12);
 }
 
 /* Related scenes slide-in panel */
@@ -120,9 +156,9 @@
   right: -320px;
   width: 300px;
   height: calc(100vh - 108px);
-  background: rgba(7,13,26,0.92);
+  background: rgba(255,255,255,0.86);
   backdrop-filter: blur(24px);
-  border-left: 1px solid var(--glass-border);
+  border-left: 1px solid rgba(255,255,255,0.92);
   border-radius: var(--radius-md) 0 0 var(--radius-md);
   padding: 20px 16px;
   overflow-y: auto;
@@ -156,13 +192,13 @@
 }
 
 .panel-scene-item:hover {
-  background: rgba(0,242,254,0.07);
-  border-color: rgba(0,242,254,0.2);
+  background: rgba(79,70,229,0.07);
+  border-color: rgba(79,70,229,0.2);
 }
 
 .panel-scene-item.current {
-  background: rgba(0,242,254,0.1);
-  border-color: rgba(0,242,254,0.3);
+  background: rgba(79,70,229,0.1);
+  border-color: rgba(79,70,229,0.3);
 }
 
 .panel-scene-dot {
@@ -174,7 +210,7 @@
 
 .panel-scene-item.current .panel-scene-dot {
   background: var(--c-primary);
-  box-shadow: 0 0 8px var(--c-primary);
+  box-shadow: 0 0 8px rgba(79,70,229,0.5);
 }
 
 .panel-scene-name {
@@ -213,6 +249,12 @@
 
 .viewer-breadcrumb-bar a:hover { color: var(--c-primary); }
 .viewer-breadcrumb-bar .sep { opacity: 0.4; font-size: 0.65rem; }
+
+.viewer-header-actions { display: flex; gap: 8px; align-items: center; justify-content: flex-end; }
+.compact-back-btn { gap: 6px; padding: 10px 14px; }
+.hint-info-icon { color: var(--c-accent); }
+.panel-title-icon { margin-right: 8px; }
+.is-hidden { display: none; }
 
 
 
