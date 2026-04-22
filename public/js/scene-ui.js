@@ -20,15 +20,7 @@ export class SceneUI {
         this.allScenes = scenes;
         if (this.statScenes) this.statScenes.textContent = this.allScenes.length;
 
-        // Dynamically set hero background from real uploaded scenes
-        const bgScene = this.allScenes.find(s => s.sceneType === 'building' && s.panorama) || this.allScenes.find(s => s.panorama);
-        if (bgScene && bgScene.panorama) {
-            const heroBg = document.querySelector('.hero-bg');
-            if (heroBg) {
-                const url = bgScene.panorama.startsWith('images/') ? '/' + bgScene.panorama : bgScene.panorama;
-                heroBg.style.backgroundImage = `url('${url}')`;
-            }
-        }
+        // Phase 2 visual system keeps hero background clean white/glass.
 
         this.renderGridView(this.allScenes);
         this.buildHierarchyView(this.allScenes);
