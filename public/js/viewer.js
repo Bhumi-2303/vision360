@@ -362,6 +362,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         zoBtn    && zoBtn.addEventListener('click',    () => VIEWER.setHfov(Math.min(VIEWER.getHfov() + 15, 120)));
         resetBtn && resetBtn.addEventListener('click', () => { VIEWER.setHfov(100); VIEWER.setPitch(0); VIEWER.setYaw(0); });
 
+        // orderedAutoTour is declared at the top of the scope (line ~31)
+
         function buildOrderedHierarchy() {
             orderedAutoTour = [];
             const typeWeight = { building: 1, department: 2, classroom: 3, lab: 4 };
