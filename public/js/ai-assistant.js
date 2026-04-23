@@ -50,7 +50,7 @@ export class AIAssistant {
                     <button id="ai-chat-close"><i class="fas fa-times"></i></button>
                 </div>
                 <div id="ai-chat-messages" class="ai-chat-messages">
-                    <div class="ai-msg bot">Hi! I'm the Vision 360 AI Guide. Ask me anything about the college, or ask me to take you to a specific scene!</div>
+                    <div class="ai-msg bot">hey, i am IRA your virtual tour assistant. welcome to R.N.G.P.I.T!</div>
                 </div>
                 <div class="ai-chat-input-area">
                     <button id="ai-chat-mic" title="Speak"><i class="fas fa-microphone"></i></button>
@@ -138,7 +138,13 @@ export class AIAssistant {
         if (this.isOpen) {
             this.chatWindow.classList.add('open');
             this.fab.classList.add('active');
-            setTimeout(() => this.chatInput.focus(), 100);
+            
+            // Speak greeting
+            setTimeout(() => {
+                this.speak("hey, i am IRA your virtual tour assistant");
+                setTimeout(() => this.speak("welcome to R.N.G.P.I.T"), 2500);
+                this.chatInput.focus();
+            }, 500);
         } else {
             this.chatWindow.classList.remove('open');
             this.fab.classList.remove('active');
@@ -155,6 +161,25 @@ export class AIAssistant {
         }
         this.chatMessages.appendChild(msgDiv);
         this.chatMessages.scrollTop = this.chatMessages.scrollHeight;
+        
+        // Optionally speak bot responses
+        if (sender === 'bot' && !isHtml) {
+            this.speak(text);
+        }
+    }
+
+    speak(text) {
+        if (!window.speechSynthesis) return;
+        
+        // Cancel any ongoing speech
+        window.speechSynthesis.cancel();
+        
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'en-US';
+        utterance.rate = 0.9; // Slightly slower for clarity
+        utterance.pitch = 1.1; // Slightly higher/feminine
+        
+        window.speechSynthesis.speak(utterance);
     }
 
     handleSend() {
