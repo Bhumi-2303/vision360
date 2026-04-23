@@ -11,7 +11,8 @@
     "build": "vite build && cp -r public/images dist/images",
     "firebase:host": "npx --yes firebase-tools serve",
     "dev": "vite",
-    "start": "npx --yes concurrently \"node server.js\" \"npm run firebase:host\""
+    "start": "node server/index.js",
+    "server": "node server/index.js"
   },
   "repository": {
     "type": "git",
