@@ -98,12 +98,14 @@ export class SceneUI {
             const row = document.createElement('div');
             row.className = 'building-row';
             row.innerHTML = `
-                <div style="width:44px;height:44px;background:linear-gradient(135deg,var(--c-primary),var(--c-secondary));border-radius:12px;display:grid;place-items:center;font-size:1.3rem;flex-shrink:0;">🏫</div>
-                <div style="flex:1;">
-                    <div style="font-weight:700;color:var(--text-main);font-size:1.05rem;">${b.title}</div>
-                    <div style="font-size:0.82rem;color:var(--text-muted);">Main Campus · ${b.hotSpots?.length || 0} hotspot${(b.hotSpots?.length||0)!==1?'s':''}</div>
+                <div class="building-icon">🏫</div>
+                <div class="building-info">
+                    <div class="building-title">${b.title}</div>
+                    <div class="building-subtitle">Main Campus · ${b.hotSpots?.length || 0} hotspot${(b.hotSpots?.length||0)!==1?'s':''}</div>
                 </div>
-                <button class="child-explore" data-id="${b.id}"><i class="fas fa-street-view"></i> Explore</button>`;
+                <button class="child-explore" data-id="${b.id}">
+                    <i class="fas fa-street-view"></i> <span>Explore</span>
+                </button>`;
             this.hierarchyView.appendChild(row);
         });
 
@@ -116,27 +118,26 @@ export class SceneUI {
             const header = document.createElement('div');
             header.className = 'dept-group-header';
             header.innerHTML = `
-                <div class="dept-group-icon"><i class="fas fa-building"></i></div>
+                <div class="dept-group-icon"><i class="fas fa-university"></i></div>
                 <div class="dept-group-info">
                     <strong>${dept.title}</strong>
                     <span>${deptChildren.length} room${deptChildren.length !== 1 ? 's' : ''} / lab${deptChildren.length !== 1 ? 's' : ''} inside</span>
                 </div>
                 <button class="child-explore" data-id="${dept.id}" style="margin-right:8px;">
-                    <i class="fas fa-eye"></i> View
+                    <i class="fas fa-eye"></i> <span>View</span>
                 </button>
                 <i class="fas fa-chevron-down dept-chevron"></i>`;
             const childContainer = document.createElement('div');
             childContainer.className = 'dept-children';
             if (deptChildren.length === 0) {
                 const empty = document.createElement('div');
-                empty.style.cssText = 'padding:16px;color:var(--text-muted);font-size:0.88rem;text-align:center;';
-                empty.innerHTML = '<i class="fas fa-info-circle" style="margin-right:6px;"></i>No rooms or labs linked yet.';
+                empty.style.cssText = 'padding:24px;color:var(--text-muted);font-size:0.9rem;text-align:center;background:rgba(0,0,0,0.02);';
+                empty.innerHTML = '<i class="fas fa-info-circle" style="margin-right:8px;opacity:0.6;"></i>No rooms or labs linked yet.';
                 childContainer.appendChild(empty);
             } else {
                 deptChildren.forEach(child => {
                     const childRow = document.createElement('div');
                     childRow.className = 'child-scene-row';
-                    const col = typeBgColors[child.sceneType] || typeBgColors.classroom;
                     childRow.innerHTML = `
                         <div class="child-icon ${child.sceneType}">${typeIcons[child.sceneType] || '🌐'}</div>
                         <div class="child-info">
@@ -144,7 +145,7 @@ export class SceneUI {
                             <span>${typeLabels[child.sceneType]} · ${child.hotSpots?.length || 0} hotspot${(child.hotSpots?.length||0)!==1?'s':''}</span>
                         </div>
                         <button class="child-explore" data-id="${child.id}">
-                            <i class="fas fa-arrow-right"></i> Explore
+                            <i class="fas fa-arrow-right"></i> <span>Explore</span>
                         </button>`;
                     childContainer.appendChild(childRow);
                 });
@@ -165,10 +166,9 @@ export class SceneUI {
         const orphans = children.filter(c => !linkedIds.has(c.id));
         if (orphans.length > 0) {
             const orphanGroup = document.createElement('div');
-            orphanGroup.className = 'dept-group open';
+            orphanGroup.className = 'dept-group';
             const orphanHeader = document.createElement('div');
             orphanHeader.className = 'dept-group-header';
-            orphanHeader.style.cursor = 'default';
             orphanHeader.innerHTML = `
                 <div class="dept-group-icon" style="background:linear-gradient(135deg,#667eea,#764ba2);">
                     <i class="fas fa-layer-group"></i>
@@ -176,10 +176,10 @@ export class SceneUI {
                 <div class="dept-group-info">
                     <strong>Other Spaces</strong>
                     <span>Rooms &amp; Labs not yet linked to a department</span>
-                </div>`;
+                </div>
+                <i class="fas fa-chevron-down dept-chevron"></i>`;
             const orphanContainer = document.createElement('div');
             orphanContainer.className = 'dept-children';
-            orphanContainer.style.display = 'flex';
             orphans.forEach(child => {
                 const childRow = document.createElement('div');
                 childRow.className = 'child-scene-row';
@@ -187,13 +187,14 @@ export class SceneUI {
                     <div class="child-icon ${child.sceneType}">${typeIcons[child.sceneType] || '🌐'}</div>
                     <div class="child-info">
                         <strong>${child.title}</strong>
-                        <span>${typeLabels[child.sceneType]}</span>
+                        <span>${typeLabels[child.sceneType]} · ${child.hotSpots?.length || 0} hotspots</span>
                     </div>
                     <button class="child-explore" data-id="${child.id}">
-                        <i class="fas fa-arrow-right"></i> Explore
+                        <i class="fas fa-arrow-right"></i> <span>Explore</span>
                     </button>`;
                 orphanContainer.appendChild(childRow);
             });
+            orphanHeader.addEventListener('click', () => orphanGroup.classList.toggle('open'));
             orphanGroup.appendChild(orphanHeader);
             orphanGroup.appendChild(orphanContainer);
             this.hierarchyView.appendChild(orphanGroup);
