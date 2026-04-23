@@ -7,10 +7,12 @@ export default defineConfig({
     emptyOutDir: true,
     rollupOptions: {
       input: {
-        main: './public/index.html',
-        viewer: './public/viewer.html',
-        admin_login: './public/admin/login.html',
-        admin_dashboard: './public/admin/dashboard.html'
+        main: 'index.html',
+        viewer: 'viewer.html',
+        vr: 'vr.html',
+        login: 'admin/login.html',
+        dashboard: 'admin/dashboard.html',
+        notfound: '404.html'
       }
     }
   },
