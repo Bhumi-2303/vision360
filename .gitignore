@@ -41,9 +41,15 @@ coverage/
 .firebase/
 
 # =========================
-# Uploaded images (local server)
+# Uploaded images (local server — legacy)
 # =========================
 public/images/uploads/
+
+# =========================
+# Backend server
+# =========================
+server/node_modules/
+server/.env
 
 # =========================
 # Temporary files

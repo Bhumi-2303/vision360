@@ -1,8 +1,8 @@
-import { auth, db, storage } from "./firebase-init.js";
+import { auth, db } from "./firebase-init.js";
 import { onAuthStateChanged, signOut, createUserWithEmailAndPassword, updateProfile, getAuth } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
 import { initializeApp, deleteApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
 import { collection, doc, setDoc, getDocs, updateDoc, deleteDoc, getDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
-import { ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-storage.js";
+
 
 // Firebase config (duplicated here for secondary app instance)
 const FIREBASE_CONFIG = {
@@ -296,7 +296,7 @@ document.addEventListener("DOMContentLoaded", () => {
         hotspotsContainer.innerHTML = '';
 
         let panoramaUrl = currentEditingScene.panorama;
-        if (panoramaUrl && panoramaUrl.startsWith('images/')) panoramaUrl = '/' + panoramaUrl;
+        if (panoramaUrl && !panoramaUrl.startsWith('http') && panoramaUrl.startsWith('images/')) panoramaUrl = '/' + panoramaUrl;
 
         if (editViewer) { editViewer.destroy(); editViewer = null; }
 
@@ -667,7 +667,11 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // Helper: Local Server Upload
+    // Helper: Upload image to backend API (Cloudinary)
+    const API_URL = (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.VITE_API_URL)
+        ? import.meta.env.VITE_API_URL
+        : 'http://localhost:3000';
+
     async function uploadImage(fileInput) {
         if (!fileInput.files || fileInput.files.length === 0) throw new Error("No image selected");
         
@@ -676,22 +680,21 @@ document.addEventListener("DOMContentLoaded", () => {
         formData.append("file", file);
 
         try {
-            // Post to the local Express server we just created
-            const response = await fetch("http://localhost:3000/api/upload", {
+            const response = await fetch(`${API_URL}/api/upload`, {
                 method: "POST",
                 body: formData
             });
 
             if (!response.ok) {
                 const errData = await response.json();
-                throw new Error(errData.error || "Local upload failed");
+                throw new Error(errData.error || "Upload failed");
             }
 
             const data = await response.json();
-            return data.url; // e.g., "images/scene-123.jpg"
+            return data.url; // Cloudinary secure_url
         } catch (error) {
-            console.error("Local Upload Error:", error);
-            throw new Error(`Failed to upload image to local server. Make sure 'node server.js' is running. Details: ${error.message}`);
+            console.error("Upload Error:", error);
+            throw new Error(`Failed to upload image. Make sure the API server is running. Details: ${error.message}`);
         }
     }
 

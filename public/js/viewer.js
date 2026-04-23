@@ -280,7 +280,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             scene.hotSpots.forEach(hs => {
                 if (hs.type === 'scene' && hs.sceneId && scenesData[hs.sceneId]) {
                     const p = scenesData[hs.sceneId].panorama;
-                    if (p) { const img = new Image(); img.src = p.startsWith('images/') ? '/' + p : p; }
+                    if (p) { const img = new Image(); img.src = p; }
                 }
             });
         }
