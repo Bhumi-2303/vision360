@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Vision 360 - VR Viewer</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <!-- A-Frame Library for VR/WebXR -->
+    <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
+    <style>
+        .vr-overlay-ui {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 9999;
+            pointer-events: none;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .back-button {
+            pointer-events: auto;
+            background: rgba(7, 13, 26, 0.8);
+            backdrop-filter: blur(8px);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 12px 24px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.2s;
+            text-decoration: none;
+            font-size: 14px;
+        }
+        .back-button:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-2px);
+        }
+        .scene-info {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.6);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 14px;
+            z-index: 9999;
+            pointer-events: none;
+            text-align: center;
+        }
+        /* Hide A-Frame inspector hint */
+        .a-canvas { cursor: grab !important; }
+        .a-canvas:active { cursor: grabbing !important; }
+    </style>
+</head>
+<body>
+    <!-- UI Overlay -->
+    <div class="vr-overlay-ui">
+        <a href="javascript:history.back()" class="back-button">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+            Exit VR Mode
+        </a>
+    </div>
+
+    <div id="scene-title-display" class="scene-info">Loading VR Scene...</div>
+
+    <!-- A-Frame Scene -->
+    <a-scene loading-screen="dotsColor: #00f2fe; backgroundColor: #070d1a" renderer="antialias: true; colorManagement: true;">
+        <a-assets>
+            <img id="panorama-img" src="" crossorigin="anonymous">
+        </a-assets>
+
+        <!-- 360 Sky -->
+        <a-sky id="main-sky" src="#panorama-img" rotation="0 -90 0" animation="property: opacity; from: 0; to: 1; dur: 1000"></a-sky>
+
+        <!-- Camera -->
+        <a-entity camera look-controls="reverseMouseDrag: false"></a-entity>
+    </a-scene>
+
+    <script>
+        // Parse URL Parameters
+        const params = new URLSearchParams(window.location.search);
+        const imgUrl = params.get('img');
+        const title = params.get('title') || '360° View';
+
+        const skyAsset = document.querySelector('#panorama-img');
+        const titleDisplay = document.querySelector('#scene-title-display');
+
+        if (imgUrl) {
+            // Set the image source
+            skyAsset.setAttribute('src', imgUrl);
+            titleDisplay.textContent = title;
+            
+            // Handle loading errors
+            skyAsset.addEventListener('error', () => {
+                alert('Error loading 360° image for VR. Please check the source.');
+                window.history.back();
+            });
+        } else {
+            alert('No image found for VR mode.');
+            window.history.back();
+        }
+
+        // Auto-enter VR mode if supported and requested (optional UX enhancement)
+        window.addEventListener('load', () => {
+            const scene = document.querySelector('a-scene');
+            if (scene.hasLoaded) {
+                setupVR();
+            } else {
+                scene.addEventListener('loaded', setupVR);
+            }
+        });
+
+        function setupVR() {
+            console.log('A-Frame Scene Loaded');
+        }
+    </script>
+</body>
+</html>

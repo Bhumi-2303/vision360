@@ -361,6 +361,19 @@ document.addEventListener("DOMContentLoaded", async () => {
             infoPanelBtn.classList.toggle('active');
         });
 
+        // ── VR Mode Toggle ──────────────────────────────────────────
+        const vrBtn = document.getElementById('btn-vr-mode');
+        if (vrBtn) {
+            vrBtn.addEventListener('click', () => {
+                const currentId = VIEWER.getScene();
+                const scene = scenesData[currentId];
+                if (scene && scene.panorama) {
+                    const vrUrl = `vr.html?img=${encodeURIComponent(scene.panorama)}&title=${encodeURIComponent(scene.title)}`;
+                    window.location.href = vrUrl;
+                }
+            });
+        }
+
         // ── Fullscreen ──────────────────────────────────────────────
         fsBtn && fsBtn.addEventListener('click', () => {
             if (!document.fullscreenElement) {
