@@ -174,6 +174,24 @@ document.addEventListener("DOMContentLoaded", async () => {
             updateInfoPanel();
             preloadAdjacent(VIEWER.getScene());
             
+            if (sessionStorage.getItem('ira_welcome') === 'true') {
+                sessionStorage.removeItem('ira_welcome');
+                if (window.speechSynthesis) {
+                    setTimeout(() => {
+                        window.speechSynthesis.cancel();
+                        const u1 = new SpeechSynthesisUtterance("Hey, I am IRA.");
+                        u1.rate = 1.0; u1.pitch = 1.1;
+                        const u2 = new SpeechSynthesisUtterance("Welcome to R.N.G.P.I.T.");
+                        u2.rate = 1.0; u2.pitch = 1.1;
+                        const voices = window.speechSynthesis.getVoices();
+                        const niceVoice = voices.find(v => v.name.includes("Google") || v.name.includes("Natural"));
+                        if (niceVoice) { u1.voice = niceVoice; u2.voice = niceVoice; }
+                        window.speechSynthesis.speak(u1);
+                        window.speechSynthesis.speak(u2);
+                    }, 500);
+                }
+            }
+            
             // Auto start tour if parameter is present
             if (urlParams.get("auto") === "true") {
                 // Determine the absolute beginning of the hierarchy to start from

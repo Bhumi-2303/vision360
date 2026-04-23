@@ -45,7 +45,7 @@ export class AIAssistant {
             <div id="ai-chat-window" class="ai-chat-window">
                 <div class="ai-chat-header">
                     <div class="ai-chat-title">
-                        <img src="images/ai_avatar.png" class="ai-avatar-img" alt="AI Avatar"> AI Guide
+                        <img src="images/ai_avatar.png" class="ai-avatar-img" alt="AI Avatar"> IRA Virtual Tour Guide
                     </div>
                     <button id="ai-chat-close"><i class="fas fa-times"></i></button>
                 </div>

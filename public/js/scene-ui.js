@@ -78,6 +78,10 @@ export class SceneUI {
 
         this.cardGrid.querySelectorAll('.explore-btn').forEach(btn => {
             btn.addEventListener('click', () => {
+                const scene = this.allScenes.find(s => s.id === btn.dataset.id);
+                if (scene && scene.title.toLowerCase().includes('main campus')) {
+                    sessionStorage.setItem('ira_welcome', 'true');
+                }
                 window.location.href = `viewer.html?scene=${btn.dataset.id}`;
             });
         });
@@ -198,6 +202,10 @@ export class SceneUI {
         this.hierarchyView.querySelectorAll('.child-explore').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 e.stopPropagation();
+                const scene = this.allScenes.find(s => s.id === btn.dataset.id);
+                if (scene && scene.title.toLowerCase().includes('main campus')) {
+                    sessionStorage.setItem('ira_welcome', 'true');
+                }
                 window.location.href = `viewer.html?scene=${btn.dataset.id}`;
             });
         });
