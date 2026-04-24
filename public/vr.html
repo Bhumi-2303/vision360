@@ -75,8 +75,27 @@
         <!-- 360 Sky -->
         <a-sky id="main-sky" src="#panorama-img" rotation="0 -90 0" animation="property: opacity; from: 0; to: 1; dur: 1000"></a-sky>
 
-        <!-- Camera -->
-        <a-entity camera look-controls="reverseMouseDrag: false"></a-entity>
+        <!-- Exit VR Button inside scene -->
+        <a-entity id="exit-vr-btn" class="clickable" 
+                  geometry="primitive: plane; width: 1.5; height: 0.4" 
+                  material="color: #070d1a; opacity: 0.8; transparent: true; shader: flat" 
+                  position="0 1.5 -2" 
+                  text="value: EXIT VR; align: center; color: #00f2fe; width: 4; font: mozillavr"
+                  animation__mouseenter="property: scale; to: 1.05 1.05 1.05; dur: 200; startEvents: mouseenter"
+                  animation__mouseleave="property: scale; to: 1 1 1; dur: 200; startEvents: mouseleave">
+        </a-entity>
+
+        <!-- Camera and Cursor -->
+        <a-entity camera look-controls="reverseMouseDrag: false">
+            <a-cursor fuse="true" fuse-timeout="1500" raycaster="objects: .clickable" color="#00f2fe"
+                animation__click="property: scale; startEvents: click; easing: easeInCubic; dur: 150; from: 0.1 0.1 0.1; to: 1 1 1"
+                animation__fusing="property: scale; startEvents: fusing; easing: easeInCubic; dur: 1500; from: 1 1 1; to: 0.1 0.1 0.1">
+            </a-cursor>
+        </a-entity>
+
+        <!-- VR Controllers -->
+        <a-entity laser-controls="hand: left" raycaster="objects: .clickable; far: 100"></a-entity>
+        <a-entity laser-controls="hand: right" raycaster="objects: .clickable; far: 100"></a-entity>
     </a-scene>
 
     <script>
@@ -116,6 +135,16 @@
         function setupVR() {
             console.log('A-Frame Scene Loaded');
         }
+
+        // Exit VR Button Click Logic
+        document.querySelector('#exit-vr-btn').addEventListener('click', () => {
+            const scene = document.querySelector('a-scene');
+            if (scene.is('vr-mode')) {
+                scene.exitVR();
+            } else {
+                window.history.back();
+            }
+        });
     </script>
 </body>
 </html>
