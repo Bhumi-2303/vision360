@@ -8,7 +8,7 @@
     "test:watch": "vitest --root .",
     "lint": "eslint .",
     "format": "prettier --write .",
-    "build": "npx vite build && cp -r public/images dist/images",
+    "build": "echo 'No build required'",
     "firebase:host": "npx --yes firebase-tools serve",
     "dev": "vite",
     "start": "node server/index.js",
@@ -43,7 +43,6 @@
     "firebase-admin": "^13.8.0",
     "globals": "^17.4.0",
     "prettier": "^3.8.1",
-    "vite": "^7.3.1",
     "vitest": "^4.1.1"
   }
 }
