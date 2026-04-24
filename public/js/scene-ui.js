@@ -5,12 +5,17 @@ export class SceneUI {
         this.cardGrid      = document.getElementById("building-cards-grid");
         this.hierarchyView = document.getElementById("hierarchy-view");
         this.statScenes    = document.getElementById("stat-scenes");
+        this.statLocations = document.getElementById("stat-locations");
+        this.statHotspots  = document.getElementById("stat-hotspots");
         this.resultsCount  = document.getElementById("results-count");
         this.searchInput   = document.getElementById("scene-search");
         this.searchClear   = document.getElementById("search-clear-btn");
         this.suggestions   = document.getElementById("search-suggestions");
         this.btnGrid       = document.getElementById("btn-grid-view");
         this.btnTree       = document.getElementById("btn-tree-view");
+        
+        this.campusLoader = document.getElementById("campus-loader");
+        this.emptyState   = document.getElementById("campus-empty-state");
 
         this.allScenes  = [];
         this.activeMode = 'grid';
@@ -18,8 +23,29 @@ export class SceneUI {
 
     init(scenes) {
         this.allScenes = scenes;
+        
+        // Handle loading state: hide spinner, show grid
+        if (this.campusLoader) this.campusLoader.style.display = 'none';
+        if (this.cardGrid) {
+            this.cardGrid.style.display = 'grid';
+            setTimeout(() => { this.cardGrid.style.opacity = '1'; }, 50);
+        }
+
+        // Handle empty state visibility for initial load
+        if (this.emptyState) {
+            this.emptyState.style.display = (scenes.length === 0) ? 'block' : 'none';
+        }
+
         if (this.statScenes) {
             this.animateCount(this.statScenes, this.allScenes.length);
+        }
+        if (this.statLocations) {
+            const locations = this.allScenes.filter(s => s.sceneType === 'building' || s.sceneType === 'department').length;
+            this.animateCount(this.statLocations, locations);
+        }
+        if (this.statHotspots) {
+            const hotspots = this.allScenes.reduce((sum, s) => sum + (s.hotSpots ? s.hotSpots.length : 0), 0);
+            this.animateCount(this.statHotspots, hotspots);
         }
 
         // Phase 2 visual system keeps hero background clean white/glass.
@@ -32,26 +58,40 @@ export class SceneUI {
 
     showError(err) {
         console.error("Error loading campuses:", err);
-        if (this.statScenes) this.statScenes.textContent = "—";
-        if (this.cardGrid) this.cardGrid.innerHTML = `
-            <div style="grid-column:1/-1; text-align:center; padding:80px 20px;">
-                <i class="fas fa-exclamation-triangle" style="font-size:2.5rem; color:var(--c-danger); margin-bottom:20px; display:block;"></i>
-                <p style="color:var(--c-danger);">Failed to load campuses. Please check your connection.</p>
-                <small style="color:var(--text-faint);">${err.message}</small>
-            </div>`;
-    }
+        if (this.campusLoader) this.campusLoader.style.display = 'none';
+        if (this.cardGrid) {
+            this.cardGrid.style.display = 'grid';
+            this.cardGrid.style.opacity = '1';
+            this.cardGrid.innerHTML = `
+                <div style="grid-column:1/-1; text-align:center; padding:80px 20px;">
+                    <i class="fas fa-exclamation-triangle" style="font-size:2.5rem; color:var(--c-danger); margin-bottom:20px; display:block;"></i>
+                    <p style="color:var(--c-danger);">Failed to load campuses. Please check your connection.</p>
+                    <small style="color:var(--text-faint);">${err.message}</small>
+                </div>`;
+        }
 
     renderGridView(scenes) {
         if (!this.cardGrid) return;
         this.cardGrid.innerHTML = '';
+        
+        const isSearching = this.searchInput && this.searchInput.value.trim() !== '';
+
         if (scenes.length === 0) {
-            this.cardGrid.innerHTML = `
-                <div style="grid-column:1/-1; text-align:center; padding:80px 20px;">
-                    <i class="fas fa-search" style="font-size:3rem; color:var(--text-faint); margin-bottom:20px; display:block;"></i>
-                    <p style="color:var(--text-muted); font-size:1.1rem;">No scenes found. Try a different search.</p>
-                </div>`;
+            // Hide global empty state if searching (to show search-specific message instead)
+            if (isSearching && this.emptyState) this.emptyState.style.display = 'none';
+            
+            if (isSearching) {
+                this.cardGrid.innerHTML = `
+                    <div style="grid-column:1/-1; text-align:center; padding:80px 20px;">
+                        <i class="fas fa-search" style="font-size:3rem; color:var(--text-faint); margin-bottom:20px; display:block;"></i>
+                        <p style="color:var(--text-muted); font-size:1.1rem;">No scenes found. Try a different search.</p>
+                    </div>`;
+            }
             return;
         }
+
+        // If we have scenes, ensure empty state is hidden
+        if (this.emptyState) this.emptyState.style.display = 'none';
 
         scenes.forEach((data, idx) => {
             const col  = typeBgColors[data.sceneType] || typeBgColors.building;
