@@ -8,7 +8,7 @@
     "test:watch": "vitest --root .",
     "lint": "eslint .",
     "format": "prettier --write .",
-    "build": "echo 'No build required'",
+    "build": "vite build",
     "firebase:host": "npx --yes firebase-tools serve",
     "dev": "vite",
     "start": "node server/index.js",
