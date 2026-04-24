@@ -131,7 +131,10 @@
   margin: 0; padding: 0; box-sizing: border-box;
 }
 
-html { scroll-behavior: smooth; }
+html { 
+  scroll-behavior: smooth; 
+  overflow-x: hidden; /* Fix: Prevent horizontal overflow bleed */
+}
 
 body {
   font-family: 'Outfit', system-ui, sans-serif;
@@ -159,7 +162,8 @@ body::before {
 ::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb {
-  background: rgba(79, 70, 229, 0.35);
+  /* Fix: Changed from purple rgba(79, 70, 229, 0.35) to match theme border color to resolve vertical strip bleed */
+  background: #DDDAF0; 
   border-radius: 6px;
 }
 ::-webkit-scrollbar-thumb:hover { background: var(--c-primary); }

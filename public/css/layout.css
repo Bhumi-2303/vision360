@@ -6,10 +6,11 @@
   top: 0;
   width: 100%;
   z-index: 1000;
-  padding: 0 24px;
+  padding: 0;
   height: 80px; /* Slight increase for logo */
   display: flex;
   align-items: center;
+  border-top: 3px solid #6B6FD4;
   transition: transform var(--dur-base) var(--ease-standard),
               background var(--dur-base) var(--ease-standard),
               box-shadow var(--dur-base) var(--ease-standard);
@@ -39,8 +40,9 @@
   justify-content: space-between;
   align-items: center;
   max-width: 1280px;
-  margin: auto;
+  margin: 0 auto;
   width: 100%;
+  padding: 0 40px;
 }
 
 .logo {
@@ -183,21 +185,21 @@
 
 .hero h2 {
   font-size: clamp(3.2rem, 8vw, 6rem);
-  font-weight: 900;
+  font-weight: 700;
   line-height: 1.05;
   letter-spacing: -2px;
   margin-bottom: 20px;
-  color: var(--text-main);
+  color: #1A1826;
+  opacity: 0.85;
   animation: fadeSlideUp 0.8s 0.15s ease both;
 }
 
 .hero h2 em {
+  display: inline-block;
   font-style: normal;
-  color: var(--c-primary);
-  background: linear-gradient(135deg, var(--c-primary), var(--c-muted-1));
-  background-clip: text;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  font-weight: 800;
+  font-size: 1.1em;
+  color: #6B6FD4;
 }
 
 @keyframes fadeSlideUp {
@@ -255,7 +257,7 @@
 
 .hero-stats {
   display: flex;
-  gap: 32px;
+  gap: 0;
   justify-content: center;
   margin-top: 72px;
   padding: 32px;
@@ -271,17 +273,14 @@
 .stat-item {
   text-align: center;
   position: relative;
+  padding: 0 32px;
 }
 
-.stat-item:not(:last-child)::after {
-  content: '';
-  position: absolute;
-  right: -16px;
-  top: 10%;
-  bottom: 10%;
-  width: 1px;
-  background: rgba(0,0,0,0.05);
+.stat-item:not(:last-child) {
+  border-right: 1px solid #DDDAF0;
 }
+
+
 
 .stat-value {
   font-size: 2.2rem;
@@ -325,7 +324,7 @@
    HAMBURGER MENU (mobile)
 ================================================ */
 .hamburger {
-  display: none;
+  display: none !important; /* Hidden on desktop by default */
   flex-direction: column;
   gap: 5px;
   cursor: pointer;
@@ -440,15 +439,16 @@
 }
 
 /* ================================================
-   MOBILE  (≤768px)
+   MOBILE  (≤767px)
 ================================================ */
-@media (max-width: 768px) {
+@media (max-width: 767px) {
   /* Show hamburger, hide desktop nav */
-  .hamburger { display: flex; }
-  .navbar     { display: none; }
+  .hamburger { display: flex !important; }
+  .navbar    { display: none !important; }
 
   /* Header tighter */
-  .header { padding: 0 16px; height: 64px; }
+  .header { padding: 0; height: 64px; }
+  .nav-container { padding: 0 20px; }
 
   /* Hero */
   body { padding-top: 64px; }
