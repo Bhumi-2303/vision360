@@ -58,7 +58,7 @@ export class AIAssistant {
                     <button id="ai-chat-send" title="Send"><i class="fas fa-paper-plane"></i></button>
                 </div>
             </div>
-            <button id="ai-fab" class="ai-fab" title="AI Assistant"></button>
+            <button id="ai-fab" class="ai-fab" title="AI Assistant" aria-label="Virtual guide"></button>
         `;
         document.body.appendChild(container);
 
