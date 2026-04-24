@@ -499,6 +499,33 @@
   transition: transform 0.3s ease, filter 0.3s ease;
   place-items: center;
 }
+
+/* AI Assistant Tooltip */
+.ai-fab::before {
+  content: "Need help? Start a tour";
+  position: absolute;
+  bottom: 100%;
+  right: 50%;
+  transform: translateX(50%) translateY(-10px);
+  background: white;
+  border: 1px solid #DDDAF0;
+  color: var(--text-secondary);
+  font-size: 13px;
+  font-weight: 500;
+  border-radius: 8px;
+  padding: 6px 12px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  box-shadow: var(--glass-shadow);
+  z-index: 1001;
+}
+
+.ai-fab:hover::before {
+  opacity: 1;
+  transform: translateX(50%) translateY(-20px);
+}
 .ai-fab:hover {
   transform: scale(1.1);
   filter: drop-shadow(0 15px 25px rgba(240, 147, 251, 0.6));
@@ -668,9 +695,22 @@
 .admin-pill-btn { padding: 9px 22px; font-size: 0.9rem; border-radius: 50px; }
 .hero-status-dot { font-size: 0.5rem; color: var(--c-success); }
 .hero-auto-tour-btn {
-  background: rgba(79, 70, 229, 0.08);
-  border: 1px solid rgba(79, 70, 229, 0.25);
-  color: var(--text-main);
+  background: #FFFFFF;
+  border: 2px solid #6B6FD4;
+  color: #6B6FD4;
+  border-radius: 999px;
+  padding: 16px 36px;
+  font-weight: 600;
+  transition: all 0.25s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+}
+
+.hero-auto-tour-btn:hover {
+  background: #6B6FD4;
+  color: #FFFFFF;
 }
 .section-header-compact { margin-bottom: 36px; }
 

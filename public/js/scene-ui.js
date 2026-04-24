@@ -18,7 +18,9 @@ export class SceneUI {
 
     init(scenes) {
         this.allScenes = scenes;
-        if (this.statScenes) this.statScenes.textContent = this.allScenes.length;
+        if (this.statScenes) {
+            this.animateCount(this.statScenes, this.allScenes.length);
+        }
 
         // Phase 2 visual system keeps hero background clean white/glass.
 
@@ -30,6 +32,7 @@ export class SceneUI {
 
     showError(err) {
         console.error("Error loading campuses:", err);
+        if (this.statScenes) this.statScenes.textContent = "—";
         if (this.cardGrid) this.cardGrid.innerHTML = `
             <div style="grid-column:1/-1; text-align:center; padding:80px 20px;">
                 <i class="fas fa-exclamation-triangle" style="font-size:2.5rem; color:var(--c-danger); margin-bottom:20px; display:block;"></i>
@@ -321,5 +324,22 @@ export class SceneUI {
                 this.suggestions.classList.remove('open');
             }
         });
+    }
+    animateCount(el, target) {
+        if (!el) return;
+        const duration = 1200; // 1.2 seconds as requested
+        let startTimestamp = null;
+        const step = (timestamp) => {
+            if (!startTimestamp) startTimestamp = timestamp;
+            const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+            const current = Math.floor(progress * target);
+            el.textContent = current;
+            if (progress < 1) {
+                window.requestAnimationFrame(step);
+            } else {
+                el.textContent = target; // Ensure it ends exactly on target
+            }
+        };
+        window.requestAnimationFrame(step);
     }
 }
