@@ -1,4 +1,5 @@
 import { typeIcons, typeLabels, typeBgColors } from "./scene-helpers.js";
+// SceneUI handles the primary landing page interactive elements and stats.
 
 export class SceneUI {
     constructor() {
