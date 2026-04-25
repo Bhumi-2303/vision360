@@ -106,6 +106,79 @@
             letter-spacing: 0.02em;
             color: var(--accent-color, #6c63ff);
         }
+
+        .nav-mobile { display: none; }
+
+        .nav-toggle {
+          display: none;
+          flex-direction: column;
+          gap: 5px;
+          background: none;
+          border: none;
+          cursor: pointer;
+          padding: 8px;
+          min-width: 44px;
+          min-height: 44px;
+          justify-content: center;
+          align-items: center;
+        }
+
+        .nav-toggle span {
+          display: block;
+          width: 22px;
+          height: 2px;
+          background: white;
+          border-radius: 2px;
+          transition: transform 0.3s ease, opacity 0.3s ease;
+        }
+
+        .nav-toggle.active span:nth-child(1) {
+          transform: translateY(7px) rotate(45deg);
+        }
+        .nav-toggle.active span:nth-child(2) {
+          opacity: 0;
+        }
+        .nav-toggle.active span:nth-child(3) {
+          transform: translateY(-7px) rotate(-45deg);
+        }
+
+        @media (max-width: 768px) {
+          .nav-desktop { display: none !important; }
+          .nav-toggle { display: flex; }
+          
+          .nav-mobile {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(10, 10, 20, 0.97);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 2rem;
+            z-index: 999;
+          }
+
+          .nav-mobile.open {
+            display: flex;
+            animation: menuFadeIn 0.3s ease forwards;
+          }
+
+          @keyframes menuFadeIn {
+            from { opacity: 0; transform: scale(0.97); }
+            to { opacity: 1; transform: scale(1); }
+          }
+
+          .nav-mobile a {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: white;
+            text-decoration: none;
+          }
+        }
     </style>
 </head>
 
@@ -118,27 +191,24 @@
                 <img src="assets/logo.png" alt="Vision 360 Logo" width="36" height="36" />
             </a>
             <nav class="navbar" aria-label="Primary navigation">
-                <ul class="nav-links desktop-nav">
+                <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">
+                  <span></span><span></span><span></span>
+                </button>
+                <ul class="nav-links nav-desktop">
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#campuses">Explore</a></li>
+                    <li><a href="#about">Learn More</a></li>
+                </ul>
+                <ul class="nav-links nav-mobile">
                     <li><a href="#home">Home</a></li>
                     <li><a href="#campuses">Explore</a></li>
                     <li><a href="#about">Learn More</a></li>
                 </ul>
             </nav>
-            <!-- Hamburger (mobile only) -->
-            <button class="hamburger" id="hamburger-btn" aria-label="Toggle navigation" aria-expanded="false">
-                <span></span><span></span><span></span>
-            </button>
         </div>
     </header>
 
-    <!-- Mobile nav drawer -->
-    <nav class="nav-drawer" id="nav-drawer" aria-label="Mobile navigation">
-        <ul class="mobile-links mobile-nav">
-            <li><a href="#home"     class="drawer-link">Home</a></li>
-            <li><a href="#campuses" class="drawer-link">Explore</a></li>
-            <li><a href="#about"    class="drawer-link">Learn More</a></li>
-        </ul>
-    </nav>
+
 
     <!-- ─── MAIN CONTENT ─────────────────────────────── -->
     <main>
@@ -480,54 +550,8 @@
             new AIAssistant();
         });
     </script>
-    <script>
-        // Hamburger toggle
-        const btn    = document.getElementById('hamburger-btn');
-        const drawer = document.getElementById('nav-drawer');
-        btn.addEventListener('click', () => {
-            const open = drawer.classList.toggle('open');
-            btn.classList.toggle('open', open);
-            btn.setAttribute('aria-expanded', open);
-        });
-        // Close on link click
-        document.querySelectorAll('.drawer-link').forEach(l =>
-            l.addEventListener('click', () => {
-                drawer.classList.remove('open');
-                btn.classList.remove('open');
-                btn.setAttribute('aria-expanded', false);
-            })
-        );
-        // Close when clicking outside
-        document.addEventListener('click', (e) => {
-            if (!btn.contains(e.target) && !drawer.contains(e.target)) {
-                drawer.classList.remove('open');
-                btn.classList.remove('open');
-                btn.setAttribute('aria-expanded', false);
-            }
-        });
-    </script>
 
-    <script>
-        const observer = new IntersectionObserver((entries) => {
-          entries.forEach((e, i) => {
-            if (e.isIntersecting) {
-              setTimeout(() => e.target.classList.add('visible'), i * 100);
-            }
-          });
-        }, { threshold: 0.15 });
-
-        document.querySelectorAll('.reveal').forEach(el => 
-          observer.observe(el));
-    </script>
-
-    <script>
-        window.addEventListener('scroll', () => {
-          document.querySelector('nav')
-            .classList.toggle('scrolled', window.scrollY > 50);
-        });
-    </script>
-    <button id="scrollTop" onclick="window.scrollTo({top:0, 
-    behavior:'smooth'})" style="
+    <button id="scrollTop" onclick="window.scrollTo({top:0, behavior:'smooth'})" style="
       position: fixed;
       bottom: 2rem;
       right: 2rem;
@@ -549,10 +573,44 @@
     ">↑</button>
 
     <script>
-    const scrollBtn = document.getElementById('scrollTop');
-    window.addEventListener('scroll', () => {
-      scrollBtn.style.display = window.scrollY > 400 ? 'flex' : 'none';
-    });
+        // Scroll to top
+        const scrollBtn = document.getElementById('scrollTop');
+        window.addEventListener('scroll', () => {
+          scrollBtn.style.display = window.scrollY > 400 ? 'flex' : 'none';
+        });
+
+        // Mobile Nav Toggle
+        const toggle = document.querySelector('.nav-toggle');
+        const mobileNav = document.querySelector('.nav-mobile');
+        if (toggle && mobileNav) {
+          toggle.addEventListener('click', () => {
+            toggle.classList.toggle('active');
+            mobileNav.classList.toggle('open');
+            toggle.setAttribute('aria-expanded', mobileNav.classList.contains('open'));
+          });
+          mobileNav.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+              toggle.classList.remove('active');
+              mobileNav.classList.remove('open');
+            });
+          });
+        }
+
+        // Reveal animations
+        const observer = new IntersectionObserver((entries) => {
+          entries.forEach((e, i) => {
+            if (e.isIntersecting) {
+              setTimeout(() => e.target.classList.add('visible'), i * 100);
+            }
+          });
+        }, { threshold: 0.15 });
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+        // Nav shadow on scroll
+        window.addEventListener('scroll', () => {
+          const nav = document.querySelector('nav');
+          if (nav) nav.classList.toggle('scrolled', window.scrollY > 50);
+        });
     </script>
 </body>
 </html>
