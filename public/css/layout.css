@@ -80,6 +80,12 @@
   align-items: center;
 }
 
+.mobile-nav { display: none; }
+@media (max-width: 768px) {
+  .desktop-nav { display: none; }
+  .mobile-nav { display: flex; flex-direction: column; }
+}
+
 .nav-links a {
   text-decoration: none;
   color: var(--text-secondary);
