@@ -75,6 +75,7 @@ export class SceneUI {
                     <small style="color:var(--text-faint);">${err.message}</small>
                 </div>`;
         }
+    }
 
     renderGridView(scenes) {
         if (!this.cardGrid) return;
