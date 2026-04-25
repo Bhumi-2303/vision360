@@ -18,6 +18,11 @@ export class SceneUI {
         this.campusLoader = document.getElementById("campus-loader");
         this.emptyState   = document.getElementById("campus-empty-state");
 
+        // Ensure clean initial state: ONLY show loader
+        if (this.campusLoader) this.campusLoader.style.display = 'flex';
+        if (this.emptyState)   this.emptyState.style.display = 'none';
+        if (this.cardGrid)     this.cardGrid.style.display = 'none';
+
         this.allScenes  = [];
         this.activeMode = 'grid';
     }
