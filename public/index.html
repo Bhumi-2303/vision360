@@ -39,14 +39,13 @@
         }
 
         .reveal {
-            opacity: 0;
-            transform: translateY(30px);
-            transition: opacity 0.6s ease, transform 0.6s ease;
+          opacity: 0;
+          transform: translateY(28px);
+          transition: opacity 0.55s ease, transform 0.55s ease;
         }
-
         .reveal.visible {
-            opacity: 1;
-            transform: translateY(0);
+          opacity: 1;
+          transform: translateY(0);
         }
 
         .feature-card {
@@ -464,7 +463,7 @@
     <section id="hierarchy" class="about-section motion-fade-up">
         <div class="about-bg-glow"></div>
         <div class="about-shell">
-            <div style="background:rgba(255,255,255,0.78); border:1px solid rgba(255,255,255,0.92); border-radius:var(--radius-lg); padding:40px 36px; backdrop-filter:blur(18px); box-shadow: var(--shadow-neu);">
+            <div class="reveal" style="background:rgba(255,255,255,0.78); border:1px solid rgba(255,255,255,0.92); border-radius:var(--radius-lg); padding:40px 36px; backdrop-filter:blur(18px); box-shadow: var(--shadow-neu);">
                 <h3 style="font-size:1.2rem;font-weight:700;color:var(--text-main);margin-bottom:6px; display:flex; align-items:center; gap:10px;">
                     <i class="fas fa-sitemap" style="color:var(--c-primary);"></i> Campus Navigation Hierarchy
                 </h3>
@@ -598,7 +597,7 @@
         <div style="max-width: 1280px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 40px; padding: 60px 40px 40px;">
             
             <!-- Column 1: Logo & Info -->
-            <div>
+            <div class="reveal">
                 <img src="assets/logo.png" alt="Vision 360 Logo" width="36" height="36" style="height: 36px; margin-bottom: 20px; display: block;">
                 <p style="color: var(--text-muted); line-height: 1.6; font-size: 0.95rem; max-width: 280px;">
                     Immersive 360° virtual campus tours, powered by Firebase.
@@ -606,7 +605,7 @@
             </div>
 
             <!-- Column 2: Quick Links -->
-            <div>
+            <div class="reveal">
                 <h4 style="color: var(--text-main); margin-bottom: 24px; font-weight: 700; font-size: 1.1rem;">Quick Links</h4>
                 <ul style="list-style: none; padding: 0; display: flex; flex-direction: column; gap: 14px;">
                     <li><a href="#home" style="color: var(--text-secondary); text-decoration: none; font-size: 0.95rem; transition: var(--transition);" onmouseenter="this.style.color='var(--c-primary)'" onmouseleave="this.style.color='var(--text-secondary)'">Home</a></li>
@@ -616,7 +615,7 @@
             </div>
 
             <!-- Column 3: Connect -->
-            <div>
+            <div class="reveal">
                 <h4 style="color: var(--text-main); margin-bottom: 24px; font-weight: 700; font-size: 1.1rem;">Connect</h4>
                 <ul style="list-style: none; padding: 0; display: flex; flex-direction: column; gap: 14px;">
                     <li><a href="https://github.com/Tktirth" target="_blank" style="color: var(--text-secondary); text-decoration: none; font-size: 0.95rem; display: flex; align-items: center; gap: 8px; transition: var(--transition);" onmouseenter="this.style.color='var(--c-primary)'" onmouseleave="this.style.color='var(--text-secondary)'">
@@ -692,14 +691,18 @@
         }
 
         // Reveal animations
-        const observer = new IntersectionObserver((entries) => {
-          entries.forEach((e, i) => {
-            if (e.isIntersecting) {
-              setTimeout(() => e.target.classList.add('visible'), i * 100);
+        const revealObserver = new IntersectionObserver((entries) => {
+          entries.forEach((entry, i) => {
+            if (entry.isIntersecting) {
+              setTimeout(() => {
+                entry.target.classList.add('visible');
+              }, i * 80);
+              revealObserver.unobserve(entry.target);
             }
           });
-        }, { threshold: 0.15 });
-        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+        }, { threshold: 0.12 });
+        document.querySelectorAll('.reveal').forEach(el => 
+          revealObserver.observe(el));
 
         // Nav shadow on scroll
         window.addEventListener('scroll', () => {
