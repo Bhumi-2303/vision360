@@ -179,6 +179,68 @@
             text-decoration: none;
           }
         }
+
+        /* Hero CTAs */
+        .hero-ctas {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 12px;
+          align-items: center;
+        }
+
+        #hero-start-btn {
+          min-height: 48px;
+          min-width: 160px;
+          padding: 14px 28px;
+          border-radius: 12px;
+          font-weight: 600;
+          touch-action: manipulation;
+          background: var(--c-primary);
+          color: white;
+          box-shadow: 0 10px 25px rgba(112, 145, 230, 0.4);
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          gap: 8px;
+          text-decoration: none;
+        }
+
+        .hero-auto-tour-btn {
+          min-height: 48px;
+          min-width: 160px;
+          padding: 13px 27px;
+          border-radius: 12px;
+          background: transparent;
+          border: 1px solid rgba(255,255,255,0.2);
+          font-weight: 500;
+          touch-action: manipulation;
+          color: white;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          gap: 8px;
+          text-decoration: none;
+          transition: border-color 0.3s ease, background 0.3s ease;
+        }
+
+        .hero-auto-tour-btn:hover {
+          border-color: var(--c-primary);
+          background: rgba(112, 145, 230, 0.05);
+        }
+
+        @media (max-width: 480px) {
+          .hero-ctas {
+            flex-direction: column;
+            width: 100%;
+          }
+
+          #hero-start-btn, 
+          .hero-auto-tour-btn {
+            width: 100%;
+            justify-content: center;
+            text-align: center;
+          }
+        }
     </style>
 </head>
 
@@ -238,11 +300,11 @@
             </p>
 
             <div class="hero-ctas">
-                <a href="#campuses" class="btn btn-primary btn-hero-pill" id="hero-start-btn" style="padding: 18px 44px; background: var(--c-primary); color: white; box-shadow: 0 10px 25px rgba(112, 145, 230, 0.4);">
+                <a href="#campuses" class="btn btn-primary btn-hero-pill" id="hero-start-btn">
                     <i class="fas fa-street-view"></i>
                     Explore Our Campus
                 </a>
-                <a href="viewer.html?auto=true" class="btn btn-outline hero-auto-tour-btn" style="background: transparent; border: 2px solid var(--c-primary); color: var(--c-primary); padding: 16px 36px;">
+                <a href="viewer.html?auto=true" class="btn btn-outline hero-auto-tour-btn">
                     <i class="fas fa-sync-alt"></i>
                     Auto Virtual Tour
                 </a>
