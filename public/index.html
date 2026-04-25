@@ -719,32 +719,37 @@
         });
     </script>
 
-    <button id="scrollTop" onclick="window.scrollTo({top:0, behavior:'smooth'})" style="
-      position: fixed;
-      bottom: 2rem;
-      right: 2rem;
-      width: 44px;
-      height: 44px;
-      border-radius: 50%;
-      background: rgba(255,255,255,0.08);
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(255,255,255,0.15);
-      color: white;
-      font-size: 1.2rem;
-      cursor: pointer;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      z-index: 999;
-      transition: opacity 0.3s ease, transform 0.3s ease;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-    ">↑</button>
+    <button id="scrollTop" 
+      aria-label="Scroll to top"
+      onclick="window.scrollTo({top:0,behavior:'smooth'})"
+      style="
+        position: fixed;
+        bottom: 1.5rem;
+        right: 1.25rem;
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        background: rgba(255,255,255,0.08);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border: 1px solid rgba(255,255,255,0.15);
+        color: white;
+        font-size: 1.1rem;
+        cursor: pointer;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 998;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        transition: opacity 0.3s ease, transform 0.3s ease;
+        touch-action: manipulation;
+      ">↑</button>
 
     <script>
         // Scroll to top
-        const scrollBtn = document.getElementById('scrollTop');
+        const _btn = document.getElementById('scrollTop');
         window.addEventListener('scroll', () => {
-          scrollBtn.style.display = window.scrollY > 400 ? 'flex' : 'none';
+          _btn.style.display = window.scrollY > 400 ? 'flex' : 'none';
         });
 
         // Mobile Nav Toggle
