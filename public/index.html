@@ -40,6 +40,23 @@
             transform: translateY(0);
         }
 
+        .feature-card {
+            background: rgba(255, 255, 255, 0.04);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease,
+                        border-color 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.35);
+            border-color: rgba(112, 145, 230, 0.35);
+        }
+
         nav {
             transition: background 0.4s ease, backdrop-filter 0.4s ease,
                         box-shadow 0.4s ease;
@@ -303,42 +320,42 @@
             <div style="margin-bottom:64px;">
                 <h3 style="text-align:center; font-size:1.05rem; font-weight:600; color:var(--text-muted); text-transform:uppercase; letter-spacing:1.5px; margin-bottom:40px;">Key Features</h3>
                 <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:20px;">
-                    <div class="reveal" style="background:rgba(255,255,255,0.78);border:1px solid rgba(255,255,255,0.92);border-radius:var(--radius-sm);padding:22px 20px;display:flex;gap:14px;align-items:flex-start;transition:var(--transition);box-shadow:var(--shadow-neu);" onmouseenter="this.style.borderColor='rgba(79,70,229,0.2)'" onmouseleave="this.style.borderColor='rgba(255,255,255,0.92)'">
+                    <div class="reveal feature-card" style="padding:22px 20px;display:flex;gap:14px;align-items:flex-start;">
                         <i class="fas fa-vr-cardboard" style="font-size:1.3rem;color:var(--c-primary);flex-shrink:0;margin-top:2px;"></i>
                         <div>
                             <div style="font-weight:700;color:var(--text-main);margin-bottom:5px;">Full 360° Panorama</div>
                             <div style="color:var(--text-muted);font-size:0.88rem;line-height:1.55;">Powered by Pannellum for smooth, high-quality equirectangular panorama rendering.</div>
                         </div>
                     </div>
-                    <div class="reveal" style="background:rgba(255,255,255,0.78);border:1px solid rgba(255,255,255,0.92);border-radius:var(--radius-sm);padding:22px 20px;display:flex;gap:14px;align-items:flex-start;transition:var(--transition);box-shadow:var(--shadow-neu);" onmouseenter="this.style.borderColor='rgba(79,70,229,0.2)'" onmouseleave="this.style.borderColor='rgba(255,255,255,0.92)'">
+                    <div class="reveal feature-card" style="padding:22px 20px;display:flex;gap:14px;align-items:flex-start;">
                         <i class="fas fa-map-pin" style="font-size:1.3rem;color:var(--c-secondary);flex-shrink:0;margin-top:2px;"></i>
                         <div>
                             <div style="font-weight:700;color:var(--text-main);margin-bottom:5px;">Interactive Hotspots</div>
                             <div style="color:var(--text-muted);font-size:0.88rem;line-height:1.55;">Clickable navigation markers placed exactly where they belong using pitch &amp; yaw coordinates.</div>
                         </div>
                     </div>
-                    <div class="reveal" style="background:rgba(255,255,255,0.78);border:1px solid rgba(255,255,255,0.92);border-radius:var(--radius-sm);padding:22px 20px;display:flex;gap:14px;align-items:flex-start;transition:var(--transition);box-shadow:var(--shadow-neu);" onmouseenter="this.style.borderColor='rgba(79,70,229,0.2)'" onmouseleave="this.style.borderColor='rgba(255,255,255,0.92)'">
+                    <div class="reveal feature-card" style="padding:22px 20px;display:flex;gap:14px;align-items:flex-start;">
                         <i class="fas fa-cloud" style="font-size:1.3rem;color:#a78bfa;flex-shrink:0;margin-top:2px;"></i>
                         <div>
                             <div style="font-weight:700;color:var(--text-main);margin-bottom:5px;">Firebase Powered</div>
                             <div style="color:var(--text-muted);font-size:0.88rem;line-height:1.55;">All scene data is stored and served live from Firebase Firestore. No page reload needed to see updates.</div>
                         </div>
                     </div>
-                    <div class="reveal" style="background:rgba(255,255,255,0.78);border:1px solid rgba(255,255,255,0.92);border-radius:var(--radius-sm);padding:22px 20px;display:flex;gap:14px;align-items:flex-start;transition:var(--transition);box-shadow:var(--shadow-neu);" onmouseenter="this.style.borderColor='rgba(79,70,229,0.2)'" onmouseleave="this.style.borderColor='rgba(255,255,255,0.92)'">
+                    <div class="reveal feature-card" style="padding:22px 20px;display:flex;gap:14px;align-items:flex-start;">
                         <i class="fas fa-shield-alt" style="font-size:1.3rem;color:#f093fb;flex-shrink:0;margin-top:2px;"></i>
                         <div>
                             <div style="font-weight:700;color:var(--text-main);margin-bottom:5px;">Secure Admin Panel</div>
                             <div style="color:var(--text-muted);font-size:0.88rem;line-height:1.55;">Master admin can create, edit and delete scenes, place hotspots, and grant access to co-admins.</div>
                         </div>
                     </div>
-                    <div class="reveal" style="background:rgba(255,255,255,0.78);border:1px solid rgba(255,255,255,0.92);border-radius:var(--radius-sm);padding:22px 20px;display:flex;gap:14px;align-items:flex-start;transition:var(--transition);box-shadow:var(--shadow-neu);" onmouseenter="this.style.borderColor='rgba(79,70,229,0.2)'" onmouseleave="this.style.borderColor='rgba(255,255,255,0.92)'">
+                    <div class="reveal feature-card" style="padding:22px 20px;display:flex;gap:14px;align-items:flex-start;">
                         <i class="fas fa-mobile-alt" style="font-size:1.3rem;color:var(--c-primary);flex-shrink:0;margin-top:2px;"></i>
                         <div>
                             <div style="font-weight:700;color:var(--text-main);margin-bottom:5px;">Mobile Responsive</div>
                             <div style="color:var(--text-muted);font-size:0.88rem;line-height:1.55;">Works seamlessly on phones, tablets, and desktops with gesture support for 360° dragging.</div>
                         </div>
                     </div>
-                    <div class="reveal" style="background:rgba(255,255,255,0.78);border:1px solid rgba(255,255,255,0.92);border-radius:var(--radius-sm);padding:22px 20px;display:flex;gap:14px;align-items:flex-start;transition:var(--transition);box-shadow:var(--shadow-neu);" onmouseenter="this.style.borderColor='rgba(79,70,229,0.2)'" onmouseleave="this.style.borderColor='rgba(255,255,255,0.92)'">
+                    <div class="reveal feature-card" style="padding:22px 20px;display:flex;gap:14px;align-items:flex-start;">
                         <i class="fas fa-bolt" style="font-size:1.3rem;color:var(--c-secondary);flex-shrink:0;margin-top:2px;"></i>
                         <div>
                             <div style="font-weight:700;color:var(--text-main);margin-bottom:5px;">Instant Loading</div>
