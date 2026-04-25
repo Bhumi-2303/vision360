@@ -82,21 +82,35 @@
           }
         }
 
+        .about-grid-3 {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 1.5rem;
+        }
+
+        @media (max-width: 768px) {
+          .about-grid-3 {
+            grid-template-columns: 1fr;
+            gap: 1rem;
+          }
+        }
+
         .glass-feature-card {
             background: var(--bg-color, #0f0f1a);
             border-radius: 20px;
+            padding: 2rem 1.5rem;
             box-shadow:
-                6px 6px 14px rgba(0, 0, 0, 0.5),
-                -4px -4px 10px rgba(255, 255, 255, 0.04);
-            border: 1px solid rgba(255, 255, 255, 0.06);
+                6px 6px 14px rgba(0,0,0,0.5),
+                -3px -3px 8px rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.06);
             transition: box-shadow 0.3s ease, transform 0.3s ease;
         }
 
         .glass-feature-card:hover {
-            box-shadow:
-                8px 8px 20px rgba(0, 0, 0, 0.6),
-                -4px -4px 12px rgba(255, 255, 255, 0.06);
             transform: translateY(-4px);
+            box-shadow:
+                8px 8px 20px rgba(0,0,0,0.6),
+                -4px -4px 12px rgba(255,255,255,0.06);
         }
 
         nav {
