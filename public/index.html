@@ -57,6 +57,23 @@
             border-color: rgba(112, 145, 230, 0.35);
         }
 
+        .glass-feature-card {
+            background: var(--bg-color, #0f0f1a);
+            border-radius: 20px;
+            box-shadow:
+                6px 6px 14px rgba(0, 0, 0, 0.5),
+                -4px -4px 10px rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            transition: box-shadow 0.3s ease, transform 0.3s ease;
+        }
+
+        .glass-feature-card:hover {
+            box-shadow:
+                8px 8px 20px rgba(0, 0, 0, 0.6),
+                -4px -4px 12px rgba(255, 255, 255, 0.06);
+            transform: translateY(-4px);
+        }
+
         nav {
             transition: background 0.4s ease, backdrop-filter 0.4s ease,
                         box-shadow 0.4s ease;
