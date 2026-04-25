@@ -24,16 +24,20 @@ export class SceneUI {
     init(scenes) {
         this.allScenes = scenes;
         
-        // Handle loading state: hide spinner, show grid
+        // Always hide the loading spinner once fetch is done
         if (this.campusLoader) this.campusLoader.style.display = 'none';
-        if (this.cardGrid) {
-            this.cardGrid.style.display = 'grid';
-            setTimeout(() => { this.cardGrid.style.opacity = '1'; }, 50);
-        }
 
-        // Handle empty state visibility for initial load
-        if (this.emptyState) {
-            this.emptyState.style.display = (scenes.length === 0) ? 'block' : 'none';
+        if (scenes.length > 0) {
+            // Data found: Show grid, hide empty state
+            if (this.cardGrid) {
+                this.cardGrid.style.display = 'grid';
+                setTimeout(() => { this.cardGrid.style.opacity = '1'; }, 50);
+            }
+            if (this.emptyState) this.emptyState.style.display = 'none';
+        } else {
+            // Zero results: Hide grid, show empty state
+            if (this.cardGrid) this.cardGrid.style.display = 'none';
+            if (this.emptyState) this.emptyState.style.display = 'block';
         }
 
         if (this.statScenes) {
