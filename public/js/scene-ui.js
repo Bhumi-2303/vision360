@@ -1,4 +1,19 @@
 import { typeIcons, typeLabels, typeBgColors } from "./scene-helpers.js";
+
+function animateCount(el, target, duration = 1400) {
+  if (!el || target === 0) { if(el) el.textContent = '0'; return; }
+  let start = null;
+  const step = (timestamp) => {
+    if (!start) start = timestamp;
+    const progress = Math.min((timestamp - start) / duration, 1);
+    const ease = 1 - Math.pow(1 - progress, 3);
+    el.textContent = Math.floor(ease * target);
+    if (progress < 1) requestAnimationFrame(step);
+    else el.textContent = target;
+  };
+  requestAnimationFrame(step);
+}
+
 // SceneUI handles the primary landing page interactive elements and stats.
 
 export class SceneUI {
@@ -47,17 +62,17 @@ export class SceneUI {
         }
 
         if (this.statScenes) {
-            this.animateCount(this.statScenes, this.allScenes.length);
+            animateCount(this.statScenes, this.allScenes.length);
         }
         if (this.statLocations) {
             // Count distinct values of the 'building' field
             const buildings = new Set(this.allScenes.map(s => s.building).filter(Boolean));
-            this.animateCount(this.statLocations, buildings.size);
+            animateCount(this.statLocations, buildings.size);
         }
         if (this.statHotspots) {
             // Sum hotspots array lengths across all scenes
             const hotspotsCount = this.allScenes.reduce((sum, s) => sum + (s.hotSpots ? s.hotSpots.length : 0), 0);
-            this.animateCount(this.statHotspots, hotspotsCount);
+            animateCount(this.statHotspots, hotspotsCount);
         }
 
         // Phase 2 visual system keeps hero background clean white/glass.
@@ -378,15 +393,5 @@ export class SceneUI {
             }
         });
     }
-    animateCount(el, target, duration = 1500) {
-        let start = 0;
-        const step = (timestamp) => {
-            if (!start) start = timestamp;
-            const progress = Math.min((timestamp - start) / duration, 1);
-            el.textContent = Math.floor(progress * target);
-            if (progress < 1) requestAnimationFrame(step);
-            else el.textContent = target;
-        };
-        requestAnimationFrame(step);
     }
 }
