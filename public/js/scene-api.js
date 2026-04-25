@@ -1,5 +1,5 @@
 import { db } from "./firebase-init.js";
-import { collection, getDocs } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+import { collection, getDocs } from "firebase/firestore";
 import { inferType, sortScenes } from "./scene-helpers.js";
 
 export async function fetchScenes() {

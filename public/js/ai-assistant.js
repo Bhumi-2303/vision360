@@ -1,5 +1,5 @@
 import { db } from "./firebase-init.js";
-import { collection, getDocs } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+import { collection, getDocs } from "firebase/firestore";
 
 export class AIAssistant {
     constructor() {
@@ -257,7 +257,7 @@ export class AIAssistant {
             }
             if (score > bestMatchScore) {
                 bestMatchScore = score;
-                matchedResponse = item.response;
+                var matchedResponse = item.response;
             }
         }
 

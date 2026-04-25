@@ -1,5 +1,5 @@
 import { db } from "./firebase-init.js";
-import { collection, getDocs } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+import { collection, getDocs } from "firebase/firestore";
 
 document.addEventListener("DOMContentLoaded", async () => {
 
@@ -167,7 +167,32 @@ document.addEventListener("DOMContentLoaded", async () => {
             scenes: processed
         });
 
+        // Safety timeout: hide overlay if it takes more than 15s
+        const safetyTimeout = setTimeout(() => {
+            if (overlay && overlay.style.display !== 'none') {
+                finishProgress(loadIv);
+                overlay.style.opacity = "0";
+                setTimeout(() => { overlay.style.display = "none"; }, 700);
+                console.warn("Viewer loading timed out. Forcing overlay hide.");
+            }
+        }, 15000);
+
+        VIEWER.on("error", (msg) => {
+            clearTimeout(safetyTimeout);
+            finishProgress(loadIv);
+            console.error("Pannellum Error:", msg);
+            if (overlay) {
+                overlay.innerHTML = `
+                    <i class="fas fa-exclamation-circle" style="font-size:2.5rem;color:#ff4b2b;margin-bottom:20px;"></i>
+                    <p style="color:#ff4b2b;font-weight:600;">Unable to load panorama</p>
+                    <small style="color:var(--text-faint);max-width:240px;display:block;">${msg}</small>
+                    <button onclick="location.reload()" style="margin-top:20px;padding:8px 16px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);color:white;border-radius:8px;cursor:pointer;">Retry</button>
+                `;
+            }
+        });
+
         VIEWER.on("load", () => {
+            clearTimeout(safetyTimeout);
             finishProgress(loadIv);
             if (overlay) { overlay.style.opacity = "0"; setTimeout(() => { overlay.style.display = "none"; }, 700); }
             updateSceneUI();
