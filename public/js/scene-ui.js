@@ -40,12 +40,14 @@ export class SceneUI {
             this.animateCount(this.statScenes, this.allScenes.length);
         }
         if (this.statLocations) {
-            const locations = this.allScenes.filter(s => s.sceneType === 'building' || s.sceneType === 'department').length;
-            this.animateCount(this.statLocations, locations);
+            // Count distinct values of the 'building' field
+            const buildings = new Set(this.allScenes.map(s => s.building).filter(Boolean));
+            this.animateCount(this.statLocations, buildings.size);
         }
         if (this.statHotspots) {
-            const hotspots = this.allScenes.reduce((sum, s) => sum + (s.hotSpots ? s.hotSpots.length : 0), 0);
-            this.animateCount(this.statHotspots, hotspots);
+            // Sum hotspots array lengths across all scenes
+            const hotspotsCount = this.allScenes.reduce((sum, s) => sum + (s.hotSpots ? s.hotSpots.length : 0), 0);
+            this.animateCount(this.statHotspots, hotspotsCount);
         }
 
         // Phase 2 visual system keeps hero background clean white/glass.
