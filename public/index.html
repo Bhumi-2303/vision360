@@ -28,6 +28,10 @@
             animation: pageFadeIn 0.45s ease forwards;
         }
 
+        button, a, [role="button"] {
+          touch-action: manipulation;
+        }
+
         @keyframes pageFadeIn {
             from { opacity: 0; }
             to { opacity: 1; }
