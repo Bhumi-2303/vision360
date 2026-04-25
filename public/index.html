@@ -22,6 +22,24 @@
 
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
 </head>
 
 <body>
@@ -181,7 +199,7 @@
             <div class="about-block">
                 <h3 class="about-subtitle">How It Works</h3>
                 <div class="about-grid-3">
-                    <div class="glass-feature-card">
+                    <div class="glass-feature-card reveal">
                         <div class="feature-icon feature-icon-step1">
                             <i class="fas fa-mouse-pointer"></i>
                         </div>
@@ -189,7 +207,7 @@
                         <h4 class="feature-title">Choose a Location</h4>
                         <p class="feature-copy">Pick any scene from the home page — Main Campus, a department, classroom, or lab. Each card shows the scene type and how many hotspots it has.</p>
                     </div>
-                    <div class="glass-feature-card">
+                    <div class="glass-feature-card reveal">
                         <div class="feature-icon feature-icon-step2">
                             <i class="fas fa-street-view"></i>
                         </div>
@@ -197,7 +215,7 @@
                         <h4 class="feature-title">Explore in 360°</h4>
                         <p class="feature-copy">Drag to look around in any direction. Use pinch-to-zoom on mobile or your scroll wheel on desktop for a fully immersive panoramic experience.</p>
                     </div>
-                    <div class="glass-feature-card">
+                    <div class="glass-feature-card reveal">
                         <div class="feature-icon feature-icon-step3">
                             <i class="fas fa-map-signs"></i>
                         </div>
@@ -220,7 +238,7 @@
                 </h3>
                 <p style="color:var(--text-muted); font-size:0.92rem; margin-bottom:28px;">Every scene sits at a specific level. Hotspots let you move naturally between them.</p>
                 <div style="display:flex; flex-wrap:wrap; align-items:center; gap:12px;">
-                    <div style="flex:0 0 auto; min-width:150px; background:linear-gradient(135deg,rgba(79,70,229,0.12),rgba(79,70,229,0.04)); border:1px solid rgba(79,70,229,0.28); border-radius:var(--radius-sm); padding:18px 20px;">
+                    <div class="reveal" style="flex:0 0 auto; min-width:150px; background:linear-gradient(135deg,rgba(79,70,229,0.12),rgba(79,70,229,0.04)); border:1px solid rgba(79,70,229,0.28); border-radius:var(--radius-sm); padding:18px 20px;">
                         <div style="color: var(--c-primary); margin-bottom: 12px;">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-building-2"><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/><path d="M10 6h4"/><path d="M10 10h4"/><path d="M10 14h4"/><path d="M10 18h4"/></svg>
                         </div>
@@ -229,7 +247,7 @@
                         <div style="color:var(--text-muted); font-size:0.82rem; margin-top:4px;">Overall entry point</div>
                     </div>
                     <i class="fas fa-arrow-right" style="color:var(--c-primary); opacity:0.42; font-size:1.1rem; flex-shrink:0;"></i>
-                    <div style="flex:0 0 auto; min-width:150px; background:linear-gradient(135deg,rgba(14,165,233,0.12),rgba(14,165,233,0.04)); border:1px solid rgba(14,165,233,0.28); border-radius:var(--radius-sm); padding:18px 20px;">
+                    <div class="reveal" style="flex:0 0 auto; min-width:150px; background:linear-gradient(135deg,rgba(14,165,233,0.12),rgba(14,165,233,0.04)); border:1px solid rgba(14,165,233,0.28); border-radius:var(--radius-sm); padding:18px 20px;">
                         <div style="color: var(--c-secondary); margin-bottom: 12px;">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-landmark"><line x1="3" x2="21" y1="22" y2="22"/><line x1="6" x2="6" y1="18" y2="11"/><line x1="10" x2="10" y1="18" y2="11"/><line x1="14" x2="14" y1="18" y2="11"/><line x1="18" x2="18" y1="18" y2="11"/><polygon points="12 2 20 7 4 7"/></svg>
                         </div>
@@ -239,7 +257,7 @@
                     </div>
                     <i class="fas fa-arrow-right" style="color:var(--c-secondary); opacity:0.42; font-size:1.1rem; flex-shrink:0;"></i>
                     <div style="display:flex; flex-direction:column; gap:10px; flex:1; min-width:150px;">
-                        <div style="background:linear-gradient(135deg,rgba(139,92,246,0.12),rgba(139,92,246,0.04)); border:1px solid rgba(139,92,246,0.28); border-radius:var(--radius-sm); padding:14px 18px; display:flex; align-items:center; gap:12px;">
+                        <div class="reveal" style="background:linear-gradient(135deg,rgba(139,92,246,0.12),rgba(139,92,246,0.04)); border:1px solid rgba(139,92,246,0.28); border-radius:var(--radius-sm); padding:14px 18px; display:flex; align-items:center; gap:12px;">
                             <div style="color: #a78bfa;">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-door-open"><path d="M13 4h3a2 2 0 0 1 2-2v14"/><path d="M2 20h3"/><path d="M13 20h9"/><path d="M10 12v.01"/><path d="M13 4.562v16.156a1 1 0 0 1-1.242.97L5 20V5.562a2 2 0 0 1 1.515-1.94l4-1A2 2 0 0 1 13 4.562Z"/></svg>
                             </div>
@@ -249,7 +267,7 @@
                                 <div style="color:var(--text-muted); font-size:0.8rem;">Lecture halls, study rooms</div>
                             </div>
                         </div>
-                        <div style="background:linear-gradient(135deg,rgba(236,72,153,0.12),rgba(236,72,153,0.04)); border:1px solid rgba(236,72,153,0.28); border-radius:var(--radius-sm); padding:14px 18px; display:flex; align-items:center; gap:12px;">
+                        <div class="reveal" style="background:linear-gradient(135deg,rgba(236,72,153,0.12),rgba(236,72,153,0.04)); border:1px solid rgba(236,72,153,0.28); border-radius:var(--radius-sm); padding:14px 18px; display:flex; align-items:center; gap:12px;">
                             <div style="color: #f093fb;">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-microscope"><path d="M6 18h8"/><path d="M3 22h18"/><path d="M14 22a7 7 0 1 0 0-14h-1"/><path d="M9 14h2"/><path d="M9 12a2 2 0 0 1-2-2V6h6v4a2 2 0 0 1-2 2Z"/><path d="M12 6V3a1 1 0 0 0-1-1H9a1 1 0 0 0-1 1v3"/></svg>
                             </div>
@@ -272,42 +290,42 @@
             <div style="margin-bottom:64px;">
                 <h3 style="text-align:center; font-size:1.05rem; font-weight:600; color:var(--text-muted); text-transform:uppercase; letter-spacing:1.5px; margin-bottom:40px;">Key Features</h3>
                 <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:20px;">
-                    <div style="background:rgba(255,255,255,0.78);border:1px solid rgba(255,255,255,0.92);border-radius:var(--radius-sm);padding:22px 20px;display:flex;gap:14px;align-items:flex-start;transition:var(--transition);box-shadow:var(--shadow-neu);" onmouseenter="this.style.borderColor='rgba(79,70,229,0.2)'" onmouseleave="this.style.borderColor='rgba(255,255,255,0.92)'">
+                    <div class="reveal" style="background:rgba(255,255,255,0.78);border:1px solid rgba(255,255,255,0.92);border-radius:var(--radius-sm);padding:22px 20px;display:flex;gap:14px;align-items:flex-start;transition:var(--transition);box-shadow:var(--shadow-neu);" onmouseenter="this.style.borderColor='rgba(79,70,229,0.2)'" onmouseleave="this.style.borderColor='rgba(255,255,255,0.92)'">
                         <i class="fas fa-vr-cardboard" style="font-size:1.3rem;color:var(--c-primary);flex-shrink:0;margin-top:2px;"></i>
                         <div>
                             <div style="font-weight:700;color:var(--text-main);margin-bottom:5px;">Full 360° Panorama</div>
                             <div style="color:var(--text-muted);font-size:0.88rem;line-height:1.55;">Powered by Pannellum for smooth, high-quality equirectangular panorama rendering.</div>
                         </div>
                     </div>
-                    <div style="background:rgba(255,255,255,0.78);border:1px solid rgba(255,255,255,0.92);border-radius:var(--radius-sm);padding:22px 20px;display:flex;gap:14px;align-items:flex-start;transition:var(--transition);box-shadow:var(--shadow-neu);" onmouseenter="this.style.borderColor='rgba(79,70,229,0.2)'" onmouseleave="this.style.borderColor='rgba(255,255,255,0.92)'">
+                    <div class="reveal" style="background:rgba(255,255,255,0.78);border:1px solid rgba(255,255,255,0.92);border-radius:var(--radius-sm);padding:22px 20px;display:flex;gap:14px;align-items:flex-start;transition:var(--transition);box-shadow:var(--shadow-neu);" onmouseenter="this.style.borderColor='rgba(79,70,229,0.2)'" onmouseleave="this.style.borderColor='rgba(255,255,255,0.92)'">
                         <i class="fas fa-map-pin" style="font-size:1.3rem;color:var(--c-secondary);flex-shrink:0;margin-top:2px;"></i>
                         <div>
                             <div style="font-weight:700;color:var(--text-main);margin-bottom:5px;">Interactive Hotspots</div>
                             <div style="color:var(--text-muted);font-size:0.88rem;line-height:1.55;">Clickable navigation markers placed exactly where they belong using pitch &amp; yaw coordinates.</div>
                         </div>
                     </div>
-                    <div style="background:rgba(255,255,255,0.78);border:1px solid rgba(255,255,255,0.92);border-radius:var(--radius-sm);padding:22px 20px;display:flex;gap:14px;align-items:flex-start;transition:var(--transition);box-shadow:var(--shadow-neu);" onmouseenter="this.style.borderColor='rgba(79,70,229,0.2)'" onmouseleave="this.style.borderColor='rgba(255,255,255,0.92)'">
+                    <div class="reveal" style="background:rgba(255,255,255,0.78);border:1px solid rgba(255,255,255,0.92);border-radius:var(--radius-sm);padding:22px 20px;display:flex;gap:14px;align-items:flex-start;transition:var(--transition);box-shadow:var(--shadow-neu);" onmouseenter="this.style.borderColor='rgba(79,70,229,0.2)'" onmouseleave="this.style.borderColor='rgba(255,255,255,0.92)'">
                         <i class="fas fa-cloud" style="font-size:1.3rem;color:#a78bfa;flex-shrink:0;margin-top:2px;"></i>
                         <div>
                             <div style="font-weight:700;color:var(--text-main);margin-bottom:5px;">Firebase Powered</div>
                             <div style="color:var(--text-muted);font-size:0.88rem;line-height:1.55;">All scene data is stored and served live from Firebase Firestore. No page reload needed to see updates.</div>
                         </div>
                     </div>
-                    <div style="background:rgba(255,255,255,0.78);border:1px solid rgba(255,255,255,0.92);border-radius:var(--radius-sm);padding:22px 20px;display:flex;gap:14px;align-items:flex-start;transition:var(--transition);box-shadow:var(--shadow-neu);" onmouseenter="this.style.borderColor='rgba(79,70,229,0.2)'" onmouseleave="this.style.borderColor='rgba(255,255,255,0.92)'">
+                    <div class="reveal" style="background:rgba(255,255,255,0.78);border:1px solid rgba(255,255,255,0.92);border-radius:var(--radius-sm);padding:22px 20px;display:flex;gap:14px;align-items:flex-start;transition:var(--transition);box-shadow:var(--shadow-neu);" onmouseenter="this.style.borderColor='rgba(79,70,229,0.2)'" onmouseleave="this.style.borderColor='rgba(255,255,255,0.92)'">
                         <i class="fas fa-shield-alt" style="font-size:1.3rem;color:#f093fb;flex-shrink:0;margin-top:2px;"></i>
                         <div>
                             <div style="font-weight:700;color:var(--text-main);margin-bottom:5px;">Secure Admin Panel</div>
                             <div style="color:var(--text-muted);font-size:0.88rem;line-height:1.55;">Master admin can create, edit and delete scenes, place hotspots, and grant access to co-admins.</div>
                         </div>
                     </div>
-                    <div style="background:rgba(255,255,255,0.78);border:1px solid rgba(255,255,255,0.92);border-radius:var(--radius-sm);padding:22px 20px;display:flex;gap:14px;align-items:flex-start;transition:var(--transition);box-shadow:var(--shadow-neu);" onmouseenter="this.style.borderColor='rgba(79,70,229,0.2)'" onmouseleave="this.style.borderColor='rgba(255,255,255,0.92)'">
+                    <div class="reveal" style="background:rgba(255,255,255,0.78);border:1px solid rgba(255,255,255,0.92);border-radius:var(--radius-sm);padding:22px 20px;display:flex;gap:14px;align-items:flex-start;transition:var(--transition);box-shadow:var(--shadow-neu);" onmouseenter="this.style.borderColor='rgba(79,70,229,0.2)'" onmouseleave="this.style.borderColor='rgba(255,255,255,0.92)'">
                         <i class="fas fa-mobile-alt" style="font-size:1.3rem;color:var(--c-primary);flex-shrink:0;margin-top:2px;"></i>
                         <div>
                             <div style="font-weight:700;color:var(--text-main);margin-bottom:5px;">Mobile Responsive</div>
                             <div style="color:var(--text-muted);font-size:0.88rem;line-height:1.55;">Works seamlessly on phones, tablets, and desktops with gesture support for 360° dragging.</div>
                         </div>
                     </div>
-                    <div style="background:rgba(255,255,255,0.78);border:1px solid rgba(255,255,255,0.92);border-radius:var(--radius-sm);padding:22px 20px;display:flex;gap:14px;align-items:flex-start;transition:var(--transition);box-shadow:var(--shadow-neu);" onmouseenter="this.style.borderColor='rgba(79,70,229,0.2)'" onmouseleave="this.style.borderColor='rgba(255,255,255,0.92)'">
+                    <div class="reveal" style="background:rgba(255,255,255,0.78);border:1px solid rgba(255,255,255,0.92);border-radius:var(--radius-sm);padding:22px 20px;display:flex;gap:14px;align-items:flex-start;transition:var(--transition);box-shadow:var(--shadow-neu);" onmouseenter="this.style.borderColor='rgba(79,70,229,0.2)'" onmouseleave="this.style.borderColor='rgba(255,255,255,0.92)'">
                         <i class="fas fa-bolt" style="font-size:1.3rem;color:var(--c-secondary);flex-shrink:0;margin-top:2px;"></i>
                         <div>
                             <div style="font-weight:700;color:var(--text-main);margin-bottom:5px;">Instant Loading</div>
@@ -317,7 +335,7 @@
                 </div>
             </div>
             <!-- CTA Banner -->
-            <div style="text-align:center; background:linear-gradient(135deg,rgba(0,242,254,0.08),rgba(240,147,251,0.08)); border:1px solid rgba(255,255,255,0.08); border-radius:var(--radius-lg); padding:48px 32px;">
+            <div class="reveal" style="text-align:center; background:linear-gradient(135deg,rgba(0,242,254,0.08),rgba(240,147,251,0.08)); border:1px solid rgba(255,255,255,0.08); border-radius:var(--radius-lg); padding:48px 32px;">
                 <div style="font-size:2.5rem; margin-bottom:14px;">🚀</div>
                 <h3 style="font-size:1.7rem;font-weight:800;color:var(--text-main);margin-bottom:10px;letter-spacing:-0.3px;">Ready to Explore?</h3>
                 <p style="color:var(--text-muted);max-width:450px;margin:0 auto 28px;line-height:1.7;">Jump into any 360° scene and experience your campus like never before — from anywhere in the world.</p>
@@ -411,5 +429,17 @@
         });
     </script>
 
+    <script>
+        const observer = new IntersectionObserver((entries) => {
+          entries.forEach((e, i) => {
+            if (e.isIntersecting) {
+              setTimeout(() => e.target.classList.add('visible'), i * 100);
+            }
+          });
+        }, { threshold: 0.15 });
+
+        document.querySelectorAll('.reveal').forEach(el => 
+          observer.observe(el));
+    </script>
 </body>
 </html>
