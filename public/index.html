@@ -129,14 +129,38 @@
         }
 
         footer a {
-            transition: color 0.25s ease, letter-spacing 0.25s ease;
-            opacity: 0.7;
+          transition: color 0.25s ease, opacity 0.25s ease;
+          opacity: 0.7;
+          touch-action: manipulation;
+        }
+        footer a:hover, footer a:active {
+          opacity: 1;
+          color: var(--accent-color, #6c63ff);
         }
 
-        footer a:hover {
-            opacity: 1;
-            letter-spacing: 0.02em;
-            color: var(--accent-color, #6c63ff);
+        .footer-grid {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 2rem;
+          padding: 2.5rem 2rem;
+        }
+
+        @media (max-width: 640px) {
+          .footer-grid {
+            grid-template-columns: 1fr;
+            gap: 1.75rem;
+            text-align: center;
+            padding: 2rem 1.25rem;
+          }
+          
+          footer a, footer p {
+            justify-content: center;
+            display: block;
+          }
+
+          footer .reveal img {
+            margin: 0 auto 20px !important;
+          }
         }
 
         .nav-mobile { display: none; }
@@ -668,7 +692,7 @@
 
 <!-- ─── FOOTER ───────────────────────────────────── -->
     <footer class="footer" style="margin-top: 100px; text-align: left; background: rgba(255,255,255,0.05);">
-        <div style="max-width: 1280px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 40px; padding: 60px 40px 40px;">
+        <div class="footer-grid" style="max-width: 1280px; margin: 0 auto;">
             
             <!-- Column 1: Logo & Info -->
             <div class="reveal">
