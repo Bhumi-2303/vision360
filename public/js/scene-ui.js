@@ -371,21 +371,15 @@ export class SceneUI {
             }
         });
     }
-    animateCount(el, target) {
-        if (!el) return;
-        const duration = 1200; // 1.2 seconds as requested
-        let startTimestamp = null;
+    animateCount(el, target, duration = 1500) {
+        let start = 0;
         const step = (timestamp) => {
-            if (!startTimestamp) startTimestamp = timestamp;
-            const progress = Math.min((timestamp - startTimestamp) / duration, 1);
-            const current = Math.floor(progress * target);
-            el.textContent = current;
-            if (progress < 1) {
-                window.requestAnimationFrame(step);
-            } else {
-                el.textContent = target; // Ensure it ends exactly on target
-            }
+            if (!start) start = timestamp;
+            const progress = Math.min((timestamp - start) / duration, 1);
+            el.textContent = Math.floor(progress * target);
+            if (progress < 1) requestAnimationFrame(step);
+            else el.textContent = target;
         };
-        window.requestAnimationFrame(step);
+        requestAnimationFrame(step);
     }
 }
