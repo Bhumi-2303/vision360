@@ -141,6 +141,27 @@
 
         .nav-mobile { display: none; }
 
+        /* Hero Fluid Typography */
+        .hero-institution {
+          font-size: clamp(0.65rem, 1.8vw, 0.75rem);
+          letter-spacing: 0.15em;
+          opacity: 0.6;
+          text-transform: uppercase;
+          margin-top: -12px;
+          margin-bottom: 20px;
+          font-weight: 600;
+        }
+
+        .hero-content h2 {
+          font-size: clamp(1.8rem, 5vw, 3.5rem);
+          line-height: 1.2;
+        }
+
+        .hero-tagline, 
+        .hero-desc {
+          font-size: clamp(0.9rem, 2.5vw, 1.15rem);
+        }
+
         .nav-toggle {
           display: none;
           flex-direction: column;
@@ -315,7 +336,7 @@
                 Live Virtual Tours Available
             </div>
 
-            <div style="font-size: 0.75rem; letter-spacing: 0.15em; opacity: 0.6; text-transform: uppercase; margin-top: -12px; margin-bottom: 20px; font-weight: 600;">
+            <div class="hero-institution">
                 R.N.G. Patel Institute of Technology · Anand, Gujarat
             </div>
 
