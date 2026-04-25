@@ -13,17 +13,21 @@
 
     <style>
         body { 
-            padding-top: 0; 
+            padding: 1rem;
             background: #0a0a14;
             color: white;
             font-family: 'Outfit', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .login-page {
-            min-height: 100vh;
-            display: grid;
-            place-items: center;
-            padding: 24px;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             position: relative;
         }
 
@@ -63,13 +67,13 @@
             position: relative;
             z-index: 1;
             width: 100%;
-            max-width: 460px;
+            max-width: 420px;
             background: rgba(255, 255, 255, 0.05);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 24px;
-            padding: 2.5rem;
+            padding: 2.5rem 2rem;
             box-shadow: 0 20px 60px rgba(0,0,0,0.4);
             text-align: center;
             animation: cardUp 0.65s cubic-bezier(0.4, 0, 0.2, 1) both;
@@ -125,7 +129,7 @@
 
         .form-group input {
             width: 100%;
-            padding: 12px 16px;
+            padding: 14px 16px;
             background: rgba(255,255,255,0.06);
             border: 1px solid rgba(255,255,255,0.1);
             border-radius: 10px;
@@ -134,12 +138,15 @@
             font-family: 'Outfit', sans-serif;
             outline: none;
             transition: border-color 0.3s ease;
+            box-sizing: border-box;
+            min-height: 48px;
+            touch-action: manipulation;
         }
 
         .form-group input::placeholder { color: rgba(255,255,255,0.3); }
 
         .form-group input:focus {
-            border-color: var(--accent-color, #6c63ff);
+            border-color: rgba(108,99,255,0.6);
             background: rgba(255,255,255,0.09);
         }
 
@@ -221,6 +228,12 @@
         .back-to-home:hover { color: var(--c-primary); }
         .form-label-icon { margin-right: 6px; opacity: 0.5; }
         .back-icon-xs { font-size: 0.8rem; }
+
+        @media (max-width: 480px) {
+            .login-card {
+                padding: 1.75rem 1.25rem;
+            }
+        }
     </style>
 </head>
 
