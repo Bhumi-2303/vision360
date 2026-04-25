@@ -1,18 +1,19 @@
 import { defineConfig } from 'vite';
 
 export default defineConfig({
-  root: 'public',
+  root: '.',
+  publicDir: 'public',
   build: {
-    outDir: '../dist',
+    outDir: 'dist',
     emptyOutDir: true,
     rollupOptions: {
       input: {
-        main: 'index.html',
-        viewer: 'viewer.html',
-        vr: 'vr.html',
-        login: 'admin/login.html',
-        dashboard: 'admin/dashboard.html',
-        notfound: '404.html'
+        main: 'public/index.html',
+        viewer: 'public/viewer.html',
+        vr: 'public/vr.html',
+        login: 'public/admin/login.html',
+        dashboard: 'public/admin/dashboard.html',
+        notfound: 'public/404.html'
       }
     }
   },
