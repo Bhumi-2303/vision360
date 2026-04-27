@@ -134,7 +134,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         buildOrderedHierarchy();
 
         // ── Process scenes — filter out invalid and attach handlers ──
-        const CLOUDINARY_BASE = "https://res.cloudinary.com/dyysldt1m/image/upload/v1777268527/vision360/";
+        const CLOUDINARY_BASE = "https://res.cloudinary.com/dyysldt1m/image/upload/f_auto,q_auto/vision360/";
         
         const processed = {};
         Object.entries(scenesData).forEach(([id, scene]) => {
