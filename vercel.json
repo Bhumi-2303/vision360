@@ -1,4 +1,11 @@
 {
+  "buildCommand": "npm run build",
   "outputDirectory": "dist",
-  "framework": null
+  "framework": null,
+  "rewrites": [
+    { "source": "/viewer", "destination": "/viewer.html" },
+    { "source": "/vr", "destination": "/vr.html" },
+    { "source": "/admin/login", "destination": "/admin/login.html" },
+    { "source": "/admin/dashboard", "destination": "/admin/dashboard.html" }
+  ]
 }
