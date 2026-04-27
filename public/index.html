@@ -2,726 +2,861 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Vision 360 – Immersive 360° virtual campus tours. Explore buildings, departments and classrooms in stunning detail.">
-    <title>Vision 360 – Virtual Campus Explorer</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description"
+    content="Vision 360 – Immersive 360° virtual campus tours. Explore buildings, departments and classrooms in stunning detail.">
+  <title>Vision 360 – Virtual Campus Explorer</title>
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet" href="css/style.css" type="text/css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
-    
-    <!-- SEO & Social Media Meta Tags -->
-    <meta name="description" content="Experience Vision 360: the ultimate immersive virtual campus explorer. Explore every building, department, and classroom in stunning 360° detail from anywhere!">
-    <meta property="og:title" content="Vision 360 – Virtual Campus Explorer">
-    <meta property="og:description" content="Experience Vision 360: the ultimate immersive virtual campus explorer. Explore every building, department, and classroom in stunning 360° detail from anywhere!">
-    <meta property="og:image" content="assets/logo.png">
-    <meta property="og:url" content="https://vision360.vercel.app">
-    <meta name="twitter:card" content="summary_large_image">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="css/style.css" type="text/css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 
-    <!-- Lucide Icons -->
-    <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- SEO & Social Media Meta Tags -->
+  <meta name="description"
+    content="Experience Vision 360: the ultimate immersive virtual campus explorer. Explore every building, department, and classroom in stunning 360° detail from anywhere!">
+  <meta property="og:title" content="Vision 360 – Virtual Campus Explorer">
+  <meta property="og:description"
+    content="Experience Vision 360: the ultimate immersive virtual campus explorer. Explore every building, department, and classroom in stunning 360° detail from anywhere!">
+  <meta property="og:image" content="assets/logo.png">
+  <meta property="og:url" content="https://vision360.vercel.app">
+  <meta name="twitter:card" content="summary_large_image">
 
-    <style>
-        body {
-            animation: pageFadeIn 0.45s ease forwards;
-        }
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
 
-        button, a, [role="button"] {
-          touch-action: manipulation;
-        }
+  <style>
+    body {
+      animation: pageFadeIn 0.45s ease forwards;
+    }
 
-        @keyframes pageFadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
+    button,
+    a,
+    [role="button"] {
+      touch-action: manipulation;
+    }
 
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+    @keyframes pageFadeIn {
+      from {
+        opacity: 0;
+      }
 
-        .reveal {
+      to {
+        opacity: 1;
+      }
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity 0.55s ease, transform 0.55s ease;
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Feature Cards (Restored to light theme) */
+    .feature-card {
+      padding: 1.5rem;
+      border-radius: var(--radius-md);
+      background: var(--glass-bg);
+      backdrop-filter: var(--glass-blur);
+      -webkit-backdrop-filter: var(--glass-blur);
+      border: var(--glass-border);
+      box-shadow: var(--glass-shadow);
+      transition: var(--transition);
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.1);
+      border-color: rgba(112, 145, 230, 0.3);
+    }
+
+    /* How It Works Cards (Restored to light theme) */
+    .glass-feature-card {
+      background: var(--glass-bg);
+      backdrop-filter: var(--glass-blur);
+      -webkit-backdrop-filter: var(--glass-blur);
+      border: var(--glass-border);
+      border-radius: var(--radius-md);
+      padding: 2.5rem 1.75rem;
+      text-align: center;
+      box-shadow: var(--glass-shadow);
+      transition: var(--transition);
+    }
+
+    .glass-feature-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08);
+      border-color: rgba(112, 145, 230, 0.25);
+    }
+
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      transition: background 0.4s ease, backdrop-filter 0.4s ease,
+        box-shadow 0.4s ease;
+    }
+
+    /* Nav Scroll State (Restored to light theme) */
+    nav.scrolled {
+      background: rgba(255, 255, 255, 0.8) !important;
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    footer a {
+      transition: color 0.25s ease, opacity 0.25s ease;
+      opacity: 0.7;
+      touch-action: manipulation;
+    }
+
+    footer a:hover,
+    footer a:active {
+      opacity: 1;
+      color: var(--accent-color, #6c63ff);
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2rem;
+      padding: 2.5rem 2rem;
+    }
+
+    @media (max-width: 640px) {
+      .footer-grid {
+        grid-template-columns: 1fr;
+        gap: 1.75rem;
+        text-align: center;
+        padding: 2rem 1.25rem;
+      }
+
+      footer a,
+      footer p {
+        justify-content: center;
+        display: block;
+      }
+
+      footer .reveal img {
+        margin: 0 auto 20px !important;
+      }
+    }
+
+    .nav-mobile {
+      display: none;
+    }
+
+    /* Hero Fluid Typography */
+    .hero-institution {
+      font-size: clamp(0.65rem, 1.8vw, 0.75rem);
+      letter-spacing: 0.15em;
+      opacity: 0.6;
+      text-transform: uppercase;
+      margin-top: -12px;
+      margin-bottom: 20px;
+      font-weight: 600;
+    }
+
+    .hero-content h2 {
+      font-size: clamp(1.8rem, 5vw, 3.5rem);
+      line-height: 1.2;
+    }
+
+    .hero-tagline,
+    .hero-desc {
+      font-size: clamp(0.9rem, 2.5vw, 1.15rem);
+    }
+
+    /* Hero Stats Row */
+    .hero-stats {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.5rem 2.5rem;
+      justify-content: center;
+      align-items: center;
+      margin-top: 40px;
+      padding-top: 30px;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .stat-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-width: 70px;
+    }
+
+    @media (max-width: 400px) {
+      .hero-stats {
+        gap: 1rem 1.5rem;
+      }
+    }
+
+    /* Hierarchy Badges */
+    .level-badge {
+      display: inline-block;
+      padding: 3px 12px;
+      border-radius: 999px;
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 0.4rem;
+    }
+
+    .level-1 {
+      background: rgba(99, 102, 241, 0.2);
+      color: #818cf8;
+    }
+
+    .level-2 {
+      background: rgba(16, 185, 129, 0.2);
+      color: #34d399;
+    }
+
+    .level-3 {
+      background: rgba(245, 158, 11, 0.2);
+      color: #fbbf24;
+    }
+
+    @media (max-width: 640px) {
+      .hierarchy-grid {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+      }
+
+      /* Hide arrows in mobile hierarchy */
+      .hierarchy-grid .fa-arrow-right {
+        display: none;
+      }
+    }
+
+    .nav-toggle {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 8px;
+      min-width: 44px;
+      min-height: 44px;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .nav-toggle span {
+      display: block;
+      width: 22px;
+      height: 2px;
+      background: var(--text-main);
+      border-radius: 2px;
+      transition: transform 0.3s ease, opacity 0.3s ease;
+    }
+
+    .nav-toggle.active span:nth-child(1) {
+      transform: translateY(7px) rotate(45deg);
+    }
+
+    .nav-toggle.active span:nth-child(2) {
+      opacity: 0;
+    }
+
+    .nav-toggle.active span:nth-child(3) {
+      transform: translateY(-7px) rotate(-45deg);
+    }
+
+    @media (max-width: 768px) {
+      .nav-desktop {
+        display: none !important;
+      }
+
+      .nav-toggle {
+        display: flex;
+      }
+
+      .nav-mobile {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: var(--bg-base);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 2rem;
+        z-index: 999;
+      }
+
+      .nav-mobile.open {
+        display: flex;
+        animation: menuFadeIn 0.3s ease forwards;
+      }
+
+      @keyframes menuFadeIn {
+        from {
           opacity: 0;
-          transform: translateY(28px);
-          transition: opacity 0.55s ease, transform 0.55s ease;
+          transform: scale(0.97);
         }
-        .reveal.visible {
+
+        to {
           opacity: 1;
-          transform: translateY(0);
+          transform: scale(1);
         }
+      }
 
-        /* Feature Cards (Restored to light theme) */
-        .feature-card {
-            padding: 1.5rem;
-            border-radius: var(--radius-md);
-            background: var(--glass-bg);
-            backdrop-filter: var(--glass-blur);
-            -webkit-backdrop-filter: var(--glass-blur);
-            border: var(--glass-border);
-            box-shadow: var(--glass-shadow);
-            transition: var(--transition);
-            display: flex;
-            gap: 14px;
-            align-items: flex-start;
-        }
+      .nav-mobile a {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: var(--text-main);
+        text-decoration: none;
+      }
+    }
 
-        .feature-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.1);
-            border-color: rgba(112, 145, 230, 0.3);
-        }
+    /* Hero CTAs */
+    .hero-ctas {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+    }
 
-        /* How It Works Cards (Restored to light theme) */
-        .glass-feature-card {
-            background: var(--glass-bg);
-            backdrop-filter: var(--glass-blur);
-            -webkit-backdrop-filter: var(--glass-blur);
-            border: var(--glass-border);
-            border-radius: var(--radius-md);
-            padding: 2.5rem 1.75rem;
-            text-align: center;
-            box-shadow: var(--glass-shadow);
-            transition: var(--transition);
-        }
+    #hero-start-btn {
+      min-height: 48px;
+      min-width: 160px;
+      padding: 14px 28px;
+      border-radius: 12px;
+      font-weight: 600;
+      touch-action: manipulation;
+      background: var(--c-primary);
+      color: white;
+      box-shadow: 0 10px 25px rgba(112, 145, 230, 0.4);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      text-decoration: none;
+    }
 
-        .glass-feature-card:hover {
-            transform: translateY(-6px);
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08);
-            border-color: rgba(112, 145, 230, 0.25);
-        }
+    .hero-auto-tour-btn {
+      min-height: 48px;
+      min-width: 160px;
+      padding: 13px 27px;
+      border-radius: 12px;
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      font-weight: 500;
+      touch-action: manipulation;
+      color: white;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      text-decoration: none;
+      transition: border-color 0.3s ease, background 0.3s ease;
+    }
 
-        nav {
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            transition: background 0.4s ease, backdrop-filter 0.4s ease,
-                        box-shadow 0.4s ease;
-        }
+    .hero-auto-tour-btn:hover {
+      border-color: var(--c-primary);
+      background: rgba(112, 145, 230, 0.05);
+    }
 
-        /* Nav Scroll State (Restored to light theme) */
-        nav.scrolled {
-            background: rgba(255, 255, 255, 0.8) !important;
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-        }
+    @media (max-width: 480px) {
+      .hero-ctas {
+        flex-direction: column;
+        width: 100%;
+      }
 
-        footer a {
-          transition: color 0.25s ease, opacity 0.25s ease;
-          opacity: 0.7;
-          touch-action: manipulation;
-        }
-        footer a:hover, footer a:active {
-          opacity: 1;
-          color: var(--accent-color, #6c63ff);
-        }
-
-        .footer-grid {
-          display: grid;
-          grid-template-columns: repeat(3, 1fr);
-          gap: 2rem;
-          padding: 2.5rem 2rem;
-        }
-
-        @media (max-width: 640px) {
-          .footer-grid {
-            grid-template-columns: 1fr;
-            gap: 1.75rem;
-            text-align: center;
-            padding: 2rem 1.25rem;
-          }
-          
-          footer a, footer p {
-            justify-content: center;
-            display: block;
-          }
-
-          footer .reveal img {
-            margin: 0 auto 20px !important;
-          }
-        }
-
-        .nav-mobile { display: none; }
-
-        /* Hero Fluid Typography */
-        .hero-institution {
-          font-size: clamp(0.65rem, 1.8vw, 0.75rem);
-          letter-spacing: 0.15em;
-          opacity: 0.6;
-          text-transform: uppercase;
-          margin-top: -12px;
-          margin-bottom: 20px;
-          font-weight: 600;
-        }
-
-        .hero-content h2 {
-          font-size: clamp(1.8rem, 5vw, 3.5rem);
-          line-height: 1.2;
-        }
-
-        .hero-tagline, 
-        .hero-desc {
-          font-size: clamp(0.9rem, 2.5vw, 1.15rem);
-        }
-
-        /* Hero Stats Row */
-        .hero-stats {
-          display: flex;
-          flex-wrap: wrap;
-          gap: 1.5rem 2.5rem;
-          justify-content: center;
-          align-items: center;
-          margin-top: 40px;
-          padding-top: 30px;
-          border-top: 1px solid rgba(255, 255, 255, 0.08);
-        }
-
-        .stat-item {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          min-width: 70px;
-        }
-
-        @media (max-width: 400px) {
-          .hero-stats {
-            gap: 1rem 1.5rem;
-          }
-        }
-
-        /* Hierarchy Badges */
-        .level-badge {
-          display: inline-block;
-          padding: 3px 12px;
-          border-radius: 999px;
-          font-size: 0.65rem;
-          font-weight: 700;
-          letter-spacing: 0.1em;
-          text-transform: uppercase;
-          margin-bottom: 0.4rem;
-        }
-        .level-1 { background: rgba(99,102,241,0.2); color: #818cf8; }
-        .level-2 { background: rgba(16,185,129,0.2); color: #34d399; }
-        .level-3 { background: rgba(245,158,11,0.2); color: #fbbf24; }
-
-        @media (max-width: 640px) {
-          .hierarchy-grid {
-            display: flex;
-            flex-direction: column;
-            gap: 0.75rem;
-          }
-          
-          /* Hide arrows in mobile hierarchy */
-          .hierarchy-grid .fa-arrow-right {
-            display: none;
-          }
-        }
-
-        .nav-toggle {
-          display: none;
-          flex-direction: column;
-          gap: 5px;
-          background: none;
-          border: none;
-          cursor: pointer;
-          padding: 8px;
-          min-width: 44px;
-          min-height: 44px;
-          justify-content: center;
-          align-items: center;
-        }
-
-        .nav-toggle span {
-          display: block;
-          width: 22px;
-          height: 2px;
-          background: var(--text-main);
-          border-radius: 2px;
-          transition: transform 0.3s ease, opacity 0.3s ease;
-        }
-
-        .nav-toggle.active span:nth-child(1) {
-          transform: translateY(7px) rotate(45deg);
-        }
-        .nav-toggle.active span:nth-child(2) {
-          opacity: 0;
-        }
-        .nav-toggle.active span:nth-child(3) {
-          transform: translateY(-7px) rotate(-45deg);
-        }
-
-        @media (max-width: 768px) {
-          .nav-desktop { display: none !important; }
-          .nav-toggle { display: flex; }
-          
-          .nav-mobile {
-            display: none;
-            position: fixed;
-            top: 0; left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: var(--bg-base);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 2rem;
-            z-index: 999;
-          }
-
-          .nav-mobile.open {
-            display: flex;
-            animation: menuFadeIn 0.3s ease forwards;
-          }
-
-          @keyframes menuFadeIn {
-            from { opacity: 0; transform: scale(0.97); }
-            to { opacity: 1; transform: scale(1); }
-          }
-
-          .nav-mobile a {
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: var(--text-main);
-            text-decoration: none;
-          }
-        }
-
-        /* Hero CTAs */
-        .hero-ctas {
-          display: flex;
-          flex-wrap: wrap;
-          gap: 12px;
-          align-items: center;
-        }
-
-        #hero-start-btn {
-          min-height: 48px;
-          min-width: 160px;
-          padding: 14px 28px;
-          border-radius: 12px;
-          font-weight: 600;
-          touch-action: manipulation;
-          background: var(--c-primary);
-          color: white;
-          box-shadow: 0 10px 25px rgba(112, 145, 230, 0.4);
-          display: inline-flex;
-          align-items: center;
-          justify-content: center;
-          gap: 8px;
-          text-decoration: none;
-        }
-
-        .hero-auto-tour-btn {
-          min-height: 48px;
-          min-width: 160px;
-          padding: 13px 27px;
-          border-radius: 12px;
-          background: transparent;
-          border: 1px solid rgba(255,255,255,0.2);
-          font-weight: 500;
-          touch-action: manipulation;
-          color: white;
-          display: inline-flex;
-          align-items: center;
-          justify-content: center;
-          gap: 8px;
-          text-decoration: none;
-          transition: border-color 0.3s ease, background 0.3s ease;
-        }
-
-        .hero-auto-tour-btn:hover {
-          border-color: var(--c-primary);
-          background: rgba(112, 145, 230, 0.05);
-        }
-
-        @media (max-width: 480px) {
-          .hero-ctas {
-            flex-direction: column;
-            width: 100%;
-          }
-
-          #hero-start-btn, 
-          .hero-auto-tour-btn {
-            width: 100%;
-            justify-content: center;
-            text-align: center;
-          }
-        }
-    </style>
+      #hero-start-btn,
+      .hero-auto-tour-btn {
+        width: 100%;
+        justify-content: center;
+        text-align: center;
+      }
+    }
+  </style>
 </head>
 
 <body>
 
-    <!-- ─── HEADER ──────────────────────────────────── -->
-    <header class="header" id="home">
-        <div class="nav-container">
-            <a href="#home" class="logo" aria-label="Vision 360 Home">
-                <img src="assets/logo.png" alt="Vision 360 Logo" width="36" height="36" />
-            </a>
-            <nav class="navbar" aria-label="Primary navigation">
-                <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">
-                  <span></span><span></span><span></span>
-                </button>
-                <ul class="nav-links nav-desktop">
-                    <li><a href="#home">Home</a></li>
-                    <li><a href="#campuses">Explore</a></li>
-                    <li><a href="#about">Learn More</a></li>
-                </ul>
-                <ul class="nav-links nav-mobile">
-                    <li><a href="#home">Home</a></li>
-                    <li><a href="#campuses">Explore</a></li>
-                    <li><a href="#about">Learn More</a></li>
-                </ul>
-            </nav>
-        </div>
-    </header>
+  <!-- ─── HEADER ──────────────────────────────────── -->
+  <header class="header" id="home">
+    <div class="nav-container">
+      <a href="#home" class="logo" aria-label="Vision 360 Home">
+        <img src="assets/logo.png" alt="Vision 360 Logo" width="36" height="36" />
+      </a>
+      <nav class="navbar" aria-label="Primary navigation">
+        <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">
+          <span></span><span></span><span></span>
+        </button>
+        <ul class="nav-links nav-desktop">
+          <li><a href="#home">Home</a></li>
+          <li><a href="#campuses">Explore</a></li>
+          <li><a href="#about">Learn More</a></li>
+        </ul>
+        <ul class="nav-links nav-mobile">
+          <li><a href="#home">Home</a></li>
+          <li><a href="#campuses">Explore</a></li>
+          <li><a href="#about">Learn More</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
 
 
 
-    <!-- ─── MAIN CONTENT ─────────────────────────────── -->
-    <main>
+  <!-- ─── MAIN CONTENT ─────────────────────────────── -->
+  <main>
 
     <!-- ─── HERO ─────────────────────────────────────── -->
     <section id="home" class="hero motion-fade-up">
-        <div class="hero-content">
-            <div class="hero-eyebrow">
-                <i class="fas fa-circle hero-status-dot"></i>
-                Live Virtual Tours Available
-            </div>
-
-            <div class="hero-institution">
-                R.N.G. Patel Institute of Technology · Anand, Gujarat
-            </div>
-
-            <h2>
-                Explore Campus<br><em>Like Never Before</em>
-            </h2>
-
-            <p class="hero-tagline">
-                Your campus. Every corner. On demand.
-            </p>
-
-            <p class="hero-desc">
-                Step inside our campus with immersive 360° panoramic tours. Navigate halls, departments and classrooms from anywhere in the world.
-            </p>
-
-            <div class="hero-ctas">
-                <a href="#campuses" class="btn btn-primary btn-hero-pill" id="hero-start-btn">
-                    <i class="fas fa-street-view"></i>
-                    Explore Our Campus
-                </a>
-                <a href="viewer.html?auto=true" class="btn btn-outline hero-auto-tour-btn">
-                    <i class="fas fa-sync-alt"></i>
-                    Auto Virtual Tour
-                </a>
-            </div>
-
-            <div class="hero-stats">
-                <div class="stat-item">
-                    <span class="stat-value" id="stat-scenes">0</span>
-                    <div class="stat-label">Scenes</div>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-value" id="stat-locations">0</span>
-                    <div class="stat-label">Locations</div>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-value" id="stat-hotspots">0</span>
-                    <div class="stat-label">Hotspots</div>
-                </div>
-            </div>
+      <div class="hero-content">
+        <div class="hero-eyebrow">
+          <i class="fas fa-circle hero-status-dot"></i>
+          Live Virtual Tours Available
         </div>
+
+        <div class="hero-institution">
+          R.N.G. Patel Institute of Technology · Bardoli, Gujarat
+        </div>
+
+        <h2>
+          Explore Campus<br><em>Like Never Before</em>
+        </h2>
+
+        <p class="hero-tagline">
+          Your campus. Every corner. On demand.
+        </p>
+
+        <p class="hero-desc">
+          Step inside our campus with immersive 360° panoramic tours. Navigate halls, departments and classrooms from
+          anywhere in the world.
+        </p>
+
+        <div class="hero-ctas">
+          <a href="#campuses" class="btn btn-primary btn-hero-pill" id="hero-start-btn">
+            <i class="fas fa-street-view"></i>
+            Explore Our Campus
+          </a>
+          <a href="viewer.html?auto=true" class="btn btn-outline hero-auto-tour-btn">
+            <i class="fas fa-sync-alt"></i>
+            Auto Virtual Tour
+          </a>
+        </div>
+
+        <div class="hero-stats">
+          <div class="stat-item">
+            <span class="stat-value" id="stat-scenes">0</span>
+            <div class="stat-label">Scenes</div>
+          </div>
+          <div class="stat-item">
+            <span class="stat-value" id="stat-locations">0</span>
+            <div class="stat-label">Locations</div>
+          </div>
+          <div class="stat-item">
+            <span class="stat-value" id="stat-hotspots">0</span>
+            <div class="stat-label">Hotspots</div>
+          </div>
+        </div>
+      </div>
     </section>
 
     <!-- ─── CAMPUS EXPLORE ───────────────────────────── -->
     <!-- ─── CAMPUS EXPLORE ───────────────────────────── -->
     <section id="campuses" class="selection-section motion-fade-up">
-        <div class="section-header section-header-compact">
-            <span class="section-label"><i class="fas fa-map-marker-alt"></i>&nbsp; Locations</span>
-            <h2>Choose a Campus Area</h2>
-            <p>Select a building or area to begin your immersive 360° walkthrough.</p>
-        </div>
+      <div class="section-header section-header-compact">
+        <span class="section-label"><i class="fas fa-map-marker-alt"></i>&nbsp; Locations</span>
+        <h2>Choose a Campus Area</h2>
+        <p>Select a building or area to begin your immersive 360° walkthrough.</p>
+      </div>
 
-        <!-- Smart Search -->
-        <div class="search-wrap">
-            <div class="search-input-row">
-                <i class="fas fa-search"></i>
-                <input type="text" id="scene-search" aria-label="Search across all scenes" placeholder="Search departments, labs, classrooms…" autocomplete="off">
-                <button class="search-clear" id="search-clear-btn" title="Clear"><i class="fas fa-times"></i></button>
-            </div>
-            <div class="search-suggestions" id="search-suggestions"></div>
+      <!-- Smart Search -->
+      <div class="search-wrap">
+        <div class="search-input-row">
+          <i class="fas fa-search"></i>
+          <input type="text" id="scene-search" aria-label="Search across all scenes"
+            placeholder="Search departments, labs, classrooms…" autocomplete="off">
+          <button class="search-clear" id="search-clear-btn" title="Clear"><i class="fas fa-times"></i></button>
         </div>
+        <div class="search-suggestions" id="search-suggestions"></div>
+      </div>
 
-        <!-- View Controls -->
-        <div class="view-controls">
-            <div class="results-count" id="results-count"></div>
-            <div class="view-toggle">
-                <button class="view-toggle-btn active" id="btn-grid-view">
-                    <i class="fas fa-th-large"></i> Grid
-                </button>
-                <button class="view-toggle-btn" id="btn-tree-view">
-                    <i class="fas fa-sitemap"></i> Hierarchy
-                </button>
-            </div>
+      <!-- View Controls -->
+      <div class="view-controls">
+        <div class="results-count" id="results-count"></div>
+        <div class="view-toggle">
+          <button class="view-toggle-btn active" id="btn-grid-view">
+            <i class="fas fa-th-large"></i> Grid
+          </button>
+          <button class="view-toggle-btn" id="btn-tree-view">
+            <i class="fas fa-sitemap"></i> Hierarchy
+          </button>
         </div>
+      </div>
 
-        <!-- Grid View (default) -->
-        <!-- Loading Spinner (Visible while fetching) -->
-        <div id="campus-loader" style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 100px 20px; gap: 20px;">
-            <div class="loader-ring"></div>
-            <p style="color: var(--text-secondary); font-weight: 500; letter-spacing: 0.5px;">Fetching campus data...</p>
-        </div>
+      <!-- Grid View (default) -->
+      <!-- Loading Spinner (Visible while fetching) -->
+      <div id="campus-loader"
+        style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 100px 20px; gap: 20px;">
+        <div class="loader-ring"></div>
+        <p style="color: var(--text-secondary); font-weight: 500; letter-spacing: 0.5px;">Fetching campus data...</p>
+      </div>
 
-        <!-- Grid View (default) -->
-        <div class="card-grid" id="building-cards-grid" style="display: none; opacity: 0; transition: opacity 0.5s ease;">
-            <div class="card-skeleton"></div>
-            <div class="card-skeleton"></div>
-            <div class="card-skeleton"></div>
-        </div>
+      <!-- Grid View (default) -->
+      <div class="card-grid" id="building-cards-grid" style="display: none; opacity: 0; transition: opacity 0.5s ease;">
+        <div class="card-skeleton"></div>
+        <div class="card-skeleton"></div>
+        <div class="card-skeleton"></div>
+      </div>
 
-        <!-- Empty State (Hidden by default) -->
-        <div id="campus-empty-state" style="display: none; text-align: center; padding: 100px 20px; background: var(--bg-white); border-radius: var(--radius-lg); border: 1px solid var(--glass-border); box-shadow: var(--glass-shadow); margin-top: 20px;">
-            <i class="fas fa-map-marker-alt" style="font-size: 3rem; color: var(--c-muted-2); margin-bottom: 24px; display: block;"></i>
-            <h3 style="color: var(--text-main); margin-bottom: 12px; font-weight: 700;">No Campus Scenes Found</h3>
-            <p style="color: var(--text-secondary); font-size: 1.1rem; max-width: 400px; margin: 0 auto;">No campus scenes available yet. Check back soon.</p>
-        </div>
+      <!-- Empty State (Hidden by default) -->
+      <div id="campus-empty-state"
+        style="display: none; text-align: center; padding: 100px 20px; background: var(--bg-white); border-radius: var(--radius-lg); border: 1px solid var(--glass-border); box-shadow: var(--glass-shadow); margin-top: 20px;">
+        <i class="fas fa-map-marker-alt"
+          style="font-size: 3rem; color: var(--c-muted-2); margin-bottom: 24px; display: block;"></i>
+        <h3 style="color: var(--text-main); margin-bottom: 12px; font-weight: 700;">No Campus Scenes Found</h3>
+        <p style="color: var(--text-secondary); font-size: 1.1rem; max-width: 400px; margin: 0 auto;">No campus scenes
+          available yet. Check back soon.</p>
+      </div>
 
-        <!-- Hierarchy Tree View -->
-        <div class="hierarchy-view" id="hierarchy-view"></div>
+      <!-- Hierarchy Tree View -->
+      <div class="hierarchy-view" id="hierarchy-view"></div>
 
     </section>
 
 
     <!-- ─── HOW IT WORKS ────────────────────────── -->
     <section id="how-it-works" class="about-section motion-fade-up">
-        <div class="about-bg-glow"></div>
-        <div class="about-shell">
-            <div class="section-header about-header">
-                <span class="section-label"><i class="fas fa-info-circle"></i>&nbsp; About Vision 360</span>
-                <h2>Everything You Need to Know</h2>
-                <p>Vision 360 is an immersive virtual campus explorer that lets anyone navigate the entire campus — from the main entrance to individual labs — without stepping foot on site.</p>
-            </div>
-            <div class="about-block">
-                <h3 class="about-subtitle">How It Works</h3>
-                <div class="about-grid-3">
-                    <div class="glass-feature-card reveal">
-                        <div class="feature-icon feature-icon-step1">
-                            <i class="fas fa-mouse-pointer"></i>
-                        </div>
-                        <div class="step-tag step1">STEP 01</div>
-                        <h4 class="feature-title">Choose a Location</h4>
-                        <p class="feature-copy">Pick any scene from the home page — Main Campus, a department, classroom, or lab. Each card shows the scene type and how many hotspots it has.</p>
-                    </div>
-                    <div class="glass-feature-card reveal">
-                        <div class="feature-icon feature-icon-step2">
-                            <i class="fas fa-street-view"></i>
-                        </div>
-                        <div class="step-tag step2">STEP 02</div>
-                        <h4 class="feature-title">Explore in 360°</h4>
-                        <p class="feature-copy">Drag to look around in any direction. Use pinch-to-zoom on mobile or your scroll wheel on desktop for a fully immersive panoramic experience.</p>
-                    </div>
-                    <div class="glass-feature-card reveal">
-                        <div class="feature-icon feature-icon-step3">
-                            <i class="fas fa-map-signs"></i>
-                        </div>
-                        <div class="step-tag step3">STEP 03</div>
-                        <h4 class="feature-title">Navigate via Hotspots</h4>
-                        <p class="feature-copy">Click glowing hotspot markers inside the viewer to instantly jump to linked scenes — moving from the main campus into departments, then into classrooms and labs.</p>
-                    </div>
-                </div>
-            </div>
+      <div class="about-bg-glow"></div>
+      <div class="about-shell">
+        <div class="section-header about-header">
+          <span class="section-label"><i class="fas fa-info-circle"></i>&nbsp; About Vision 360</span>
+          <h2>Everything You Need to Know</h2>
+          <p>Vision 360 is an immersive virtual campus explorer that lets anyone navigate the entire campus — from the
+            main entrance to individual labs — without stepping foot on site.</p>
         </div>
+        <div class="about-block">
+          <h3 class="about-subtitle">How It Works</h3>
+          <div class="about-grid-3">
+            <div class="glass-feature-card reveal">
+              <div class="feature-icon feature-icon-step1">
+                <i class="fas fa-mouse-pointer"></i>
+              </div>
+              <div class="step-tag step1">STEP 01</div>
+              <h4 class="feature-title">Choose a Location</h4>
+              <p class="feature-copy">Pick any scene from the home page — Main Campus, a department, classroom, or lab.
+                Each card shows the scene type and how many hotspots it has.</p>
+            </div>
+            <div class="glass-feature-card reveal">
+              <div class="feature-icon feature-icon-step2">
+                <i class="fas fa-street-view"></i>
+              </div>
+              <div class="step-tag step2">STEP 02</div>
+              <h4 class="feature-title">Explore in 360°</h4>
+              <p class="feature-copy">Drag to look around in any direction. Use pinch-to-zoom on mobile or your scroll
+                wheel on desktop for a fully immersive panoramic experience.</p>
+            </div>
+            <div class="glass-feature-card reveal">
+              <div class="feature-icon feature-icon-step3">
+                <i class="fas fa-map-signs"></i>
+              </div>
+              <div class="step-tag step3">STEP 03</div>
+              <h4 class="feature-title">Navigate via Hotspots</h4>
+              <p class="feature-copy">Click glowing hotspot markers inside the viewer to instantly jump to linked scenes
+                — moving from the main campus into departments, then into classrooms and labs.</p>
+            </div>
+          </div>
+        </div>
+      </div>
     </section>
 
     <!-- ─── CAMPUS HIERARCHY ──────────────────────── -->
     <section id="hierarchy" class="about-section motion-fade-up">
-        <div class="about-bg-glow"></div>
-        <div class="about-shell">
-            <div class="reveal" style="background:rgba(255,255,255,0.78); border:1px solid rgba(255,255,255,0.92); border-radius:var(--radius-lg); padding:40px 36px; backdrop-filter:blur(18px); box-shadow: var(--shadow-neu);">
-                <h3 style="font-size:1.2rem;font-weight:700;color:var(--text-main);margin-bottom:6px; display:flex; align-items:center; gap:10px;">
-                    <i class="fas fa-sitemap" style="color:var(--c-primary);"></i> Campus Navigation Hierarchy
-                </h3>
-                <p style="color:var(--text-muted); font-size:0.92rem; margin-bottom:28px;">Every scene sits at a specific level. Hotspots let you move naturally between them.</p>
-                <div class="hierarchy-grid" style="display:flex; flex-wrap:wrap; align-items:center; gap:12px;">
-                    <div class="reveal" style="flex:0 0 auto; min-width:150px; background:linear-gradient(135deg,rgba(79,70,229,0.12),rgba(79,70,229,0.04)); border:1px solid rgba(79,70,229,0.28); border-radius:var(--radius-sm); padding:18px 20px;">
-                        <div style="color: var(--c-primary); margin-bottom: 12px;">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-building-2"><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/><path d="M10 6h4"/><path d="M10 10h4"/><path d="M10 14h4"/><path d="M10 18h4"/></svg>
-                        </div>
-                        <div style="margin-bottom:8px;"><span class="level-badge level-1">LEVEL 1</span></div>
-                        <div style="color:var(--text-main); font-weight:700;">Main Campus</div>
-                        <div style="color:var(--text-muted); font-size:0.82rem; margin-top:4px;">Overall entry point</div>
-                    </div>
-                    <i class="fas fa-arrow-right" style="color:var(--c-primary); opacity:0.42; font-size:1.1rem; flex-shrink:0;"></i>
-                    <div class="reveal" style="flex:0 0 auto; min-width:150px; background:linear-gradient(135deg,rgba(14,165,233,0.12),rgba(14,165,233,0.04)); border:1px solid rgba(14,165,233,0.28); border-radius:var(--radius-sm); padding:18px 20px;">
-                        <div style="color: var(--c-secondary); margin-bottom: 12px;">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-landmark"><line x1="3" x2="21" y1="22" y2="22"/><line x1="6" x2="6" y1="18" y2="11"/><line x1="10" x2="10" y1="18" y2="11"/><line x1="14" x2="14" y1="18" y2="11"/><line x1="18" x2="18" y1="18" y2="11"/><polygon points="12 2 20 7 4 7"/></svg>
-                        </div>
-                        <div style="margin-bottom:8px;"><span class="level-badge level-2">LEVEL 2</span></div>
-                        <div style="color:var(--text-main); font-weight:700;">Department</div>
-                        <div style="color:var(--text-muted); font-size:0.82rem; margin-top:4px;">CS, IT, Mechanical…</div>
-                    </div>
-                    <i class="fas fa-arrow-right" style="color:var(--c-secondary); opacity:0.42; font-size:1.1rem; flex-shrink:0;"></i>
-                    <div style="display:flex; flex-direction:column; gap:10px; flex:1; min-width:150px;">
-                        <div class="reveal" style="background:linear-gradient(135deg,rgba(139,92,246,0.12),rgba(139,92,246,0.04)); border:1px solid rgba(139,92,246,0.28); border-radius:var(--radius-sm); padding:14px 18px; display:flex; align-items:center; gap:12px;">
-                            <div style="color: #a78bfa;">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-door-open"><path d="M13 4h3a2 2 0 0 1 2-2v14"/><path d="M2 20h3"/><path d="M13 20h9"/><path d="M10 12v.01"/><path d="M13 4.562v16.156a1 1 0 0 1-1.242.97L5 20V5.562a2 2 0 0 1 1.515-1.94l4-1A2 2 0 0 1 13 4.562Z"/></svg>
-                            </div>
-                            <div>
-                                <div style="margin-bottom:6px;"><span class="level-badge level-3">LEVEL 3</span></div>
-                                <div style="color:var(--text-main); font-weight:700; font-size:0.95rem;">Classrooms</div>
-                                <div style="color:var(--text-muted); font-size:0.8rem;">Lecture halls, study rooms</div>
-                            </div>
-                        </div>
-                        <div class="reveal" style="background:linear-gradient(135deg,rgba(236,72,153,0.12),rgba(236,72,153,0.04)); border:1px solid rgba(236,72,153,0.28); border-radius:var(--radius-sm); padding:14px 18px; display:flex; align-items:center; gap:12px;">
-                            <div style="color: #f093fb;">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-microscope"><path d="M6 18h8"/><path d="M3 22h18"/><path d="M14 22a7 7 0 1 0 0-14h-1"/><path d="M9 14h2"/><path d="M9 12a2 2 0 0 1-2-2V6h6v4a2 2 0 0 1-2 2Z"/><path d="M12 6V3a1 1 0 0 0-1-1H9a1 1 0 0 0-1 1v3"/></svg>
-                            </div>
-                            <div>
-                                <div style="margin-bottom:6px;"><span class="level-badge level-3">LEVEL 3</span></div>
-                                <div style="color:var(--text-main); font-weight:700; font-size:0.95rem;">Labs</div>
-                                <div style="color:var(--text-muted); font-size:0.8rem;">Computer, science labs</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+      <div class="about-bg-glow"></div>
+      <div class="about-shell">
+        <div class="reveal"
+          style="background:rgba(255,255,255,0.78); border:1px solid rgba(255,255,255,0.92); border-radius:var(--radius-lg); padding:40px 36px; backdrop-filter:blur(18px); box-shadow: var(--shadow-neu);">
+          <h3
+            style="font-size:1.2rem;font-weight:700;color:var(--text-main);margin-bottom:6px; display:flex; align-items:center; gap:10px;">
+            <i class="fas fa-sitemap" style="color:var(--c-primary);"></i> Campus Navigation Hierarchy
+          </h3>
+          <p style="color:var(--text-muted); font-size:0.92rem; margin-bottom:28px;">Every scene sits at a specific
+            level. Hotspots let you move naturally between them.</p>
+          <div class="hierarchy-grid" style="display:flex; flex-wrap:wrap; align-items:center; gap:12px;">
+            <div class="reveal"
+              style="flex:0 0 auto; min-width:150px; background:linear-gradient(135deg,rgba(79,70,229,0.12),rgba(79,70,229,0.04)); border:1px solid rgba(79,70,229,0.28); border-radius:var(--radius-sm); padding:18px 20px;">
+              <div style="color: var(--c-primary); margin-bottom: 12px;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                  class="lucide lucide-building-2">
+                  <path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z" />
+                  <path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2" />
+                  <path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2" />
+                  <path d="M10 6h4" />
+                  <path d="M10 10h4" />
+                  <path d="M10 14h4" />
+                  <path d="M10 18h4" />
+                </svg>
+              </div>
+              <div style="margin-bottom:8px;"><span class="level-badge level-1">LEVEL 1</span></div>
+              <div style="color:var(--text-main); font-weight:700;">Main Campus</div>
+              <div style="color:var(--text-muted); font-size:0.82rem; margin-top:4px;">Overall entry point</div>
             </div>
+            <i class="fas fa-arrow-right"
+              style="color:var(--c-primary); opacity:0.42; font-size:1.1rem; flex-shrink:0;"></i>
+            <div class="reveal"
+              style="flex:0 0 auto; min-width:150px; background:linear-gradient(135deg,rgba(14,165,233,0.12),rgba(14,165,233,0.04)); border:1px solid rgba(14,165,233,0.28); border-radius:var(--radius-sm); padding:18px 20px;">
+              <div style="color: var(--c-secondary); margin-bottom: 12px;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                  class="lucide lucide-landmark">
+                  <line x1="3" x2="21" y1="22" y2="22" />
+                  <line x1="6" x2="6" y1="18" y2="11" />
+                  <line x1="10" x2="10" y1="18" y2="11" />
+                  <line x1="14" x2="14" y1="18" y2="11" />
+                  <line x1="18" x2="18" y1="18" y2="11" />
+                  <polygon points="12 2 20 7 4 7" />
+                </svg>
+              </div>
+              <div style="margin-bottom:8px;"><span class="level-badge level-2">LEVEL 2</span></div>
+              <div style="color:var(--text-main); font-weight:700;">Department</div>
+              <div style="color:var(--text-muted); font-size:0.82rem; margin-top:4px;">CS, IT, Mechanical…</div>
+            </div>
+            <i class="fas fa-arrow-right"
+              style="color:var(--c-secondary); opacity:0.42; font-size:1.1rem; flex-shrink:0;"></i>
+            <div style="display:flex; flex-direction:column; gap:10px; flex:1; min-width:150px;">
+              <div class="reveal"
+                style="background:linear-gradient(135deg,rgba(139,92,246,0.12),rgba(139,92,246,0.04)); border:1px solid rgba(139,92,246,0.28); border-radius:var(--radius-sm); padding:14px 18px; display:flex; align-items:center; gap:12px;">
+                <div style="color: #a78bfa;">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                    class="lucide lucide-door-open">
+                    <path d="M13 4h3a2 2 0 0 1 2-2v14" />
+                    <path d="M2 20h3" />
+                    <path d="M13 20h9" />
+                    <path d="M10 12v.01" />
+                    <path
+                      d="M13 4.562v16.156a1 1 0 0 1-1.242.97L5 20V5.562a2 2 0 0 1 1.515-1.94l4-1A2 2 0 0 1 13 4.562Z" />
+                  </svg>
+                </div>
+                <div>
+                  <div style="margin-bottom:6px;"><span class="level-badge level-3">LEVEL 3</span></div>
+                  <div style="color:var(--text-main); font-weight:700; font-size:0.95rem;">Classrooms</div>
+                  <div style="color:var(--text-muted); font-size:0.8rem;">Lecture halls, study rooms</div>
+                </div>
+              </div>
+              <div class="reveal"
+                style="background:linear-gradient(135deg,rgba(236,72,153,0.12),rgba(236,72,153,0.04)); border:1px solid rgba(236,72,153,0.28); border-radius:var(--radius-sm); padding:14px 18px; display:flex; align-items:center; gap:12px;">
+                <div style="color: #f093fb;">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                    class="lucide lucide-microscope">
+                    <path d="M6 18h8" />
+                    <path d="M3 22h18" />
+                    <path d="M14 22a7 7 0 1 0 0-14h-1" />
+                    <path d="M9 14h2" />
+                    <path d="M9 12a2 2 0 0 1-2-2V6h6v4a2 2 0 0 1-2 2Z" />
+                    <path d="M12 6V3a1 1 0 0 0-1-1H9a1 1 0 0 0-1 1v3" />
+                  </svg>
+                </div>
+                <div>
+                  <div style="margin-bottom:6px;"><span class="level-badge level-3">LEVEL 3</span></div>
+                  <div style="color:var(--text-main); font-weight:700; font-size:0.95rem;">Labs</div>
+                  <div style="color:var(--text-muted); font-size:0.8rem;">Computer, science labs</div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
+      </div>
     </section>
 
     <!-- ─── KEY FEATURES ──────────────────────────── -->
     <section id="features" class="about-section motion-fade-up">
-        <div class="about-bg-glow"></div>
-        <div class="about-shell">
-            <div style="margin-bottom:64px;">
-                <h3 style="text-align:center; font-size:1.05rem; font-weight:600; color:var(--text-muted); text-transform:uppercase; letter-spacing:1.5px; margin-bottom:40px;">Key Features</h3>
-                <div class="features-grid">
-                    <div class="reveal feature-card">
-                        <i class="fas fa-vr-cardboard" style="font-size:1.3rem;color:var(--c-primary);flex-shrink:0;margin-top:2px;"></i>
-                        <div>
-                            <div style="font-weight:700;color:var(--text-main);margin-bottom:5px;">Full 360° Panorama</div>
-                            <div style="color:var(--text-muted);font-size:0.88rem;line-height:1.55;">Powered by Pannellum for smooth, high-quality equirectangular panorama rendering.</div>
-                        </div>
-                    </div>
-                    <div class="reveal feature-card">
-                        <i class="fas fa-map-pin" style="font-size:1.3rem;color:var(--c-secondary);flex-shrink:0;margin-top:2px;"></i>
-                        <div>
-                            <div style="font-weight:700;color:var(--text-main);margin-bottom:5px;">Interactive Hotspots</div>
-                            <div style="color:var(--text-muted);font-size:0.88rem;line-height:1.55;">Clickable navigation markers placed exactly where they belong using pitch &amp; yaw coordinates.</div>
-                        </div>
-                    </div>
-                    <div class="reveal feature-card">
-                        <i class="fas fa-cloud" style="font-size:1.3rem;color:#a78bfa;flex-shrink:0;margin-top:2px;"></i>
-                        <div>
-                            <div style="font-weight:700;color:var(--text-main);margin-bottom:5px;">Firebase Powered</div>
-                            <div style="color:var(--text-muted);font-size:0.88rem;line-height:1.55;">All scene data is stored and served live from Firebase Firestore. No page reload needed to see updates.</div>
-                        </div>
-                    </div>
-                    <div class="reveal feature-card">
-                        <i class="fas fa-shield-alt" style="font-size:1.3rem;color:#f093fb;flex-shrink:0;margin-top:2px;"></i>
-                        <div>
-                            <div style="font-weight:700;color:var(--text-main);margin-bottom:5px;">Secure Admin Panel</div>
-                            <div style="color:var(--text-muted);font-size:0.88rem;line-height:1.55;">Master admin can create, edit and delete scenes, place hotspots, and grant access to co-admins.</div>
-                        </div>
-                    </div>
-                    <div class="reveal feature-card">
-                        <i class="fas fa-mobile-alt" style="font-size:1.3rem;color:var(--c-primary);flex-shrink:0;margin-top:2px;"></i>
-                        <div>
-                            <div style="font-weight:700;color:var(--text-main);margin-bottom:5px;">Mobile Responsive</div>
-                            <div style="color:var(--text-muted);font-size:0.88rem;line-height:1.55;">Works seamlessly on phones, tablets, and desktops with gesture support for 360° dragging.</div>
-                        </div>
-                    </div>
-                    <div class="reveal feature-card">
-                        <i class="fas fa-bolt" style="font-size:1.3rem;color:var(--c-secondary);flex-shrink:0;margin-top:2px;"></i>
-                        <div>
-                            <div style="font-weight:700;color:var(--text-main);margin-bottom:5px;">Instant Loading</div>
-                            <div style="color:var(--text-muted);font-size:0.88rem;line-height:1.55;">Cinematic loading screen hides delays. Scenes appear only when fully ready for a polished experience.</div>
-                        </div>
-                    </div>
-                </div>
+      <div class="about-bg-glow"></div>
+      <div class="about-shell">
+        <div style="margin-bottom:64px;">
+          <h3
+            style="text-align:center; font-size:1.05rem; font-weight:600; color:var(--text-muted); text-transform:uppercase; letter-spacing:1.5px; margin-bottom:40px;">
+            Key Features</h3>
+          <div class="features-grid">
+            <div class="reveal feature-card">
+              <i class="fas fa-vr-cardboard"
+                style="font-size:1.3rem;color:var(--c-primary);flex-shrink:0;margin-top:2px;"></i>
+              <div>
+                <div style="font-weight:700;color:var(--text-main);margin-bottom:5px;">Full 360° Panorama</div>
+                <div style="color:var(--text-muted);font-size:0.88rem;line-height:1.55;">Powered by Pannellum for
+                  smooth, high-quality equirectangular panorama rendering.</div>
+              </div>
             </div>
-            <!-- CTA Banner -->
-            <div class="reveal" style="text-align:center; background:linear-gradient(135deg,rgba(0,242,254,0.08),rgba(240,147,251,0.08)); border:1px solid rgba(255,255,255,0.08); border-radius:var(--radius-lg); padding:48px 32px;">
-                <span style="display:inline-block;padding:5px 14px;
+            <div class="reveal feature-card">
+              <i class="fas fa-map-pin"
+                style="font-size:1.3rem;color:var(--c-secondary);flex-shrink:0;margin-top:2px;"></i>
+              <div>
+                <div style="font-weight:700;color:var(--text-main);margin-bottom:5px;">Interactive Hotspots</div>
+                <div style="color:var(--text-muted);font-size:0.88rem;line-height:1.55;">Clickable navigation markers
+                  placed exactly where they belong using pitch &amp; yaw coordinates.</div>
+              </div>
+            </div>
+            <div class="reveal feature-card">
+              <i class="fas fa-cloud" style="font-size:1.3rem;color:#a78bfa;flex-shrink:0;margin-top:2px;"></i>
+              <div>
+                <div style="font-weight:700;color:var(--text-main);margin-bottom:5px;">Firebase Powered</div>
+                <div style="color:var(--text-muted);font-size:0.88rem;line-height:1.55;">All scene data is stored and
+                  served live from Firebase Firestore. No page reload needed to see updates.</div>
+              </div>
+            </div>
+            <div class="reveal feature-card">
+              <i class="fas fa-shield-alt" style="font-size:1.3rem;color:#f093fb;flex-shrink:0;margin-top:2px;"></i>
+              <div>
+                <div style="font-weight:700;color:var(--text-main);margin-bottom:5px;">Secure Admin Panel</div>
+                <div style="color:var(--text-muted);font-size:0.88rem;line-height:1.55;">Master admin can create, edit
+                  and delete scenes, place hotspots, and grant access to co-admins.</div>
+              </div>
+            </div>
+            <div class="reveal feature-card">
+              <i class="fas fa-mobile-alt"
+                style="font-size:1.3rem;color:var(--c-primary);flex-shrink:0;margin-top:2px;"></i>
+              <div>
+                <div style="font-weight:700;color:var(--text-main);margin-bottom:5px;">Mobile Responsive</div>
+                <div style="color:var(--text-muted);font-size:0.88rem;line-height:1.55;">Works seamlessly on phones,
+                  tablets, and desktops with gesture support for 360° dragging.</div>
+              </div>
+            </div>
+            <div class="reveal feature-card">
+              <i class="fas fa-bolt"
+                style="font-size:1.3rem;color:var(--c-secondary);flex-shrink:0;margin-top:2px;"></i>
+              <div>
+                <div style="font-weight:700;color:var(--text-main);margin-bottom:5px;">Instant Loading</div>
+                <div style="color:var(--text-muted);font-size:0.88rem;line-height:1.55;">Cinematic loading screen hides
+                  delays. Scenes appear only when fully ready for a polished experience.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- CTA Banner -->
+        <div class="reveal"
+          style="text-align:center; background:linear-gradient(135deg,rgba(0,242,254,0.08),rgba(240,147,251,0.08)); border:1px solid rgba(255,255,255,0.08); border-radius:var(--radius-lg); padding:48px 32px;">
+          <span style="display:inline-block;padding:5px 14px;
                   border-radius:999px;background:rgba(255,255,255,0.06);
                   border:1px solid rgba(255,255,255,0.1);font-size:0.7rem;
                   letter-spacing:0.12em;text-transform:uppercase;
                   color:rgba(255,255,255,0.5);margin-bottom:1rem;">
-                  Virtual Tour Platform</span>
-                <h3 style="font-size:1.7rem;font-weight:800;color:var(--text-main);margin-bottom:10px;letter-spacing:-0.3px;">Ready to Explore?</h3>
-                <p style="color:var(--text-muted);max-width:450px;margin:0 auto 28px;line-height:1.7;">Jump into any 360° scene and experience your campus like never before — from anywhere in the world.</p>
-                <a href="#campuses" class="btn btn-primary" style="padding:15px 36px; font-size:1rem; border-radius:50px;">
-                    <i class="fas fa-street-view"></i> View All Locations
-                </a>
-            </div>
+            Virtual Tour Platform</span>
+          <h3 style="font-size:1.7rem;font-weight:800;color:var(--text-main);margin-bottom:10px;letter-spacing:-0.3px;">
+            Ready to Explore?</h3>
+          <p style="color:var(--text-muted);max-width:450px;margin:0 auto 28px;line-height:1.7;">Jump into any 360°
+            scene and experience your campus like never before — from anywhere in the world.</p>
+          <a href="#campuses" class="btn btn-primary" style="padding:15px 36px; font-size:1rem; border-radius:50px;">
+            <i class="fas fa-street-view"></i> View All Locations
+          </a>
         </div>
+      </div>
     </section>
-    </main>
+  </main>
 
-    <script type="module" src="js/motion.js"></script>
+  <script type="module" src="js/motion.js"></script>
 
 
-<!-- ─── FOOTER ───────────────────────────────────── -->
-    <footer class="footer" style="margin-top: 100px; text-align: left; background: rgba(255,255,255,0.05);">
-        <div class="footer-grid" style="max-width: 1280px; margin: 0 auto;">
-            
-            <!-- Column 1: Logo & Info -->
-            <div class="reveal">
-                <img src="assets/logo.png" alt="Vision 360 Logo" width="36" height="36" style="height: 36px; margin-bottom: 20px; display: block;">
-                <p style="color: var(--text-muted); line-height: 1.6; font-size: 0.95rem; max-width: 280px;">
-                    Immersive 360° virtual campus tours, powered by Firebase.
-                </p>
-            </div>
+  <!-- ─── FOOTER ───────────────────────────────────── -->
+  <footer class="footer" style="margin-top: 100px; text-align: left; background: rgba(255,255,255,0.05);">
+    <div class="footer-grid" style="max-width: 1280px; margin: 0 auto;">
 
-            <!-- Column 2: Quick Links -->
-            <div class="reveal">
-                <h4 style="color: var(--text-main); margin-bottom: 24px; font-weight: 700; font-size: 1.1rem;">Quick Links</h4>
-                <ul style="list-style: none; padding: 0; display: flex; flex-direction: column; gap: 14px;">
-                    <li><a href="#home" style="color: var(--text-secondary); text-decoration: none; font-size: 0.95rem; transition: var(--transition);" onmouseenter="this.style.color='var(--c-primary)'" onmouseleave="this.style.color='var(--text-secondary)'">Home</a></li>
-                    <li><a href="#campuses" style="color: var(--text-secondary); text-decoration: none; font-size: 0.95rem; transition: var(--transition);" onmouseenter="this.style.color='var(--c-primary)'" onmouseleave="this.style.color='var(--text-secondary)'">Explore</a></li>
-                    <li><a href="#about" style="color: var(--text-secondary); text-decoration: none; font-size: 0.95rem; transition: var(--transition);" onmouseenter="this.style.color='var(--c-primary)'" onmouseleave="this.style.color='var(--text-secondary)'">Learn More</a></li>
-                </ul>
-            </div>
+      <!-- Column 1: Logo & Info -->
+      <div class="reveal">
+        <img src="assets/logo.png" alt="Vision 360 Logo" width="36" height="36"
+          style="height: 36px; margin-bottom: 20px; display: block;">
+        <p style="color: var(--text-muted); line-height: 1.6; font-size: 0.95rem; max-width: 280px;">
+          Immersive 360° virtual campus tours, powered by Firebase.
+        </p>
+      </div>
 
-            <!-- Column 3: Connect -->
-            <div class="reveal">
-                <h4 style="color: var(--text-main); margin-bottom: 24px; font-weight: 700; font-size: 1.1rem;">Connect</h4>
-                <ul style="list-style: none; padding: 0; display: flex; flex-direction: column; gap: 14px;">
-                    <li><a href="https://github.com/Tktirth" target="_blank" style="color: var(--text-secondary); text-decoration: none; font-size: 0.95rem; display: flex; align-items: center; gap: 8px; transition: var(--transition);" onmouseenter="this.style.color='var(--c-primary)'" onmouseleave="this.style.color='var(--text-secondary)'">
-                        <i class="fab fa-github"></i> GitHub
-                    </a></li>
-                    <li><a href="https://linkedin.com/in/tirthkosambia" target="_blank" style="color: var(--text-secondary); text-decoration: none; font-size: 0.95rem; display: flex; align-items: center; gap: 8px; transition: var(--transition);" onmouseenter="this.style.color='var(--c-primary)'" onmouseleave="this.style.color='var(--text-secondary)'">
-                        <i class="fab fa-linkedin"></i> LinkedIn
-                    </a></li>
-                </ul>
-            </div>
+      <!-- Column 2: Quick Links -->
+      <div class="reveal">
+        <h4 style="color: var(--text-main); margin-bottom: 24px; font-weight: 700; font-size: 1.1rem;">Quick Links</h4>
+        <ul style="list-style: none; padding: 0; display: flex; flex-direction: column; gap: 14px;">
+          <li><a href="#home"
+              style="color: var(--text-secondary); text-decoration: none; font-size: 0.95rem; transition: var(--transition);"
+              onmouseenter="this.style.color='var(--c-primary)'"
+              onmouseleave="this.style.color='var(--text-secondary)'">Home</a></li>
+          <li><a href="#campuses"
+              style="color: var(--text-secondary); text-decoration: none; font-size: 0.95rem; transition: var(--transition);"
+              onmouseenter="this.style.color='var(--c-primary)'"
+              onmouseleave="this.style.color='var(--text-secondary)'">Explore</a></li>
+          <li><a href="#about"
+              style="color: var(--text-secondary); text-decoration: none; font-size: 0.95rem; transition: var(--transition);"
+              onmouseenter="this.style.color='var(--c-primary)'"
+              onmouseleave="this.style.color='var(--text-secondary)'">Learn More</a></li>
+        </ul>
+      </div>
 
-        </div>
+      <!-- Column 3: Connect -->
+      <div class="reveal">
+        <h4 style="color: var(--text-main); margin-bottom: 24px; font-weight: 700; font-size: 1.1rem;">Connect</h4>
+        <ul style="list-style: none; padding: 0; display: flex; flex-direction: column; gap: 14px;">
+          <li><a href="https://github.com/Tktirth" target="_blank"
+              style="color: var(--text-secondary); text-decoration: none; font-size: 0.95rem; display: flex; align-items: center; gap: 8px; transition: var(--transition);"
+              onmouseenter="this.style.color='var(--c-primary)'"
+              onmouseleave="this.style.color='var(--text-secondary)'">
+              <i class="fab fa-github"></i> GitHub
+            </a></li>
+          <li><a href="https://linkedin.com/in/tirthkosambia" target="_blank"
+              style="color: var(--text-secondary); text-decoration: none; font-size: 0.95rem; display: flex; align-items: center; gap: 8px; transition: var(--transition);"
+              onmouseenter="this.style.color='var(--c-primary)'"
+              onmouseleave="this.style.color='var(--text-secondary)'">
+              <i class="fab fa-linkedin"></i> LinkedIn
+            </a></li>
+        </ul>
+      </div>
 
-        <!-- Copyright Bottom -->
-        <div style="max-width: 1280px; margin: 0 auto; padding: 30px 40px; border-top: 1px solid rgba(148, 163, 184, 0.1); text-align: center;">
-            <p style="color: var(--text-faint); font-size: 0.85rem;">
-                © 2026 Virtual Campus Explorer. All rights reserved.
-            </p>
-        </div>
-    </footer>
+    </div>
 
-    <script type="module" src="js/main.js"></script>
-    <script type="module">
-        import { AIAssistant } from "./js/ai-assistant.js";
-        document.addEventListener("DOMContentLoaded", () => {
-            new AIAssistant();
-        });
-    </script>
+    <!-- Copyright Bottom -->
+    <div
+      style="max-width: 1280px; margin: 0 auto; padding: 30px 40px; border-top: 1px solid rgba(148, 163, 184, 0.1); text-align: center;">
+      <p style="color: var(--text-faint); font-size: 0.85rem;">
+        © 2026 Virtual Campus Explorer. All rights reserved.
+      </p>
+    </div>
+  </footer>
 
-    <button id="scrollTop" 
-      aria-label="Scroll to top"
-      onclick="window.scrollTo({top:0,behavior:'smooth'})"
-      style="
+  <script type="module" src="js/main.js"></script>
+  <script type="module">
+    import { AIAssistant } from "./js/ai-assistant.js";
+    document.addEventListener("DOMContentLoaded", () => {
+      new AIAssistant();
+    });
+  </script>
+
+  <button id="scrollTop" aria-label="Scroll to top" onclick="window.scrollTo({top:0,behavior:'smooth'})" style="
         position: fixed;
         bottom: 1.5rem;
         right: 1.25rem;
@@ -744,49 +879,50 @@
         touch-action: manipulation;
       ">↑</button>
 
-    <script>
-        // Scroll to top
-        const _btn = document.getElementById('scrollTop');
-        window.addEventListener('scroll', () => {
-          _btn.style.display = window.scrollY > 400 ? 'flex' : 'none';
-        });
+  <script>
+    // Scroll to top
+    const _btn = document.getElementById('scrollTop');
+    window.addEventListener('scroll', () => {
+      _btn.style.display = window.scrollY > 400 ? 'flex' : 'none';
+    });
 
-        // Mobile Nav Toggle
-        const toggle = document.querySelector('.nav-toggle');
-        const mobileNav = document.querySelector('.nav-mobile');
-        if (toggle && mobileNav) {
-          toggle.addEventListener('click', () => {
-            toggle.classList.toggle('active');
-            mobileNav.classList.toggle('open');
-            toggle.setAttribute('aria-expanded', mobileNav.classList.contains('open'));
-          });
-          mobileNav.querySelectorAll('a').forEach(link => {
-            link.addEventListener('click', () => {
-              toggle.classList.remove('active');
-              mobileNav.classList.remove('open');
-            });
-          });
+    // Mobile Nav Toggle
+    const toggle = document.querySelector('.nav-toggle');
+    const mobileNav = document.querySelector('.nav-mobile');
+    if (toggle && mobileNav) {
+      toggle.addEventListener('click', () => {
+        toggle.classList.toggle('active');
+        mobileNav.classList.toggle('open');
+        toggle.setAttribute('aria-expanded', mobileNav.classList.contains('open'));
+      });
+      mobileNav.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', () => {
+          toggle.classList.remove('active');
+          mobileNav.classList.remove('open');
+        });
+      });
+    }
+
+    // Reveal animations
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry, i) => {
+        if (entry.isIntersecting) {
+          setTimeout(() => {
+            entry.target.classList.add('visible');
+          }, i * 80);
+          revealObserver.unobserve(entry.target);
         }
+      });
+    }, { threshold: 0.12 });
+    document.querySelectorAll('.reveal').forEach(el =>
+      revealObserver.observe(el));
 
-        // Reveal animations
-        const revealObserver = new IntersectionObserver((entries) => {
-          entries.forEach((entry, i) => {
-            if (entry.isIntersecting) {
-              setTimeout(() => {
-                entry.target.classList.add('visible');
-              }, i * 80);
-              revealObserver.unobserve(entry.target);
-            }
-          });
-        }, { threshold: 0.12 });
-        document.querySelectorAll('.reveal').forEach(el => 
-          revealObserver.observe(el));
-
-        // Nav shadow on scroll
-        window.addEventListener('scroll', () => {
-          const nav = document.querySelector('nav');
-          if (nav) nav.classList.toggle('scrolled', window.scrollY > 50);
-        });
-    </script>
+    // Nav shadow on scroll
+    window.addEventListener('scroll', () => {
+      const nav = document.querySelector('nav');
+      if (nav) nav.classList.toggle('scrolled', window.scrollY > 50);
+    });
+  </script>
 </body>
+
 </html>
