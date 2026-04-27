@@ -158,26 +158,31 @@
         let isExitInProgress = false;
 
         function exitVR() {
-            if (isExitInProgress) return; // Prevent duplicate execution
+            console.log('Exit VR initiated');
+            if (isExitInProgress) return; 
             isExitInProgress = true;
 
             const sceneEl = document.querySelector('a-scene');
             if (!sceneEl) { 
+                console.warn('Scene element not found');
                 handleFallbackExit();
                 return;
             }
 
             const renderer = sceneEl.renderer;
             const xrSession = renderer ? renderer.xr.getSession() : null;
+            
+            console.log('XR Session status:', xrSession ? 'Active' : 'None');
 
             if (xrSession) {
                 // Async Safe: Wait for session to actually end before cleaning up
                 xrSession.addEventListener('end', () => {
+                    console.log('XR Session ended gracefully');
                     handleExitCleanup(sceneEl);
                 }, { once: true });
                 
                 xrSession.end().catch(err => {
-                    console.warn("XR Session end failed, forcing cleanup:", err);
+                    console.error("XR Session end failed:", err);
                     handleExitCleanup(sceneEl);
                 });
             } else {
@@ -186,49 +191,43 @@
         }
 
         function handleExitCleanup(sceneEl) {
+            console.log('Performing resource cleanup...');
             // 1. Stop Render Loop Immediately
             if (sceneEl.renderer) {
                 sceneEl.renderer.setAnimationLoop(null);
             }
 
-            // 2. Safe GPU Resource Disposal (Full Traversal)
+            // 2. Safe GPU Resource Disposal
             const threeScene = sceneEl.object3D;
             if (threeScene) {
                 threeScene.traverse((node) => {
-                    if (node.geometry) {
-                        node.geometry.dispose();
-                    }
+                    if (node.geometry) node.geometry.dispose();
                     if (node.material) {
                         const materials = Array.isArray(node.material) ? node.material : [node.material];
                         materials.forEach(mat => {
-                            // Dispose textures
                             Object.keys(mat).forEach(prop => {
-                                if (!mat[prop]) return;
-                                if (mat[prop].isTexture) {
-                                    mat[prop].dispose();
-                                }
+                                if (mat[prop] && mat[prop].isTexture) mat[prop].dispose();
                             });
                             mat.dispose();
                         });
                     }
                 });
-                // 3. Clear Scene
                 threeScene.clear();
             }
 
-            // 4. Release Renderer Resources
             if (sceneEl.renderer) {
                 sceneEl.renderer.renderLists.dispose();
                 sceneEl.renderer.dispose();
             }
 
-            // 5. Controlled Navigation (Avoid Race Conditions)
+            console.log('Cleanup complete. Redirecting...');
             setTimeout(() => {
                 window.location.href = 'index.html';
             }, 50);
         }
 
         function handleFallbackExit() {
+            console.log('Fallback exit triggered');
             setTimeout(() => {
                 window.location.href = 'index.html';
             }, 100);
@@ -236,6 +235,7 @@
 
         // Hook into A-Frame's built-in exit event
         document.querySelector('a-scene').addEventListener('exit-vr', () => {
+            console.log('A-Frame exit-vr event detected');
             exitVR();
         });
 
@@ -243,9 +243,10 @@
         const exitBtn = document.querySelector('#exit-vr-btn');
         if (exitBtn) {
             exitBtn.addEventListener('click', () => {
+                console.log('In-scene exit button clicked');
                 const scene = document.querySelector('a-scene');
                 if (scene.is('vr-mode')) {
-                    scene.exitVR(); // This will trigger 'exit-vr' event above
+                    scene.exitVR(); 
                 } else {
                     exitVR();
                 }
@@ -255,7 +256,10 @@
         // UI Overlay Exit Button Click Logic
         const uiExitBtn = document.querySelector('#ui-exit-btn');
         if (uiExitBtn) {
-            uiExitBtn.addEventListener('click', () => {
+            uiExitBtn.style.pointerEvents = 'auto'; // Ensure clickable
+            uiExitBtn.addEventListener('click', (e) => {
+                console.log('UI overlay exit button clicked');
+                e.preventDefault();
                 exitVR();
             });
         }
