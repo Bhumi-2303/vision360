@@ -154,27 +154,41 @@
             console.log('A-Frame Scene Loaded');
         }
 
-        // ── Unified XR Exit Controller (VR/AR Isolation) ───────
+        // ── Global XR State & Dynamic Labeling ───────────────────
+        let currentMode = 'none'; // 'vr' | 'ar' | 'none'
         let isExitInProgress = false;
 
+        const uiExitBtn = document.querySelector('#ui-exit-btn');
+        const inSceneExitBtn = document.querySelector('#exit-vr-btn');
+
+        function updateExitLabels() {
+            const labelText = currentMode === 'vr' ? 'Exit VR Mode' : 
+                            currentMode === 'ar' ? 'Exit AR Mode' : 'Exit Mode';
+            
+            // Update 2D UI Overlay Button
+            if (uiExitBtn) {
+                // Keep the SVG but update text
+                const svg = uiExitBtn.querySelector('svg').outerHTML;
+                uiExitBtn.innerHTML = `${svg} ${labelText}`;
+            }
+
+            // Update 3D In-Scene Button Label
+            const sceneLabel = document.querySelector('#exit-btn-label');
+            if (sceneLabel) {
+                sceneLabel.setAttribute('value', currentMode === 'vr' ? 'EXIT VR' : 'EXIT AR');
+            }
+        }
+
+        // ── Unified XR Exit Controller (Mode-Specific) ───────────
         function handleUnifiedExit() {
             if (isExitInProgress) return;
             
-            const sceneEl = document.querySelector('a-scene');
-            const renderer = sceneEl ? sceneEl.renderer : null;
-            const session = renderer ? renderer.xr.getSession() : null;
-
-            console.log('Exit clicked. Mode:', session ? session.mode : 'None');
+            console.log('Unified Exit Triggered. Current Mode:', currentMode);
 
             requestAnimationFrame(() => {
-                if (!session) {
-                    fallbackExit();
-                    return;
-                }
-
-                if (session.mode === 'immersive-vr') {
+                if (currentMode === 'vr') {
                     exitVR();
-                } else if (session.mode === 'immersive-ar') {
+                } else if (currentMode === 'ar') {
                     exitAR();
                 } else {
                     fallbackExit();
@@ -185,15 +199,15 @@
         function exitVR() {
             isExitInProgress = true;
             const sceneEl = document.querySelector('a-scene');
-            const renderer = sceneEl.renderer;
-            const session = renderer.xr.getSession();
+            const renderer = sceneEl ? sceneEl.renderer : null;
+            const session = renderer ? renderer.xr.getSession() : null;
 
             if (session) {
                 session.addEventListener('end', () => {
                     handleVRCleanup(sceneEl);
                 }, { once: true });
                 session.end().catch(err => {
-                    console.error("VR Exit failed:", err);
+                    console.error("VR Session End Failed:", err);
                     handleVRCleanup(sceneEl);
                 });
             } else {
@@ -204,30 +218,34 @@
         function exitAR() {
             isExitInProgress = true;
             const sceneEl = document.querySelector('a-scene');
-            const renderer = sceneEl.renderer;
-            const session = renderer.xr.getSession();
-
-            if (session) {
-                // No VR cleanup for AR as per requirements
-                session.end().then(() => {
-                    setTimeout(() => { window.location.href = 'index.html'; }, 100);
-                }).catch(() => {
-                    fallbackExit();
-                });
-            } else {
-                fallbackExit();
+            
+            console.log('Exiting AR Mode...');
+            
+            if (sceneEl && sceneEl.is('vr-mode')) {
+                sceneEl.exitVR(); // A-Frame handles AR exit through this call
             }
+
+            currentMode = 'none';
+            updateExitLabels();
+            
+            // Optional redirect for consistency
+            setTimeout(() => {
+                window.location.href = 'index.html';
+            }, 100);
         }
 
         function handleVRCleanup(sceneEl) {
             console.log('VR Cleanup started');
+            currentMode = 'none';
+            updateExitLabels();
+
             if (sceneEl.renderer) {
                 sceneEl.renderer.setAnimationLoop(null);
                 sceneEl.renderer.renderLists.dispose();
                 if (sceneEl.renderer.info) sceneEl.renderer.info.reset();
             }
 
-            // Safe GPU Disposal for VR
+            // Safe GPU Disposal for VR (Three.js Only)
             const threeScene = sceneEl.object3D;
             if (threeScene) {
                 threeScene.traverse((node) => {
@@ -251,6 +269,10 @@
         }
 
         function fallbackExit() {
+            console.log('Fallback Exit triggered');
+            currentMode = 'none';
+            updateExitLabels();
+            
             const sceneEl = document.querySelector('a-scene');
             if (sceneEl && sceneEl.renderer) {
                 sceneEl.renderer.setAnimationLoop(null);
@@ -260,47 +282,51 @@
             }, 100);
         }
 
-        // ── Scene Initialization & Loading Fix ─────────────────────
-        // Ensure texture is ready before sky renders to prevent black screens
+        // ── Mode Detection Hooks ──────────────────────────────────
+        const sceneEl = document.querySelector('a-scene');
+        
+        sceneEl.addEventListener('enter-vr', () => {
+            if (sceneEl.is('ar-mode')) {
+                currentMode = 'ar';
+                console.log('Entered AR Mode');
+            } else {
+                currentMode = 'vr';
+                console.log('Entered VR Mode');
+            }
+            updateExitLabels();
+        });
+
+        sceneEl.addEventListener('exit-vr', () => {
+            // Only trigger if not already handled by our controller
+            if (!isExitInProgress) {
+                handleUnifiedExit();
+            }
+        });
+
+        // ── Scene Initialization ──────────────────────────────────
         async function initializeVRScene() {
             if (!imgUrl) return;
-            
             try {
-                // Pre-load texture using Three.js loader for absolute certainty
                 const loader = new THREE.TextureLoader();
                 loader.setCrossOrigin('anonymous');
-                
                 const texture = await loader.loadAsync(imgUrl);
-                console.log('Texture loaded successfully via Three.js');
                 
-                // Once loaded, apply to A-Frame asset and sky
                 skyAsset.setAttribute('src', imgUrl);
                 mainSky.setAttribute('src', '#panorama-img');
                 mainSky.setAttribute('visible', 'true');
             } catch (err) {
                 console.error('VR Scene Loading Error:', err);
-                mainSky.setAttribute('color', '#111111'); // Dark fallback
+                mainSky.setAttribute('color', '#111111');
             }
         }
 
-        // Hook into A-Frame's built-in exit event
-        document.querySelector('a-scene').addEventListener('exit-vr', () => {
-            handleUnifiedExit();
-        });
-
-        // Exit VR Button Click Logic (In-scene entity)
-        const exitBtn = document.querySelector('#exit-vr-btn');
-        if (exitBtn) {
-            exitBtn.onclick = null; // Remove any legacy handlers
-            exitBtn.addEventListener('click', (e) => {
-                handleUnifiedExit();
-            });
+        // ── Button Binding ────────────────────────────────────────
+        if (inSceneExitBtn) {
+            inSceneExitBtn.onclick = null;
+            inSceneExitBtn.addEventListener('click', handleUnifiedExit);
         }
 
-        // UI Overlay Exit Button Click Logic
-        const uiExitBtn = document.querySelector('#ui-exit-btn');
         if (uiExitBtn) {
-            uiExitBtn.onclick = null;
             uiExitBtn.style.pointerEvents = 'auto';
             uiExitBtn.addEventListener('click', (e) => {
                 if (e.cancelable) e.preventDefault();
@@ -308,12 +334,10 @@
             });
         }
 
-        // Start initialization
         initializeVRScene();
 
         window.addEventListener('beforeunload', () => {
-            const scene = document.querySelector('a-scene');
-            if (scene && scene.renderer) scene.renderer.setAnimationLoop(null);
+            if (sceneEl && sceneEl.renderer) sceneEl.renderer.setAnimationLoop(null);
         });
     </script>
 </body>
