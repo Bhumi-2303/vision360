@@ -233,19 +233,18 @@ document.addEventListener("DOMContentLoaded", async () => {
             
             // Auto start tour if parameter is present
             if (urlParams.get("auto") === "true") {
-                // Determine the absolute beginning of the hierarchy to start from
                 if (orderedAutoTour.length === 0) buildOrderedHierarchy();
                 const startHierarchalId = orderedAutoTour[0];
                 
-                // If we aren't already on the first scene, switch to it before starting rotation
                 if (VIEWER.getScene() !== startHierarchalId && startHierarchalId) {
-                    autoRotateActive = true; // Set flag so scenechange knows it's an auto tour
-                    isAutoNavigating = true;
+                    autoRotateActive = true; 
+                    isAutoNavigating = true; // Mark as auto so scenechange resets the timer
                     if (autoBtn) { autoBtn.classList.add('active'); autoBtn.setAttribute('data-tip','Stop Auto Tour'); }
                     VIEWER.loadScene(startHierarchalId);
-                    // The 'scenechange' event will re-start the auto rotate sequence
                 } else {
+                    isAutoNavigating = true; 
                     startAutoRotate();
+                    isAutoNavigating = false; 
                 }
             }
         });
@@ -255,21 +254,17 @@ document.addEventListener("DOMContentLoaded", async () => {
             updateInfoPanel();
             refreshPanelHighlight();
             preloadAdjacent(id);
-            if (!isAutoNavigating) {
-                stopAutoRotate();
-            } else {
+            if (isAutoNavigating) {
+                // This change was triggered by the AutoTour timer
                 isAutoNavigating = false;
-                
-                // Only loop if auto rotate is actually active
                 if (autoRotateActive) {
-                    clearTimeout(autoTourTimer);
-                    
-                    // We also need to clear and re-activate the auto rotation interval 
-                    // so it starts rotating the new scene immediately
-                    clearInterval(autoRotateTimer);
-                    autoRotateTimer = setInterval(() => { if (VIEWER) VIEWER.setYaw(VIEWER.getYaw() + 0.25); }, 16);
-                    
-                    autoTourTimer = setTimeout(autoNavigateHierarchy, 10000);
+                    resetAutoTourTimer();
+                }
+            } else {
+                // This change was likely manual (hotspot click or panel selection)
+                // We stop the auto-tour to give control back to the user
+                if (autoRotateActive) {
+                    stopAutoRotate();
                 }
             }
             speakCurrentScene();
@@ -405,7 +400,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         if (vrBtn) {
             vrBtn.addEventListener('click', () => {
                 const currentId = VIEWER.getScene();
-                const scene = scenesData[currentId];
+                const scene = processed[currentId];
                 if (scene && scene.panorama) {
                     const vrUrl = `vr.html?img=${encodeURIComponent(scene.panorama)}&title=${encodeURIComponent(scene.title)}`;
                     window.location.href = vrUrl;
@@ -498,36 +493,99 @@ document.addEventListener("DOMContentLoaded", async () => {
             leftovers.forEach(s => orderedAutoTour.push(s.id));
         }
 
-        // ── Auto-rotate & Auto-Tour ─────────────────────────────────
+        // ── Auto-rotate & Auto-Tour Manager ─────────────────────────
+        let autoTourStartTime = 0;
+        let autoTourDuration = 10000; // 10 seconds per scene
+        let progressFrameReq = null;
+        const autoProgressContainer = document.getElementById('autotour-progress-container');
+        const autoProgressBar = document.getElementById('autotour-progress-bar');
+
+        function updateAutoTourProgress() {
+            if (!autoRotateActive) return;
+            const elapsed = Date.now() - autoTourStartTime;
+            const percentage = Math.min((elapsed / autoTourDuration) * 100, 100);
+            
+            if (autoProgressBar) {
+                autoProgressBar.style.width = percentage + '%';
+            }
+
+            if (percentage < 100) {
+                progressFrameReq = requestAnimationFrame(updateAutoTourProgress);
+            }
+        }
+
         function autoNavigateHierarchy() {
-            if (!autoRotateActive || !VIEWER) return;
+            if (!autoRotateActive || !VIEWER || isAutoNavigating) return;
             const curId = VIEWER.getScene();
             
             if (orderedAutoTour.length === 0) buildOrderedHierarchy();
 
-            let nextIdx = orderedAutoTour.indexOf(curId) + 1;
-            if (nextIdx >= orderedAutoTour.length || nextIdx < 0) {
-                nextIdx = 0; // Loop back to the beginning
+            let curIdx = orderedAutoTour.indexOf(curId);
+            let nextIdx = (curIdx + 1) % orderedAutoTour.length;
+            
+            const nextSceneId = orderedAutoTour[nextIdx];
+            if (!nextSceneId || !processed[nextSceneId]) {
+                stopAutoRotate();
+                return;
+            }
+
+            // Preload the scene AFTER the next one for extra smoothness
+            const lookAheadIdx = (nextIdx + 1) % orderedAutoTour.length;
+            const lookAheadId = orderedAutoTour[lookAheadIdx];
+            if (lookAheadId && processed[lookAheadId]) {
+                const img = new Image();
+                img.src = processed[lookAheadId].panorama;
             }
 
             isAutoNavigating = true;
-            VIEWER.loadScene(orderedAutoTour[nextIdx]);
+            VIEWER.loadScene(nextSceneId);
         }
 
         function startAutoRotate() {
             if (autoRotateActive) return;
             autoRotateActive = true;
-            autoTourHistory = [];
-            if (autoBtn) { autoBtn.classList.add('active'); autoBtn.setAttribute('data-tip','Stop Auto Tour'); }
-            autoRotateTimer = setInterval(() => { if (VIEWER) VIEWER.setYaw(VIEWER.getYaw() + 0.25); }, 16);
-            autoTourTimer = setTimeout(autoNavigateHierarchy, 10000);
+            
+            if (autoBtn) { 
+                autoBtn.classList.add('active'); 
+                autoBtn.setAttribute('data-tip','Stop Auto Tour'); 
+            }
+            if (autoProgressContainer) autoProgressContainer.style.display = 'block';
+            
+            // Start rotation immediately
+            clearInterval(autoRotateTimer);
+            autoRotateTimer = setInterval(() => { 
+                if (VIEWER && !isAutoNavigating) {
+                    VIEWER.setYaw(VIEWER.getYaw() + 0.15); // Slightly slower, more cinematic rotation
+                }
+            }, 16);
+
+            resetAutoTourTimer();
         }
+
+        function resetAutoTourTimer() {
+            clearTimeout(autoTourTimer);
+            cancelAnimationFrame(progressFrameReq);
+            
+            autoTourStartTime = Date.now();
+            updateAutoTourProgress();
+            
+            autoTourTimer = setTimeout(autoNavigateHierarchy, autoTourDuration);
+        }
+
         function stopAutoRotate() {
             if (!autoRotateActive) return;
             autoRotateActive = false;
+            
             clearInterval(autoRotateTimer);
             clearTimeout(autoTourTimer);
-            if (autoBtn) { autoBtn.classList.remove('active'); autoBtn.setAttribute('data-tip','Auto-Tour (A)'); }
+            cancelAnimationFrame(progressFrameReq);
+
+            if (autoBtn) { 
+                autoBtn.classList.remove('active'); 
+                autoBtn.setAttribute('data-tip','Auto-Tour (A)'); 
+            }
+            if (autoProgressContainer) autoProgressContainer.style.display = 'none';
+            if (autoProgressBar) autoProgressBar.style.width = '0%';
         }
         autoBtn && autoBtn.addEventListener('click', () => autoRotateActive ? stopAutoRotate() : startAutoRotate());
 
