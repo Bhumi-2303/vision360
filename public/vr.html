@@ -232,13 +232,25 @@
             });
         }
 
-        // ── Phase 5: Global Hard Escape (Mandatory) ──────────────
+        // ── Phase 5: Global Hard Escape (Mode-Aware) ────────────
         window.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
                 console.log('Global Escape Triggered');
-                // Attempt both paths to ensure exit
-                exitAR();
-                exitVR();
+                
+                // Detection logic within the handler to ensure real-time accuracy
+                const isVR = sceneEl.renderer && sceneEl.renderer.xr && sceneEl.renderer.xr.isPresenting;
+                const isAR = sceneEl && sceneEl.is('vr-mode') && !isVR;
+
+                if (isVR) {
+                    console.log('Escape: Terminating VR Session');
+                    exitVR();
+                } else if (isAR) {
+                    console.log('Escape: Terminating AR Session');
+                    exitAR();
+                } else {
+                    console.log('Escape: No active XR session, performing standard exit');
+                    fallbackExit();
+                }
             }
         });
 
