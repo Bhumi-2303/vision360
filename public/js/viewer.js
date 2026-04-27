@@ -426,80 +426,39 @@ document.addEventListener("DOMContentLoaded", async () => {
         // orderedAutoTour is declared at the top of the scope (line ~31)
 
         function buildOrderedHierarchy() {
-            orderedAutoTour = [];
-            const typeWeight = { building: 1, department: 2, classroom: 3, lab: 4 };
-
-            // Only consider scenes that actually have an image uploaded
-            const validScenes = Object.values(scenesData).filter(s => s.panorama && s.panorama.trim() !== '');
-
-            // Find root scenes (buildings or those without parents)
-            let roots = validScenes.filter(s => s.sceneType === 'building' || !s.parentId);
+            // Get all scenes that have a panorama image
+            const allValid = Object.values(scenesData).filter(s => s.id && s.panorama && s.panorama.trim() !== '');
             
-            // Sort roots by strict semantic weight
-            roots.sort((a, b) => {
-                const aTitle = (a.title || '').toLowerCase();
-                const bTitle = (b.title || '').toLowerCase();
-                const aIsMain = aTitle.includes('campus') || aTitle.includes('main');
-                const bIsMain = bTitle.includes('campus') || bTitle.includes('main');
-                if (aIsMain && !bIsMain) return -1;
-                if (!aIsMain && bIsMain) return 1;
-
-                const weightA = typeWeight[a.sceneType] || 5;
-                const weightB = typeWeight[b.sceneType] || 5;
-                if (weightA !== weightB) return weightA - weightB;
-
-                return (a.title || '').localeCompare(b.title || '');
-            });
-            
-            // DFS to add children
-            function addDependencies(parentId) {
-                let children = validScenes.filter(s => s.parentId === parentId);
-                
-                // Sort children by hierarchy weight
-                children.sort((a, b) => {
-                    const weightA = typeWeight[a.sceneType] || 5;
-                    const weightB = typeWeight[b.sceneType] || 5;
-                    if (weightA !== weightB) return weightA - weightB;
-                    return (a.title || '').localeCompare(b.title || '');
-                });
-
-                children.forEach(c => {
-                    if (!orderedAutoTour.includes(c.id)) {
-                        orderedAutoTour.push(c.id);
-                        addDependencies(c.id); // Add grandchildren
-                    }
-                });
+            if (allValid.length === 0) {
+                orderedAutoTour = [];
+                return;
             }
 
-            roots.forEach(root => {
-                if (!orderedAutoTour.includes(root.id)) {
-                    orderedAutoTour.push(root.id);
-                    addDependencies(root.id);
-                }
-            });
-
-            // Append any disconnected scenes just in case, sorted by hierarchy too
-            let leftovers = validScenes.filter(s => !orderedAutoTour.includes(s.id));
-            leftovers.sort((a, b) => {
-                const weightA = typeWeight[a.sceneType] || 5;
-                const weightB = typeWeight[b.sceneType] || 5;
-                if (weightA !== weightB) return weightA - weightB;
+            // Sort by type (Buildings -> Departments -> Rooms) then by title
+            const typeWeight = { building: 1, department: 2, classroom: 3, lab: 4 };
+            allValid.sort((a, b) => {
+                const wa = typeWeight[a.sceneType] || 5;
+                const wb = typeWeight[b.sceneType] || 5;
+                if (wa !== wb) return wa - wb;
                 return (a.title || '').localeCompare(b.title || '');
             });
-            leftovers.forEach(s => orderedAutoTour.push(s.id));
+
+            orderedAutoTour = allValid.map(s => s.id);
+            console.log("Auto Tour sequence initialized:", orderedAutoTour);
         }
 
         // ── Auto-rotate & Auto-Tour ─────────────────────────────────
         function autoNavigateHierarchy() {
             if (!autoRotateActive || !VIEWER) return;
-            const curId = VIEWER.getScene();
             
-            if (orderedAutoTour.length === 0) buildOrderedHierarchy();
+            if (!orderedAutoTour || orderedAutoTour.length === 0) buildOrderedHierarchy();
+            if (orderedAutoTour.length === 0) return;
 
-            let nextIdx = orderedAutoTour.indexOf(curId) + 1;
-            if (nextIdx >= orderedAutoTour.length || nextIdx < 0) {
-                nextIdx = 0; // Loop back to the beginning
-            }
+            const curId = VIEWER.getScene();
+            const idx = orderedAutoTour.indexOf(curId);
+            
+            // Get next scene in sequence (loop to start if at the end)
+            const nextIdx = (idx === -1) ? 0 : (idx + 1) % orderedAutoTour.length;
 
             isAutoNavigating = true;
             VIEWER.loadScene(orderedAutoTour[nextIdx]);
