@@ -11,7 +11,7 @@
             position: fixed;
             top: 20px;
             left: 20px;
-            z-index: 9999;
+            z-index: 100000;
             pointer-events: none;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
@@ -154,17 +154,17 @@
             console.log('A-Frame Scene Loaded');
         }
 
-        // ── Senior Exit VR Controller (Performance Optimized) ───────
+        // ── Senior Exit VR Controller (Ultra-Robust Pattern) ───────
         let isExitInProgress = false;
 
         function exitVR() {
-            console.log('Exit VR initiated');
+            console.log('Exit VR Controller: Initialized');
             if (isExitInProgress) return; 
             isExitInProgress = true;
 
             const sceneEl = document.querySelector('a-scene');
             if (!sceneEl) { 
-                console.warn('Scene element not found');
+                console.error('Exit VR Error: a-scene not found');
                 handleFallbackExit();
                 return;
             }
@@ -172,32 +172,52 @@
             const renderer = sceneEl.renderer;
             const xrSession = renderer ? renderer.xr.getSession() : null;
             
-            console.log('XR Session status:', xrSession ? 'Active' : 'None');
+            console.log('Exit VR: Session State ->', xrSession ? 'Active' : 'Null');
+
+            // Failsafe Timeout: If session doesn't end within 500ms, force fallback
+            const failsafeTimer = setTimeout(() => {
+                if (renderer && renderer.xr.isPresenting) {
+                    console.warn('Exit VR Failsafe: XR still presenting after 500ms. Forcing fallback.');
+                    handleFallbackExit();
+                }
+            }, 500);
 
             if (xrSession) {
-                // Async Safe: Wait for session to actually end before cleaning up
+                // Validation: Only proceed if session is in a valid state
+                if (xrSession.visibilityState === 'hidden') {
+                    console.warn('Exit VR: Session already hidden. Forcing cleanup.');
+                    clearTimeout(failsafeTimer);
+                    handleExitCleanup(sceneEl);
+                    return;
+                }
+
+                // Async Safe: Wait for hardware to signal the end of immersion
                 xrSession.addEventListener('end', () => {
-                    console.log('XR Session ended gracefully');
+                    console.log('Exit VR: Hardware signaled session end');
+                    clearTimeout(failsafeTimer);
                     handleExitCleanup(sceneEl);
                 }, { once: true });
                 
                 xrSession.end().catch(err => {
-                    console.error("XR Session end failed:", err);
+                    console.error("Exit VR: Session end request rejected ->", err);
+                    clearTimeout(failsafeTimer);
                     handleExitCleanup(sceneEl);
                 });
             } else {
+                clearTimeout(failsafeTimer);
                 handleExitCleanup(sceneEl);
             }
         }
 
         function handleExitCleanup(sceneEl) {
-            console.log('Performing resource cleanup...');
+            console.log('Exit VR: Starting GPU Resource Disposal');
+            
             // 1. Stop Render Loop Immediately
             if (sceneEl.renderer) {
                 sceneEl.renderer.setAnimationLoop(null);
             }
 
-            // 2. Safe GPU Resource Disposal
+            // 2. Safe GPU Resource Disposal (Full Traversal)
             const threeScene = sceneEl.object3D;
             if (threeScene) {
                 threeScene.traverse((node) => {
@@ -215,61 +235,64 @@
                 threeScene.clear();
             }
 
+            // 3. Clear Renderer Pipeline
             if (sceneEl.renderer) {
                 sceneEl.renderer.renderLists.dispose();
                 sceneEl.renderer.dispose();
             }
 
-            console.log('Cleanup complete. Redirecting...');
+            console.log('Exit VR: Cleanup Complete. Navigating...');
             setTimeout(() => {
                 window.location.href = 'index.html';
             }, 50);
         }
 
         function handleFallbackExit() {
-            console.log('Fallback exit triggered');
+            const sceneEl = document.querySelector('a-scene');
+            if (sceneEl && sceneEl.renderer) {
+                sceneEl.renderer.setAnimationLoop(null);
+            }
             setTimeout(() => {
                 window.location.href = 'index.html';
             }, 100);
         }
 
-        // Hook into A-Frame's built-in exit event
+        // Hook into A-Frame's built-in exit event (Triggered by ESC, Controller Back, etc.)
         document.querySelector('a-scene').addEventListener('exit-vr', () => {
-            console.log('A-Frame exit-vr event detected');
+            console.log('Exit VR: A-Frame event hook detected');
             exitVR();
         });
 
-        // Exit VR Button Click Logic (In-scene entity)
+        // Exit VR Button Click Logic (In-scene 3D Button)
         const exitBtn = document.querySelector('#exit-vr-btn');
         if (exitBtn) {
-            exitBtn.addEventListener('click', () => {
-                console.log('In-scene exit button clicked');
+            exitBtn.addEventListener('click', (e) => {
+                console.log('Exit VR: 3D Button Interaction');
                 const scene = document.querySelector('a-scene');
                 if (scene.is('vr-mode')) {
                     scene.exitVR(); 
                 } else {
-                    exitVR();
+                    requestAnimationFrame(() => exitVR());
                 }
             });
         }
 
-        // UI Overlay Exit Button Click Logic
+        // UI Overlay Exit Button Click Logic (2D UI Overlay)
         const uiExitBtn = document.querySelector('#ui-exit-btn');
         if (uiExitBtn) {
-            uiExitBtn.style.pointerEvents = 'auto'; // Ensure clickable
+            uiExitBtn.style.pointerEvents = 'auto';
             uiExitBtn.addEventListener('click', (e) => {
-                console.log('UI overlay exit button clicked');
-                e.preventDefault();
-                exitVR();
+                console.log('Exit VR: 2D Overlay Interaction');
+                if (e.cancelable) e.preventDefault();
+                // Defer to next frame to ensure UI response is smooth
+                requestAnimationFrame(() => exitVR());
             });
         }
 
-        // Failsafe: Handle manual navigation or tab closing
+        // Failsafe: Handle abrupt navigation
         window.addEventListener('beforeunload', () => {
             const scene = document.querySelector('a-scene');
-            if (scene && scene.renderer) {
-                scene.renderer.setAnimationLoop(null);
-            }
+            if (scene && scene.renderer) scene.renderer.setAnimationLoop(null);
         });
     </script>
 </body>
