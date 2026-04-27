@@ -154,9 +154,13 @@
             console.log('A-Frame Scene Loaded');
         }
 
+        const sceneEl = document.querySelector('a-scene');
+        const uiExitBtn = document.querySelector('#ui-exit-btn');
+        const sceneLabel = document.querySelector('#exit-btn-label');
+
         // ── Deterministic Exit Flow (Single Pass) ────────────────
         function handleExit() {
-            const renderer = sceneEl.renderer;
+            const renderer = sceneEl ? sceneEl.renderer : null;
             const isVR = renderer && renderer.xr && renderer.xr.isPresenting;
             const isAR = sceneEl && sceneEl.is('vr-mode') && !isVR;
 
