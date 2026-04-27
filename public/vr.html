@@ -235,10 +235,11 @@
                 threeScene.clear();
             }
 
-            // 3. Clear Renderer Pipeline
+            // 3. Clear Renderer Pipeline (Safe Reset)
             if (sceneEl.renderer) {
                 sceneEl.renderer.renderLists.dispose();
-                sceneEl.renderer.dispose();
+                if (sceneEl.renderer.info) sceneEl.renderer.info.reset();
+                // Note: renderer.dispose() removed to ensure context remains reusable
             }
 
             console.log('Exit VR: Cleanup Complete. Navigating...');
