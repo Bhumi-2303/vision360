@@ -250,6 +250,51 @@
             }, 100);
         }
 
+        // ── Phase 1: Real-time Label Synchronization ────────────
+        function updateExitLabel() {
+            if (!uiExitBtn) return;
+            
+            const isVR = sceneEl.renderer && sceneEl.renderer.xr && sceneEl.renderer.xr.isPresenting;
+            const isAR = sceneEl && sceneEl.is('vr-mode') && !isVR;
+
+            let labelText = 'EXIT';
+            if (isVR) labelText = 'EXIT VR';
+            else if (isAR) labelText = 'EXIT AR';
+
+            // Preserve SVG while updating text
+            const svg = uiExitBtn.querySelector('svg');
+            uiExitBtn.innerHTML = '';
+            if (svg) uiExitBtn.appendChild(svg);
+            uiExitBtn.appendChild(document.createTextNode(' ' + labelText));
+
+            // Update 3D label if present
+            if (sceneLabel) sceneLabel.setAttribute('value', labelText);
+            
+            console.log('Label Sync:', labelText);
+        }
+
+        // ── Phase 3: Event Synchronization ───────────────────────
+        sceneEl.addEventListener('enter-vr', () => {
+            // A-Frame enters 'vr-mode' for both AR and VR
+            // Wait one frame to let hardware state settle
+            requestAnimationFrame(() => {
+                updateExitLabel();
+                
+                // For Three.js VR session sync
+                const session = sceneEl.renderer && sceneEl.renderer.xr.getSession();
+                if (session) {
+                    session.addEventListener('end', updateExitLabel, { once: true });
+                }
+            });
+        });
+
+        sceneEl.addEventListener('exit-vr', () => {
+            updateExitLabel();
+        });
+
+        // Initial call
+        updateExitLabel();
+
         // ── Scene Initialization & Binding ───────────────────────
         async function initializeVRScene() {
             if (!imgUrl) return;
@@ -281,16 +326,6 @@
                 handleUnifiedExit();
             });
         }
-
-        // Auto-update Labels based on state
-        sceneEl.addEventListener('enter-vr', () => {
-            const label = isVRModeActive() ? 'Exit VR' : 'Exit AR';
-            if (sceneLabel) sceneLabel.setAttribute('value', label);
-            if (uiExitBtn) {
-                const svg = uiExitBtn.querySelector('svg').outerHTML;
-                uiExitBtn.innerHTML = `${svg} ${label}`;
-            }
-        });
 
         initializeVRScene();
 
