@@ -668,11 +668,9 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // Helper: Upload image to backend API (Cloudinary)
-    // - In dev: uses VITE_API_URL from .env (defaults to localhost:3000)
-    // - In production: uses VITE_API_URL set in Vercel environment variables
     const API_URL = (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.VITE_API_URL)
         ? import.meta.env.VITE_API_URL
-        : (window.location.hostname === 'localhost' ? 'http://localhost:3000' : '');
+        : 'http://localhost:3000';
 
     async function uploadImage(fileInput) {
         if (!fileInput.files || fileInput.files.length === 0) throw new Error("No image selected");

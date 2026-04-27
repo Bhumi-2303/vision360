@@ -3,10 +3,27 @@ import multer from 'multer';
 import cors from 'cors';
 import { v2 as cloudinary } from 'cloudinary';
 import dotenv from 'dotenv';
+import { fileURLToPath } from 'url';
+import path from 'path';
 
-dotenv.config();
+// Resolve __dirname for ESM
+const __filename = fileURLToPath(import.meta.url);
+const __dirname  = path.dirname(__filename);
+
+// Load .env from the server/ directory (CWD is project root when run via npm scripts)
+dotenv.config({ path: path.resolve(__dirname, '.env') });
 
 // ── Cloudinary config ───────────────────────────────────────────
+if (!process.env.CLOUDINARY_CLOUD_NAME || !process.env.CLOUDINARY_API_KEY || !process.env.CLOUDINARY_API_SECRET) {
+    console.error('❌ FATAL: Missing Cloudinary credentials!');
+    console.error('   Create a .env file in the server/ directory with:');
+    console.error('   CLOUDINARY_CLOUD_NAME=your_cloud_name');
+    console.error('   CLOUDINARY_API_KEY=your_api_key');
+    console.error('   CLOUDINARY_API_SECRET=your_api_secret');
+    console.error('   Copy server/.env.example to server/.env and fill in your values.');
+    process.exit(1);
+}
+
 cloudinary.config({
     cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
     api_key:    process.env.CLOUDINARY_API_KEY,
