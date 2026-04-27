@@ -1,5 +1,6 @@
 import { db } from "./firebase-init.js";
 import { collection, getDocs } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+import aiAvatar from "../images/ai_avatar.png";
 
 export class AIAssistant {
     constructor() {
@@ -45,7 +46,7 @@ export class AIAssistant {
             <div id="ai-chat-window" class="ai-chat-window">
                 <div class="ai-chat-header">
                     <div class="ai-chat-title">
-                        <img src="images/ai_avatar.png" class="ai-avatar-img" alt="AI Avatar"> IRA Virtual Tour Guide
+                        <img src="${aiAvatar}" class="ai-avatar-img" alt="AI Avatar"> IRA Virtual Tour Guide
                     </div>
                     <button id="ai-chat-close"><i class="fas fa-times"></i></button>
                 </div>
