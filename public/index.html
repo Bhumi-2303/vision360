@@ -369,24 +369,26 @@
     .hero-auto-tour-btn {
       min-height: 48px;
       min-width: 160px;
-      padding: 13px 27px;
+      padding: 14px 28px;
       border-radius: 12px;
-      background: transparent;
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      font-weight: 500;
+      font-weight: 600;
       touch-action: manipulation;
+      background: var(--c-primary);
       color: white;
+      box-shadow: 0 10px 25px rgba(112, 145, 230, 0.4);
       display: inline-flex;
       align-items: center;
       justify-content: center;
       gap: 8px;
       text-decoration: none;
-      transition: border-color 0.3s ease, background 0.3s ease;
+      transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
     }
 
     .hero-auto-tour-btn:hover {
-      border-color: var(--c-primary);
-      background: rgba(112, 145, 230, 0.05);
+      transform: translateY(-2px);
+      box-shadow: 0 12px 30px rgba(112, 145, 230, 0.5);
+      background: var(--c-primary);
+      opacity: 0.9;
     }
 
     @media (max-width: 480px) {
