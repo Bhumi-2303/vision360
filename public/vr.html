@@ -58,10 +58,10 @@
 <body>
     <!-- UI Overlay -->
     <div class="vr-overlay-ui">
-        <a href="javascript:history.back()" class="back-button">
+        <button id="ui-exit-btn" class="back-button" style="border:none; outline:none; appearance:none;">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
             Exit VR Mode
-        </a>
+        </button>
     </div>
 
     <div id="scene-title-display" class="scene-info">Loading VR Scene...</div>
@@ -72,8 +72,13 @@
             <img id="panorama-img" src="" crossorigin="anonymous">
         </a-assets>
 
-        <!-- 360 Sky -->
-        <a-sky id="main-sky" src="#panorama-img" rotation="0 -90 0" animation="property: opacity; from: 0; to: 1; dur: 1000"></a-sky>
+        <!-- 360 Sky (using flat shader to prevent lighting issues) -->
+        <a-sky id="main-sky" 
+               radius="5000" 
+               rotation="0 -90 0" 
+               material="shader: flat; src: #panorama-img; opacity: 1; transparent: true;"
+               animation="property: components.material.material.opacity; from: 0; to: 1; dur: 1200; easing: easeOutQuad">
+        </a-sky>
 
         <!-- Exit VR Button inside scene -->
         <a-entity id="exit-vr-btn" class="clickable" 
@@ -105,18 +110,31 @@
         const title = params.get('title') || '360° View';
 
         const skyAsset = document.querySelector('#panorama-img');
+        const mainSky = document.querySelector('#main-sky');
         const titleDisplay = document.querySelector('#scene-title-display');
 
         if (imgUrl) {
-            // Set the image source
-            skyAsset.setAttribute('src', imgUrl);
             titleDisplay.textContent = title;
             
-            // Handle loading errors
-            skyAsset.addEventListener('error', () => {
+            // 1. Set the source on the asset first
+            skyAsset.setAttribute('src', imgUrl);
+            
+            // 2. Listen for the asset to load
+            skyAsset.onload = () => {
+                console.log("Texture loaded successfully");
+                // Explicitly tell the sky to use the loaded asset
+                mainSky.setAttribute('src', '#panorama-img');
+            };
+
+            // 3. Handle loading errors
+            skyAsset.onerror = () => {
+                console.error("Failed to load VR texture:", imgUrl);
                 alert('Error loading 360° image for VR. Please check the source.');
                 window.history.back();
-            });
+            };
+
+            // 4. Force immediate source if already cached or for faster initial render attempt
+            mainSky.setAttribute('src', imgUrl);
         } else {
             alert('No image found for VR mode.');
             window.history.back();
@@ -136,13 +154,117 @@
             console.log('A-Frame Scene Loaded');
         }
 
-        // Exit VR Button Click Logic
-        document.querySelector('#exit-vr-btn').addEventListener('click', () => {
-            const scene = document.querySelector('a-scene');
-            if (scene.is('vr-mode')) {
-                scene.exitVR();
+        // ── Senior Exit VR Controller (Performance Optimized) ───────
+        let isExitInProgress = false;
+
+        function exitVR() {
+            if (isExitInProgress) return; // Prevent duplicate execution
+            isExitInProgress = true;
+
+            const sceneEl = document.querySelector('a-scene');
+            if (!sceneEl) { 
+                handleFallbackExit();
+                return;
+            }
+
+            const renderer = sceneEl.renderer;
+            const xrSession = renderer ? renderer.xr.getSession() : null;
+
+            if (xrSession) {
+                // Async Safe: Wait for session to actually end before cleaning up
+                xrSession.addEventListener('end', () => {
+                    handleExitCleanup(sceneEl);
+                }, { once: true });
+                
+                xrSession.end().catch(err => {
+                    console.warn("XR Session end failed, forcing cleanup:", err);
+                    handleExitCleanup(sceneEl);
+                });
             } else {
-                window.history.back();
+                handleExitCleanup(sceneEl);
+            }
+        }
+
+        function handleExitCleanup(sceneEl) {
+            // 1. Stop Render Loop Immediately
+            if (sceneEl.renderer) {
+                sceneEl.renderer.setAnimationLoop(null);
+            }
+
+            // 2. Safe GPU Resource Disposal (Full Traversal)
+            const threeScene = sceneEl.object3D;
+            if (threeScene) {
+                threeScene.traverse((node) => {
+                    if (node.geometry) {
+                        node.geometry.dispose();
+                    }
+                    if (node.material) {
+                        const materials = Array.isArray(node.material) ? node.material : [node.material];
+                        materials.forEach(mat => {
+                            // Dispose textures
+                            Object.keys(mat).forEach(prop => {
+                                if (!mat[prop]) return;
+                                if (mat[prop].isTexture) {
+                                    mat[prop].dispose();
+                                }
+                            });
+                            mat.dispose();
+                        });
+                    }
+                });
+                // 3. Clear Scene
+                threeScene.clear();
+            }
+
+            // 4. Release Renderer Resources
+            if (sceneEl.renderer) {
+                sceneEl.renderer.renderLists.dispose();
+                sceneEl.renderer.dispose();
+            }
+
+            // 5. Controlled Navigation (Avoid Race Conditions)
+            setTimeout(() => {
+                window.location.href = 'index.html';
+            }, 50);
+        }
+
+        function handleFallbackExit() {
+            setTimeout(() => {
+                window.location.href = 'index.html';
+            }, 100);
+        }
+
+        // Hook into A-Frame's built-in exit event
+        document.querySelector('a-scene').addEventListener('exit-vr', () => {
+            exitVR();
+        });
+
+        // Exit VR Button Click Logic (In-scene entity)
+        const exitBtn = document.querySelector('#exit-vr-btn');
+        if (exitBtn) {
+            exitBtn.addEventListener('click', () => {
+                const scene = document.querySelector('a-scene');
+                if (scene.is('vr-mode')) {
+                    scene.exitVR(); // This will trigger 'exit-vr' event above
+                } else {
+                    exitVR();
+                }
+            });
+        }
+
+        // UI Overlay Exit Button Click Logic
+        const uiExitBtn = document.querySelector('#ui-exit-btn');
+        if (uiExitBtn) {
+            uiExitBtn.addEventListener('click', () => {
+                exitVR();
+            });
+        }
+
+        // Failsafe: Handle manual navigation or tab closing
+        window.addEventListener('beforeunload', () => {
+            const scene = document.querySelector('a-scene');
+            if (scene && scene.renderer) {
+                scene.renderer.setAnimationLoop(null);
             }
         });
     </script>
