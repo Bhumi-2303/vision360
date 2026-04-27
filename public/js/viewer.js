@@ -134,11 +134,20 @@ document.addEventListener("DOMContentLoaded", async () => {
         buildOrderedHierarchy();
 
         // ── Process scenes — filter out invalid and attach handlers ──
+        const CLOUDINARY_BASE = "https://res.cloudinary.com/dyysldt1m/image/upload/v1777268527/vision360/";
+        
         const processed = {};
         Object.entries(scenesData).forEach(([id, scene]) => {
             if (!scene.panorama || scene.panorama.trim() === '') return;
 
             const s = { ...scene };
+            
+            // Auto-transform local paths to Cloudinary
+            if (s.panorama.startsWith('images/') || s.panorama.startsWith('/images/')) {
+                const filename = s.panorama.split('/').pop().replace(/\.[^/.]+$/, ""); // get name without ext
+                s.panorama = `${CLOUDINARY_BASE}${filename}`;
+            }
+
             if (s.initialPitch !== undefined) s.pitch = s.initialPitch;
             if (s.initialYaw !== undefined) s.yaw = s.initialYaw;
             
