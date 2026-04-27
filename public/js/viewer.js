@@ -119,7 +119,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         const snap = await getDocs(collection(db, "scenes"));
         snap.forEach(doc => {
             const d = doc.data();
-            d.sceneType = inferType({ ...d, id: doc.id });
+            d.id = doc.id;
+            d.sceneType = inferType(d);
             scenesData[doc.id] = d;
         });
 
@@ -132,18 +133,9 @@ document.addEventListener("DOMContentLoaded", async () => {
         // Build hierarchy immediately to ensure we have a valid sequence to fall back to
         buildOrderedHierarchy();
 
-        // Safe fallback: try URL param first, then the top of our safe hierarchy, then random key
-        let startId = (initialScene && scenesData[initialScene]) ? initialScene : null;
-        if (!startId && orderedAutoTour.length > 0) {
-            startId = orderedAutoTour[0];
-        } else if (!startId) {
-            startId = Object.keys(scenesData)[0];
-        }
-
-        // ── Process scenes — attach info hotspot handlers ──────────
+        // ── Process scenes — filter out invalid and attach handlers ──
         const processed = {};
         Object.entries(scenesData).forEach(([id, scene]) => {
-            // Drop thoroughly invalid scenes to prevent crashes if navigated to via UI either
             if (!scene.panorama || scene.panorama.trim() === '') return;
 
             const s = { ...scene };
@@ -160,6 +152,19 @@ document.addEventListener("DOMContentLoaded", async () => {
             }
             processed[id] = s;
         });
+
+        const processedIds = Object.keys(processed);
+        if (processedIds.length === 0) {
+            overlay.innerHTML = `<i class="fas fa-cube" style="font-size:2.5rem;color:var(--text-faint);margin-bottom:20px;"></i><p>No valid panoramas found.</p>`;
+            finishProgress(loadIv);
+            return;
+        }
+
+        // Safe fallback: try URL param first, then the top of our safe hierarchy, then first available
+        let startId = (initialScene && processed[initialScene]) ? initialScene : null;
+        if (!startId) {
+            startId = orderedAutoTour.find(id => processed[id]) || processedIds[0];
+        }
 
         // ── Init Pannellum ──────────────────────────────────────────
         VIEWER = pannellum.viewer("panorama", {
