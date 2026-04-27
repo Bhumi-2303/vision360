@@ -220,18 +220,6 @@
         function handleUnifiedExit() {
             if (isExitInProgress) return;
             isExitInProgress = true;
-
-            requestAnimationFrame(() => {
-                if (isVRModeActive()) {
-                    exitVR();
-                } else if (isARModeActive()) {
-                    exitAR();
-                } else {
-                    fallbackExit();
-                }
-            });
-        }
-
         // ── Phase 1: Persistent Mode Tracking (Hardened Exit) ────
         let lastXRMode = null; // 'ar' or 'vr'
 
@@ -245,32 +233,35 @@
             return lastXRMode; // Fallback for transition states
         }
 
-        // ── Phase 5: Global Hard Escape (Hardened) ───────────────
+        // ── Phase 2: Exit Watchdog (Resilience Layer) ───────────
+        function startExitWatchdog() {
+            setTimeout(() => {
+                const renderer = sceneEl.renderer;
+                const stillVR = renderer && renderer.xr && renderer.xr.isPresenting;
+                const stillAR = sceneEl && sceneEl.is('vr-mode') && !stillVR;
+
+                if (stillAR || stillVR) {
+                    console.warn('XR Exit Hang Detected → Forcing browser recovery');
+                    window.location.href = 'index.html';
+                }
+
+                // Global safety reset
+                lastXRMode = null;
+            }, 800); // Allow hardware time to respond first
+        }
+
+        // ── Phase 5: Global Hard Escape (Resilient) ──────────────
         window.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
-                console.log('Global Escape: Hardened Detection Triggered');
+                console.log('Global Escape: resilience watchdog started');
+                startExitWatchdog();
+                
                 const mode = getActiveMode();
-
-                if (mode === 'ar') {
-                    console.log('Escape: Forcing AR Exit');
-                    exitAR();
-                } else if (mode === 'vr') {
-                    console.log('Escape: Forcing VR Exit');
-                    exitVR();
-                } else {
-                    console.log('Escape: No active or cached mode, forcing fallback');
-                    fallbackExit();
-                }
+                if (mode === 'ar') exitAR();
+                else if (mode === 'vr') exitVR();
+                else fallbackExit();
             }
         });
-
-        // ── Phase 6: Failsafe Exit ───────────────────────────────
-        function fallbackExit() {
-            if (sceneEl.renderer) sceneEl.renderer.setAnimationLoop(null);
-            setTimeout(() => {
-                window.location.href = 'index.html';
-            }, 100);
-        }
 
         // ── Phase 1: Real-time Label Synchronization ────────────
         function updateExitLabel() {
@@ -317,6 +308,32 @@
             lastXRMode = null;
             updateExitLabel();
         });
+
+        // ── Phase 3: Exit Button Routing ─────────────────────────
+        function handleUnifiedExit() {
+            if (isExitInProgress) return;
+            isExitInProgress = true;
+            
+            startExitWatchdog(); // Extra safety
+
+            requestAnimationFrame(() => {
+                if (isVRModeActive()) {
+                    exitVR();
+                } else if (isARModeActive()) {
+                    exitAR();
+                } else {
+                    fallbackExit();
+                }
+            });
+        }
+
+        // ── Phase 6: Failsafe Exit ───────────────────────────────
+        function fallbackExit() {
+            if (sceneEl.renderer) sceneEl.renderer.setAnimationLoop(null);
+            setTimeout(() => {
+                window.location.href = 'index.html';
+            }, 100);
+        }
 
         // Initial call
         updateExitLabel();
