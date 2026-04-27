@@ -232,23 +232,33 @@
             });
         }
 
-        // ── Phase 5: Global Hard Escape (Mode-Aware) ────────────
+        // ── Phase 1: Persistent Mode Tracking (Hardened Exit) ────
+        let lastXRMode = null; // 'ar' or 'vr'
+
+        function getActiveMode() {
+            const isVR = sceneEl.renderer && sceneEl.renderer.xr && sceneEl.renderer.xr.isPresenting;
+            const isAR = sceneEl && sceneEl.is('vr-mode') && !isVR;
+
+            if (isVR) return 'vr';
+            if (isAR) return 'ar';
+
+            return lastXRMode; // Fallback for transition states
+        }
+
+        // ── Phase 5: Global Hard Escape (Hardened) ───────────────
         window.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
-                console.log('Global Escape Triggered');
-                
-                // Detection logic within the handler to ensure real-time accuracy
-                const isVR = sceneEl.renderer && sceneEl.renderer.xr && sceneEl.renderer.xr.isPresenting;
-                const isAR = sceneEl && sceneEl.is('vr-mode') && !isVR;
+                console.log('Global Escape: Hardened Detection Triggered');
+                const mode = getActiveMode();
 
-                if (isVR) {
-                    console.log('Escape: Terminating VR Session');
-                    exitVR();
-                } else if (isAR) {
-                    console.log('Escape: Terminating AR Session');
+                if (mode === 'ar') {
+                    console.log('Escape: Forcing AR Exit');
                     exitAR();
+                } else if (mode === 'vr') {
+                    console.log('Escape: Forcing VR Exit');
+                    exitVR();
                 } else {
-                    console.log('Escape: No active XR session, performing standard exit');
+                    console.log('Escape: No active or cached mode, forcing fallback');
                     fallbackExit();
                 }
             }
@@ -285,22 +295,26 @@
             console.log('Label Sync:', labelText);
         }
 
-        // ── Phase 3: Event Synchronization ───────────────────────
+        // Sync state on mode entry
         sceneEl.addEventListener('enter-vr', () => {
-            // A-Frame enters 'vr-mode' for both AR and VR
-            // Wait one frame to let hardware state settle
             requestAnimationFrame(() => {
+                const isVR = sceneEl.renderer && sceneEl.renderer.xr && sceneEl.renderer.xr.isPresenting;
+                lastXRMode = isVR ? 'vr' : 'ar';
+                console.log('XR Mode Cached:', lastXRMode);
                 updateExitLabel();
                 
-                // For Three.js VR session sync
                 const session = sceneEl.renderer && sceneEl.renderer.xr.getSession();
                 if (session) {
-                    session.addEventListener('end', updateExitLabel, { once: true });
+                    session.addEventListener('end', () => {
+                        lastXRMode = null;
+                        updateExitLabel();
+                    }, { once: true });
                 }
             });
         });
 
         sceneEl.addEventListener('exit-vr', () => {
+            lastXRMode = null;
             updateExitLabel();
         });
 
