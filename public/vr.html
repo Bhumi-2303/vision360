@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8">
     <title>Vision 360 - VR Viewer</title>
@@ -15,6 +16,7 @@
             pointer-events: none;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
+
         .back-button {
             pointer-events: auto;
             background: rgba(7, 13, 26, 0.8);
@@ -32,10 +34,12 @@
             text-decoration: none;
             font-size: 14px;
         }
+
         .back-button:hover {
             background: rgba(255, 255, 255, 0.15);
             transform: translateY(-2px);
         }
+
         .scene-info {
             position: fixed;
             bottom: 30px;
@@ -50,44 +54,52 @@
             pointer-events: none;
             text-align: center;
         }
+
         /* Hide A-Frame inspector hint */
-        .a-canvas { cursor: grab !important; }
-        .a-canvas:active { cursor: grabbing !important; }
+        .a-canvas {
+            cursor: grab !important;
+        }
+
+        .a-canvas:active {
+            cursor: grabbing !important;
+        }
     </style>
 </head>
+
 <body>
     <!-- UI Overlay -->
     <div class="vr-overlay-ui">
         <button id="ui-exit-btn" class="back-button" style="border:none; outline:none; appearance:none;">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
-            Exit VR Mode
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"
+                stroke-linecap="round" stroke-linejoin="round">
+                <line x1="19" y1="12" x2="5" y2="12"></line>
+                <polyline points="12 19 5 12 12 5"></polyline>
+            </svg>
+            Exit AR Mode
         </button>
     </div>
 
     <div id="scene-title-display" class="scene-info">Loading VR Scene...</div>
 
     <!-- A-Frame Scene -->
-    <a-scene loading-screen="dotsColor: #00f2fe; backgroundColor: #070d1a" renderer="antialias: true; colorManagement: true;">
+    <a-scene loading-screen="dotsColor: #00f2fe; backgroundColor: #070d1a"
+        renderer="antialias: true; colorManagement: true;">
         <a-assets>
             <img id="panorama-img" src="" crossorigin="anonymous">
         </a-assets>
 
         <!-- 360 Sky (using flat shader to prevent lighting issues) -->
-        <a-sky id="main-sky" 
-               radius="5000" 
-               rotation="0 -90 0" 
-               material="shader: flat; src: #panorama-img; opacity: 1; transparent: true;"
-               animation="property: components.material.material.opacity; from: 0; to: 1; dur: 1200; easing: easeOutQuad">
+        <a-sky id="main-sky" radius="5000" rotation="0 -90 0"
+            material="shader: flat; src: #panorama-img; opacity: 1; transparent: true;"
+            animation="property: components.material.material.opacity; from: 0; to: 1; dur: 1200; easing: easeOutQuad">
         </a-sky>
 
         <!-- Exit VR Button inside scene -->
-        <a-entity id="exit-vr-btn" class="clickable" 
-                  geometry="primitive: plane; width: 1.5; height: 0.4" 
-                  material="color: #070d1a; opacity: 0.8; transparent: true; shader: flat" 
-                  position="0 1.5 -2" 
-                  text="value: EXIT VR; align: center; color: #00f2fe; width: 4; font: mozillavr"
-                  animation__mouseenter="property: scale; to: 1.05 1.05 1.05; dur: 200; startEvents: mouseenter"
-                  animation__mouseleave="property: scale; to: 1 1 1; dur: 200; startEvents: mouseleave">
+        <a-entity id="exit-vr-btn" class="clickable" geometry="primitive: plane; width: 1.5; height: 0.4"
+            material="color: #070d1a; opacity: 0.8; transparent: true; shader: flat" position="0 1.5 -2"
+            text="value: EXIT VR; align: center; color: #00f2fe; width: 4; font: mozillavr"
+            animation__mouseenter="property: scale; to: 1.05 1.05 1.05; dur: 200; startEvents: mouseenter"
+            animation__mouseleave="property: scale; to: 1 1 1; dur: 200; startEvents: mouseleave">
         </a-entity>
 
         <!-- Camera and Cursor -->
@@ -115,10 +127,10 @@
 
         if (imgUrl) {
             titleDisplay.textContent = title;
-            
+
             // 1. Set the source on the asset first
             skyAsset.setAttribute('src', imgUrl);
-            
+
             // 2. Listen for the asset to load
             skyAsset.onload = () => {
                 console.log("Texture loaded successfully");
@@ -204,7 +216,7 @@
         // ── Dynamic Labels ──────────────────────────────────────
         function updateExitLabel() {
             if (!uiExitBtn) return;
-            
+
             const isVR = sceneEl.renderer && sceneEl.renderer.xr && sceneEl.renderer.xr.isPresenting;
             const isAR = sceneEl && sceneEl.is('vr-mode') && !isVR;
 
@@ -221,7 +233,7 @@
         // ── Event Synchronization ───────────────────────────────
         sceneEl.addEventListener('enter-vr', () => {
             requestAnimationFrame(updateExitLabel);
-            
+
             const session = sceneEl.renderer && sceneEl.renderer.xr.getSession();
             if (session) {
                 session.addEventListener('end', () => {
@@ -262,7 +274,7 @@
                 const loader = new THREE.TextureLoader();
                 loader.setCrossOrigin('anonymous');
                 const tex = await loader.loadAsync(imgUrl);
-                
+
                 skyAsset.setAttribute('src', imgUrl);
                 mainSky.setAttribute('src', '#panorama-img');
                 mainSky.setAttribute('visible', 'true');
@@ -280,4 +292,5 @@
         });
     </script>
 </body>
+
 </html>
