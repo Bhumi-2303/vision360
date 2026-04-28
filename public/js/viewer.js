@@ -23,12 +23,13 @@ document.addEventListener("DOMContentLoaded", async () => {
     // ── State ──────────────────────────────────────────────────────
     let VIEWER           = null;
     let scenesData       = {};
-    let autoRotateActive = false;
-    let autoRotateTimer  = null;
+    let isTourPlaying    = false;
+    let rotationFrameReq = null;
     let autoTourTimer    = null;
     let isAutoNavigating = false;
     let autoTourHistory  = [];
     let orderedAutoTour  = [];
+    let currentSceneIndex = 0;
     let aiVoiceEnabled   = false;
     let currentSpeech    = null;
 
@@ -205,6 +206,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             }
         });
 
+        let isInitialViewerLoad = true;
         VIEWER.on("load", () => {
             clearTimeout(safetyTimeout);
             finishProgress(loadIv);
@@ -232,14 +234,14 @@ document.addEventListener("DOMContentLoaded", async () => {
             }
             
             // Auto start tour if parameter is present
-            if (urlParams.get("auto") === "true") {
+            if (isInitialViewerLoad && urlParams.get("auto") === "true") {
+                isInitialViewerLoad = false;
                 if (orderedAutoTour.length === 0) buildOrderedHierarchy();
                 const startHierarchalId = orderedAutoTour[0];
                 
                 if (VIEWER.getScene() !== startHierarchalId && startHierarchalId) {
-                    autoRotateActive = true; 
-                    isAutoNavigating = true; // Mark as auto so scenechange resets the timer
-                    if (autoBtn) { autoBtn.classList.add('active'); autoBtn.setAttribute('data-tip','Stop Auto Tour'); }
+                    isAutoNavigating = true; // Mark as auto so scenechange resets the timer properly
+                    startAutoRotate();
                     VIEWER.loadScene(startHierarchalId);
                 } else {
                     isAutoNavigating = true; 
@@ -250,6 +252,9 @@ document.addEventListener("DOMContentLoaded", async () => {
         });
 
         VIEWER.on("scenechange", (id) => {
+            if (orderedAutoTour.length > 0) {
+                currentSceneIndex = orderedAutoTour.indexOf(id);
+            }
             updateSceneUI();
             updateInfoPanel();
             refreshPanelHighlight();
@@ -257,13 +262,13 @@ document.addEventListener("DOMContentLoaded", async () => {
             if (isAutoNavigating) {
                 // This change was triggered by the AutoTour timer
                 isAutoNavigating = false;
-                if (autoRotateActive) {
+                if (isTourPlaying) {
                     resetAutoTourTimer();
                 }
             } else {
                 // This change was likely manual (hotspot click or panel selection)
                 // We stop the auto-tour to give control back to the user
-                if (autoRotateActive) {
+                if (isTourPlaying) {
                     stopAutoRotate();
                 }
             }
@@ -497,11 +502,14 @@ document.addEventListener("DOMContentLoaded", async () => {
         let autoTourStartTime = 0;
         let autoTourDuration = 10000; // 10 seconds per scene
         let progressFrameReq = null;
+        let rotationSpeed = 0.15; // configurable rotation speed
+        let lastRotationTime = 0; // for smooth rotation
+        
         const autoProgressContainer = document.getElementById('autotour-progress-container');
         const autoProgressBar = document.getElementById('autotour-progress-bar');
 
         function updateAutoTourProgress() {
-            if (!autoRotateActive) return;
+            if (!isTourPlaying) return;
             const elapsed = Date.now() - autoTourStartTime;
             const percentage = Math.min((elapsed / autoTourDuration) * 100, 100);
             
@@ -515,13 +523,14 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
 
         function autoNavigateHierarchy() {
-            if (!autoRotateActive || !VIEWER || isAutoNavigating) return;
+            if (!isTourPlaying || !VIEWER || isAutoNavigating) return;
             const curId = VIEWER.getScene();
             
             if (orderedAutoTour.length === 0) buildOrderedHierarchy();
 
             let curIdx = orderedAutoTour.indexOf(curId);
             let nextIdx = (curIdx + 1) % orderedAutoTour.length;
+            currentSceneIndex = nextIdx; // State management
             
             const nextSceneId = orderedAutoTour[nextIdx];
             if (!nextSceneId || !processed[nextSceneId]) {
@@ -541,9 +550,24 @@ document.addEventListener("DOMContentLoaded", async () => {
             VIEWER.loadScene(nextSceneId);
         }
 
+        function rotateStep(time) {
+            if (!isTourPlaying) return;
+            
+            if (lastRotationTime === 0) lastRotationTime = time;
+            const delta = time - lastRotationTime;
+            lastRotationTime = time;
+            
+            if (VIEWER && !isAutoNavigating) {
+                // Frame rate independent smooth rotation
+                const speedMultiplier = delta / 16.666; // Normalize to ~60fps
+                VIEWER.setYaw(VIEWER.getYaw() + (rotationSpeed * speedMultiplier));
+            }
+            rotationFrameReq = requestAnimationFrame(rotateStep);
+        }
+
         function startAutoRotate() {
-            if (autoRotateActive) return;
-            autoRotateActive = true;
+            if (isTourPlaying) return;
+            isTourPlaying = true;
             
             if (autoBtn) { 
                 autoBtn.classList.add('active'); 
@@ -551,13 +575,10 @@ document.addEventListener("DOMContentLoaded", async () => {
             }
             if (autoProgressContainer) autoProgressContainer.style.display = 'block';
             
-            // Start rotation immediately
-            clearInterval(autoRotateTimer);
-            autoRotateTimer = setInterval(() => { 
-                if (VIEWER && !isAutoNavigating) {
-                    VIEWER.setYaw(VIEWER.getYaw() + 0.15); // Slightly slower, more cinematic rotation
-                }
-            }, 16);
+            // Start smooth rotation
+            cancelAnimationFrame(rotationFrameReq);
+            lastRotationTime = performance.now();
+            rotationFrameReq = requestAnimationFrame(rotateStep);
 
             resetAutoTourTimer();
         }
@@ -573,10 +594,10 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
 
         function stopAutoRotate() {
-            if (!autoRotateActive) return;
-            autoRotateActive = false;
+            if (!isTourPlaying) return;
+            isTourPlaying = false;
             
-            clearInterval(autoRotateTimer);
+            cancelAnimationFrame(rotationFrameReq);
             clearTimeout(autoTourTimer);
             cancelAnimationFrame(progressFrameReq);
 
@@ -587,7 +608,22 @@ document.addEventListener("DOMContentLoaded", async () => {
             if (autoProgressContainer) autoProgressContainer.style.display = 'none';
             if (autoProgressBar) autoProgressBar.style.width = '0%';
         }
-        autoBtn && autoBtn.addEventListener('click', () => autoRotateActive ? stopAutoRotate() : startAutoRotate());
+        autoBtn && autoBtn.addEventListener('click', () => isTourPlaying ? stopAutoRotate() : startAutoRotate());
+
+        // Pause auto mode when tab is inactive
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                if (isTourPlaying) {
+                    window.__wasAutoRotatingBeforeHide = true;
+                    stopAutoRotate();
+                }
+            } else {
+                if (window.__wasAutoRotatingBeforeHide) {
+                    window.__wasAutoRotatingBeforeHide = false;
+                    startAutoRotate();
+                }
+            }
+        });
 
         // ── Keyboard ────────────────────────────────────────────────
         document.addEventListener('keydown', (e) => {
