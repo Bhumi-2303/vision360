@@ -7,6 +7,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <!-- A-Frame Library for VR/WebXR -->
     <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
+    <!-- Puter.js for TTS -->
+    <script src="https://js.puter.com/v2/"></script>
     <style>
         .vr-overlay-ui {
             position: fixed;
@@ -113,6 +115,9 @@
         <!-- VR Controllers -->
         <a-entity laser-controls="hand: left" raycaster="objects: .clickable; far: 100"></a-entity>
         <a-entity laser-controls="hand: right" raycaster="objects: .clickable; far: 100"></a-entity>
+
+        <!-- ERA Audio Entity -->
+        <a-entity id="era-audio"></a-entity>
     </a-scene>
 
     <script>
@@ -165,6 +170,55 @@
         function setupVR() {
             console.log('A-Frame Scene Loaded');
         }
+
+        // ── ERA Virtual Assistant (Puter TTS) ────────────────────
+        async function speakERA() {
+            const text = "Hello, I am ERA, your virtual tour assistant. Welcome to R N G P I T.";
+            console.log("ERA speaking:", text);
+
+            try {
+                // Call Puter TTS
+                const ttsResult = await puter.ai.txt2speech(text);
+                
+                let audioUrl;
+                if (typeof ttsResult === 'string') {
+                    audioUrl = ttsResult;
+                } else if (ttsResult instanceof Blob) {
+                    audioUrl = URL.createObjectURL(ttsResult);
+                } else if (ttsResult.src) {
+                    audioUrl = ttsResult.src; // In case it returns an Audio element
+                } else {
+                    console.error("Unknown Puter TTS response format:", ttsResult);
+                    return;
+                }
+                
+                // Prevent caching by appending timestamp
+                audioUrl += "?t=" + Date.now();
+                
+                const audioEntity = document.querySelector('#era-audio');
+                if (audioEntity) {
+                    // Stop any currently playing sound and clear previous source
+                    if (audioEntity.components.sound) {
+                        audioEntity.components.sound.stopSound();
+                    }
+                    audioEntity.removeAttribute('sound'); 
+                    
+                    // Play new audio
+                    audioEntity.setAttribute('sound', `src: ${audioUrl}; autoplay: true; positional: false`);
+                }
+            } catch (error) {
+                console.error("ERA TTS Failed:", error);
+                // Safe fallback could be implemented here
+            }
+        }
+
+        // Trigger ERA on first user interaction with the scene
+        window.addEventListener('click', () => {
+            if (!window.eraHasSpoken) {
+                window.eraHasSpoken = true;
+                speakERA();
+            }
+        });
 
         const sceneEl = document.querySelector('a-scene');
         const uiExitBtn = document.querySelector('#ui-exit-btn');

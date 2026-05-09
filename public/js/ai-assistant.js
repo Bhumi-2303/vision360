@@ -163,24 +163,13 @@ export class AIAssistant {
         this.chatMessages.appendChild(msgDiv);
         this.chatMessages.scrollTop = this.chatMessages.scrollHeight;
         
-        // Optionally speak bot responses
-        if (sender === 'bot' && !isHtml) {
-            this.speak(text);
-        }
+        // Old speechSynthesis call removed. Voice handled exclusively by centralized ERA system in VR.
     }
 
     speak(text) {
-        if (!window.speechSynthesis) return;
-        
-        // Cancel any ongoing speech
-        window.speechSynthesis.cancel();
-        
-        const utterance = new SpeechSynthesisUtterance(text);
-        utterance.lang = 'en-US';
-        utterance.rate = 0.9; // Slightly slower for clarity
-        utterance.pitch = 1.1; // Slightly higher/feminine
-        
-        window.speechSynthesis.speak(utterance);
+        // Function intentionally disabled. 
+        // Voice synthesis is now handled exclusively by the centralized speakERA() system.
+        console.log("Legacy speak() called. Ignoring to prevent conflicts.", text);
     }
 
     handleSend() {

@@ -69,18 +69,12 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // ── AI Voice Guide ─────────────────────────────────────────────
     function stopAIVoice() {
-        if (window.speechSynthesis) window.speechSynthesis.cancel();
+        // Disabled old speechSynthesis logic
     }
     function playAIVoice(text) {
         stopAIVoice();
-        if (!aiVoiceEnabled || !window.speechSynthesis) return;
-        currentSpeech = new SpeechSynthesisUtterance(text);
-        currentSpeech.rate = 1.0;
-        currentSpeech.pitch = 1.1;
-        const voices = window.speechSynthesis.getVoices();
-        const niceVoice = voices.find(v => v.name.includes("Google") || v.name.includes("Natural"));
-        if (niceVoice) currentSpeech.voice = niceVoice;
-        window.speechSynthesis.speak(currentSpeech);
+        if (!aiVoiceEnabled) return;
+        console.log("Legacy playAIVoice() called. (Speech logic disabled in viewer.js - handled by ERA system)");
     }
     function speakCurrentScene() {
         if (!aiVoiceEnabled) return;
@@ -217,20 +211,8 @@ document.addEventListener("DOMContentLoaded", async () => {
             
             if (sessionStorage.getItem('ira_welcome') === 'true') {
                 sessionStorage.removeItem('ira_welcome');
-                if (window.speechSynthesis) {
-                    setTimeout(() => {
-                        window.speechSynthesis.cancel();
-                        const u1 = new SpeechSynthesisUtterance("Hey, I am IRA.");
-                        u1.rate = 1.0; u1.pitch = 1.1;
-                        const u2 = new SpeechSynthesisUtterance("Welcome to R.N.G.P.I.T.");
-                        u2.rate = 1.0; u2.pitch = 1.1;
-                        const voices = window.speechSynthesis.getVoices();
-                        const niceVoice = voices.find(v => v.name.includes("Google") || v.name.includes("Natural"));
-                        if (niceVoice) { u1.voice = niceVoice; u2.voice = niceVoice; }
-                        window.speechSynthesis.speak(u1);
-                        window.speechSynthesis.speak(u2);
-                    }, 500);
-                }
+                // Old speechSynthesis code removed to prevent conflicts
+                console.log("IRA welcome triggered. (Speech logic disabled in viewer.js - handled by ERA system)");
             }
             
             // Auto start tour if parameter is present
