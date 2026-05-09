@@ -295,15 +295,38 @@ document.addEventListener("DOMContentLoaded", () => {
         const hotspotsContainer = document.getElementById('edit-hotspots-container');
         hotspotsContainer.innerHTML = '';
 
+        // ── Resolve panorama URL (same logic as viewer.js) ──────────
+        const CLOUDINARY_BASE = "https://res.cloudinary.com/dyysldt1m/image/upload/f_auto,q_auto/vision360/";
         let panoramaUrl = currentEditingScene.panorama;
-        if (panoramaUrl && !panoramaUrl.startsWith('http') && panoramaUrl.startsWith('images/')) panoramaUrl = '/' + panoramaUrl;
+
+        if (panoramaUrl && !panoramaUrl.startsWith('http')) {
+            // Transform local image paths to Cloudinary URLs (matches viewer.js behavior)
+            if (panoramaUrl.startsWith('images/') || panoramaUrl.startsWith('/images/')) {
+                const filename = panoramaUrl.split('/').pop().replace(/\.[^/.]+$/, "");
+                panoramaUrl = `${CLOUDINARY_BASE}${filename}`;
+            }
+        }
+
+        console.log(`[Admin Edit] Loading panorama for "${currentEditingScene.title}":`, panoramaUrl || '(none)');
 
         if (editViewer) { editViewer.destroy(); editViewer = null; }
 
         if (panoramaUrl) {
-            editViewer = pannellum.viewer('admin-panorama-viewer', {
-                type: 'equirectangular', panorama: panoramaUrl, autoLoad: true, showControls: true
-            });
+            try {
+                editViewer = pannellum.viewer('admin-panorama-viewer', {
+                    type: 'equirectangular', panorama: panoramaUrl, autoLoad: true, showControls: true
+                });
+
+                editViewer.on('error', (msg) => {
+                    console.error(`[Admin Edit] Pannellum error for "${currentEditingScene.title}":`, msg);
+                });
+
+                editViewer.on('load', () => {
+                    console.log(`[Admin Edit] Panorama loaded successfully for "${currentEditingScene.title}"`);
+                });
+            } catch (err) {
+                console.error('[Admin Edit] Failed to initialize Pannellum viewer:', err);
+            }
 
             const viewerContainer = document.getElementById('admin-panorama-viewer');
             
@@ -334,6 +357,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
             viewerContainer.addEventListener('touchend', () => clearTimeout(pressTimer));
             viewerContainer.addEventListener('touchmove', () => clearTimeout(pressTimer));
+        } else {
+            console.warn(`[Admin Edit] No panorama URL found for scene "${currentEditingScene.title}" (ID: ${sceneId})`);
         }
 
         if (currentEditingScene.hotSpots) {
